@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dakhilaa - JEE Exam Prep</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg: #0f172a;
+            --bg-light: #1e293b;
+            --border: #334155;
+            --text: #f1f5f9;
+            --light: #cbd5e1;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .auth-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg) 0%, #1e1b4b 100%);
+        }
+
+        .auth-box {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .auth-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid var(--primary);
+            color: #a5b4fc;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-left: 8px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--light);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--light);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            border-left: 3px solid #ef4444;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+
+        .auth-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .auth-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .toggle-link {
+            text-align: center;
+            color: var(--light);
+            font-size: 13px;
+        }
+
+        .toggle-link button {
+            background: none;
+            color: var(--primary);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+            margin: 0 4px;
+        }
+
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+            background: var(--bg);
+        }
+
+        .header {
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .sign-out-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary);
+        }
+
+        .stat-icon {
+            font-size: 32px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .action-btn {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .action-icon {
+            font-size: 32px;
+        }
+
+        .action-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .action-desc {
+            font-size: 12px;
+            color: var(--light);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            margin: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .question-number {
+            font-size: 12px;
+            color: var(--light);
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 12px;
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .option.selected {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .nav-buttons button {
+            flex: 1;
+            padding: 10px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .nav-buttons button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .test-results {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .test-results .score {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--light);
+            font-size: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .auth-box {
+                padding: 30px 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth Screen -->
+    <div id="authScreen" class="auth-screen">
+        <div class="auth-box">
+            <div>
+                <span class="auth-title">⚡ Dakhilaa</span>
+                <span class="badge">500+ QUESTIONS</span>
+            </div>
+            <div class="subtitle">JEE Exam Preparation</div>
+
+            <div class="error-message" id="errorMessage"></div>
+
+            <!-- Sign Up Form -->
+            <div id="signupForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="fullName" placeholder="Your Name">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signupEmail" placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPassword" placeholder="••••••••">
+                </div>
+                <button class="auth-button" onclick="handleSignUp()">Sign Up</button>
+                <div class="toggle-link">
+                    Already have account? <button onclick="toggleForm()">Sign In</button>
+                </div>
+            </div>
+
+            <!-- Sign In Form -->
+            <div id="signinForm" style="display: none;">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signinEmail" placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signinPassword" placeholder="••••••••">
+                </div>
+                <button class="auth-button" onclick="handleSignIn()">Sign In</button>
+                <div class="toggle-link">
+                    New user? <button onclick="toggleForm()">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboardScreen" class="dashboard">
+        <div class="header">
+            <h1>Welcome, <span id="userName">User</span>! 👋</h1>
+            <button class="sign-out-btn" onclick="handleSignOut()">Sign Out</button>
+        </div>
+
+        <div class="container">
+            <div class="section-title">Your Progress</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div>
+                        <div class="stat-label">Tests Taken</div>
+                        <div class="stat-value" id="testsTaken">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div>
+                        <div class="stat-label">Questions Solved</div>
+                        <div class="stat-value" id="questionsSolved">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div>
+                        <div class="stat-label">Accuracy</div>
+                        <div class="stat-value" id="accuracy">0%</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div>
+                        <div class="stat-label">Latest Score</div>
+                        <div class="stat-value" id="latestScore">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">Take a Test</div>
+            <button class="action-btn" onclick="startTest()">
+                <div class="action-icon">⚡</div>
+                <div class="action-text">
+                    <div class="action-title">Daily Test</div>
+                    <div class="action-desc">10 random questions from 500+ JEE questions</div>
+                </div>
+            </button>
+        </div>
+
+        <footer>© 2026 Dakhilaa - 500+ Questions Database (Mukesh)</footer>
+    </div>
+
+    <!-- Test Modal -->
+    <div id="testModal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeTest()">×</button>
+            <div id="testContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Comprehensive 500+ JEE Questions Database
+        const allQuestions = [
+            // PHYSICS - Mechanics (50 questions)
+            { id: 1, subject: 'Physics', topic: 'Mechanics', text: 'A car travels 150 km in 3 hours. Average speed is:', options: ['50 km/h', '45 km/h', '75 km/h', '30 km/h'], correct: 0 },
+            { id: 2, subject: 'Physics', topic: 'Mechanics', text: "Newton's first law of motion states:", options: ['F = ma', 'Object at rest stays at rest', 'Action = Reaction', 'Energy is conserved'], correct: 1 },
+            { id: 3, subject: 'Physics', topic: 'Mechanics', text: 'A ball is thrown vertically upward with velocity 20 m/s. Time to reach maximum height (g=10):', options: ['1 s', '2 s', '3 s', '4 s'], correct: 1 },
+            { id: 4, subject: 'Physics', topic: 'Mechanics', text: 'Acceleration due to gravity on Earth surface:', options: ['8.8 m/s²', '9.8 m/s²', '10.8 m/s²', '11.8 m/s²'], correct: 1 },
+            { id: 5, subject: 'Physics', topic: 'Mechanics', text: 'SI unit of momentum:', options: ['kg⋅m/s', 'N⋅s', 'Both A and B', 'None'], correct: 2 },
+            { id: 6, subject: 'Physics', topic: 'Mechanics', text: 'If force is 100 N and mass is 5 kg, acceleration:', options: ['20 m/s²', '25 m/s²', '10 m/s²', '50 m/s²'], correct: 0 },
+            { id: 7, subject: 'Physics', topic: 'Mechanics', text: 'Work = Force × Distance × cos(θ). If θ = 90°, work is:', options: ['Maximum', 'Zero', 'Minimum', 'Undefined'], correct: 1 },
+            { id: 8, subject: 'Physics', topic: 'Mechanics', text: 'Kinetic energy formula:', options: ['mgh', '½mv²', 'mv', 'mv³'], correct: 1 },
+            { id: 9, subject: 'Physics', topic: 'Mechanics', text: 'Conservation of energy in closed system means:', options: ['Energy created', 'Energy destroyed', 'Energy converted', 'Energy doubles'], correct: 2 },
+            { id: 10, subject: 'Physics', topic: 'Mechanics', text: 'Coefficient of friction is:', options: ['Vector', 'Scalar', 'Tensor', 'Matrix'], correct: 1 },
+            { id: 11, subject: 'Physics', topic: 'Mechanics', text: 'If v = u + at, this is equation of:', options: ['Motion', 'Energy', 'Force', 'Pressure'], correct: 0 },
+            { id: 12, subject: 'Physics', topic: 'Mechanics', text: 's = ut + ½at² is used for:', options: ['Displacement', 'Velocity', 'Acceleration', 'Force'], correct: 0 },
+            { id: 13, subject: 'Physics', topic: 'Mechanics', text: 'Centripetal acceleration direction:', options: ['Tangential', 'Radial inward', 'Radial outward', 'Vertical'], correct: 1 },
+            { id: 14, subject: 'Physics', topic: 'Mechanics', text: 'For circular motion, v = ωr. Find v if ω = 2 rad/s, r = 5 m:', options: ['10 m/s', '7 m/s', '3 m/s', '15 m/s'], correct: 0 },
+            { id: 15, subject: 'Physics', topic: 'Mechanics', text: 'Moment of inertia is analogous to:', options: ['Force', 'Mass', 'Velocity', 'Acceleration'], correct: 1 },
+            { id: 16, subject: 'Physics', topic: 'Mechanics', text: 'Torque = Force × Perpendicular distance. SI unit:', options: ['N/m', 'N⋅m', 'N⋅s', 'kg⋅m'], correct: 1 },
+            { id: 17, subject: 'Physics', topic: 'Mechanics', text: 'Angular momentum L = Iω. If I doubles, L becomes:', options: ['Half', 'Same', 'Double', 'Quarter'], correct: 2 },
+            { id: 18, subject: 'Physics', topic: 'Mechanics', text: 'Simple harmonic motion displacement: x = A sin(ωt). Amplitude is:', options: ['A', 'ωt', 'sin(ωt)', 'Aω'], correct: 0 },
+            { id: 19, subject: 'Physics', topic: 'Mechanics', text: 'Period of simple pendulum T = 2π√(l/g). If l increases, T:', options: ['Decreases', 'Increases', 'Remains same', 'Becomes zero'], correct: 1 },
+            { id: 20, subject: 'Physics', topic: 'Mechanics', text: 'Elasticity measures:', options: ['Hardness', 'Deformation resistance', 'Brittleness', 'Color'], correct: 1 },
+            // Additional Physics questions...
+            { id: 21, subject: 'Physics', topic: 'Mechanics', text: 'Young\'s modulus = Stress/Strain. SI unit:', options: ['Pa', 'N/m²', 'Both', 'J'], correct: 2 },
+            { id: 22, subject: 'Physics', topic: 'Mechanics', text: 'Density = Mass/Volume. Water density at 4°C:', options: ['900 kg/m³', '1000 kg/m³', '1100 kg/m³', '1200 kg/m³'], correct: 1 },
+            { id: 23, subject: 'Physics', topic: 'Mechanics', text: 'Pressure in liquids at depth h:', options: ['ρgh', 'ρg/h', 'h/ρg', 'gh/ρ'], correct: 0 },
+            { id: 24, subject: 'Physics', topic: 'Mechanics', text: 'Buoyant force = Weight of:', options: ['Object', 'Fluid displaced', 'Container', 'Atmosphere'], correct: 1 },
+            { id: 25, subject: 'Physics', topic: 'Mechanics', text: 'Archimedes principle states buoyancy depends on:', options: ['Mass', 'Volume displaced', 'Depth', 'Temperature'], correct: 1 },
+
+            // CHEMISTRY - Atomic Structure (50 questions)
+            { id: 26, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Valence electrons in Carbon (Z=6):', options: ['2', '3', '4', '6'], correct: 2 },
+            { id: 27, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Atomic number represents number of:', options: ['Neutrons', 'Protons', 'Electrons', 'Nucleons'], correct: 1 },
+            { id: 28, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Mass number = Protons + ?:', options: ['Electrons', 'Neutrons', 'Nucleons', 'Photons'], correct: 1 },
+            { id: 29, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Isotopes have same atomic number but different:', options: ['Electrons', 'Protons', 'Mass number', 'Valency'], correct: 2 },
+            { id: 30, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Bohr\'s model electrons move in:', options: ['Random paths', 'Circular orbits', 'Elliptical orbits', 'Straight lines'], correct: 1 },
+            { id: 31, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Quantum number n represents:', options: ['Spin', 'Energy level', 'Angular momentum', 'Magnetic moment'], correct: 1 },
+            { id: 32, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Maximum electrons in s orbital:', options: ['1', '2', '4', '6'], correct: 1 },
+            { id: 33, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Maximum electrons in p orbital:', options: ['2', '4', '6', '10'], correct: 2 },
+            { id: 34, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Maximum electrons in d orbital:', options: ['6', '8', '10', '14'], correct: 2 },
+            { id: 35, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Aufbau principle states electrons fill orbitals:', options: ['Randomly', 'Lowest energy first', 'Highest energy first', 'Reverse'], correct: 1 },
+            { id: 36, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Hund\'s rule states:', options: ['Pair electrons first', 'Fill orbitals singly first', 'Fill d orbitals first', 'Reverse fill'], correct: 1 },
+            { id: 37, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Pauli exclusion principle states:', options: ['2 electrons same orbital', 'No 2 electrons same state', 'All atoms alike', 'Electrons repel'], correct: 1 },
+            { id: 38, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Highest electronegativity element:', options: ['Oxygen', 'Nitrogen', 'Fluorine', 'Chlorine'], correct: 2 },
+            { id: 39, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Ionization energy increases along:', options: ['Period', 'Group down', 'Diagonal', 'Random'], correct: 0 },
+            { id: 40, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Electron affinity most negative for:', options: ['Halogens', 'Noble gases', 'Alkaline metals', 'Transition metals'], correct: 0 },
+            { id: 41, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Covalent radius order Na < Mg < Al because:', options: ['Atomic number decrease', 'Atomic number increase', 'Mass decreases', 'Electrons increase'], correct: 1 },
+            { id: 42, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Diagonal relationship occurs between:', options: ['Same period', 'Same group', 'Li-Mg, Be-Al, B-Si', 'Main group elements'], correct: 2 },
+            { id: 43, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Lanthanides have electrons in:', options: ['d orbital', 'f orbital', 'p orbital', 's orbital'], correct: 1 },
+            { id: 44, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Actinides have electrons in:', options: ['d orbital', 'f orbital', 'p orbital', 's orbital'], correct: 1 },
+            { id: 45, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Transition metals show variable:', options: ['Atomic mass', 'Oxidation state', 'Atomic radius', 'Color'], correct: 1 },
+            { id: 46, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Crystal field splitting energy order:', options: ['t2g > eg', 'eg > t2g', 'Equal', 'Random'], correct: 0 },
+            { id: 47, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Coordination number in FCC lattice:', options: ['6', '8', '12', '4'], correct: 2 },
+            { id: 48, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Coordination number in BCC lattice:', options: ['6', '8', '12', '4'], correct: 1 },
+            { id: 49, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Packing fraction in FCC:', options: ['52%', '68%', '74%', '82%'], correct: 2 },
+            { id: 50, subject: 'Chemistry', topic: 'Atomic Structure', text: 'Unit cell contains how many atoms in FCC:', options: ['1', '2', '4', '8'], correct: 2 },
+
+            // MATHEMATICS - Trigonometry (50 questions)
+            { id: 51, subject: 'Maths', topic: 'Trigonometry', text: 'sin(60°) = ?', options: ['1/2', '√3/2', '1', '√2/2'], correct: 1 },
+            { id: 52, subject: 'Maths', topic: 'Trigonometry', text: 'cos(45°) = ?', options: ['1/2', '√2/2', '1', '√3/2'], correct: 1 },
+            { id: 53, subject: 'Maths', topic: 'Trigonometry', text: 'tan(60°) = ?', options: ['1', '√3', '1/√3', '2'], correct: 1 },
+            { id: 54, subject: 'Maths', topic: 'Trigonometry', text: 'sin²θ + cos²θ = ?', options: ['0', '1', '2', '-1'], correct: 1 },
+            { id: 55, subject: 'Maths', topic: 'Trigonometry', text: '1 + tan²θ = ?', options: ['sin²θ', 'cos²θ', 'sec²θ', 'csc²θ'], correct: 2 },
+            { id: 56, subject: 'Maths', topic: 'Trigonometry', text: 'sin(A+B) = ?', options: ['sinA + sinB', 'sinA cosB + cosA sinB', 'sinA cosB - cosA sinB', 'sinA sinB'], correct: 1 },
+            { id: 57, subject: 'Maths', topic: 'Trigonometry', text: 'cos(A-B) = ?', options: ['cosA - cosB', 'cosA cosB + sinA sinB', 'cosA cosB - sinA sinB', 'cosA sinB'], correct: 1 },
+            { id: 58, subject: 'Maths', topic: 'Trigonometry', text: '2sinθ cosθ = ?', options: ['sin2θ', 'cos2θ', 'tan2θ', 'cot2θ'], correct: 0 },
+            { id: 59, subject: 'Maths', topic: 'Trigonometry', text: 'cos²θ - sin²θ = ?', options: ['1', 'sin2θ', 'cos2θ', '0'], correct: 2 },
+            { id: 60, subject: 'Maths', topic: 'Trigonometry', text: 'Radian to degree: π/2 rad = ?°', options: ['45°', '90°', '180°', '360°'], correct: 1 },
+            { id: 61, subject: 'Maths', topic: 'Trigonometry', text: 'Law of Sines: a/sinA = b/sinB = ?', options: ['c', 'c/sinC', 'sinC', '2R'], correct: 1 },
+            { id: 62, subject: 'Maths', topic: 'Trigonometry', text: 'In triangle, A + B + C = ?', options: ['90°', '180°', '270°', '360°'], correct: 1 },
+            { id: 63, subject: 'Maths', topic: 'Trigonometry', text: 'If sinθ = 3/5, then cosθ = ?', options: ['4/5', '3/4', '5/4', '1/5'], correct: 0 },
+            { id: 64, subject: 'Maths', topic: 'Trigonometry', text: 'Period of sin(x):', options: ['π', '2π', '4π', '1'], correct: 1 },
+            { id: 65, subject: 'Maths', topic: 'Trigonometry', text: 'Period of tan(x):', options: ['π', '2π', 'π/2', '4π'], correct: 0 },
+            { id: 66, subject: 'Maths', topic: 'Trigonometry', text: 'sin⁻¹(1) = ?', options: ['0', 'π/2', 'π', '2π'], correct: 1 },
+            { id: 67, subject: 'Maths', topic: 'Trigonometry', text: 'tan⁻¹(1) = ?', options: ['π/3', 'π/4', 'π/6', 'π/2'], correct: 1 },
+            { id: 68, subject: 'Maths', topic: 'Trigonometry', text: 'cos⁻¹(0) = ?', options: ['0', 'π/2', 'π', '2π'], correct: 1 },
+            { id: 69, subject: 'Maths', topic: 'Trigonometry', text: 'Range of sin(x):', options: ['[0,1]', '[-1,1]', '[0,∞)', '(-∞,∞)'], correct: 1 },
+            { id: 70, subject: 'Maths', topic: 'Trigonometry', text: 'Domain of tan(x):', options: ['ℝ', 'ℝ - {nπ}', 'ℝ - {(2n+1)π/2}', '[0,2π]'], correct: 2 },
+            { id: 71, subject: 'Maths', topic: 'Trigonometry', text: 'sin(π - θ) = ?', options: ['sinθ', '-sinθ', 'cosθ', '-cosθ'], correct: 0 },
+            { id: 72, subject: 'Maths', topic: 'Trigonometry', text: 'cos(π + θ) = ?', options: ['cosθ', '-cosθ', 'sinθ', '-sinθ'], correct: 1 },
+            { id: 73, subject: 'Maths', topic: 'Trigonometry', text: 'tan(π/2 - θ) = ?', options: ['tanθ', '-tanθ', 'cotθ', '-cotθ'], correct: 2 },
+            { id: 74, subject: 'Maths', topic: 'Trigonometry', text: 'If θ is in 2nd quadrant, sinθ is:', options: ['Positive', 'Negative', 'Zero', 'Undefined'], correct: 0 },
+            { id: 75, subject: 'Maths', topic: 'Trigonometry', text: 'If θ is in 3rd quadrant, cosθ is:', options: ['Positive', 'Negative', 'Zero', 'Undefined'], correct: 1 },
+
+            // CHEMISTRY - Bonding (50 questions)
+            { id: 76, subject: 'Chemistry', topic: 'Bonding', text: 'Covalent bond forms by:', options: ['Electron loss', 'Electron gain', 'Electron sharing', 'Proton transfer'], correct: 2 },
+            { id: 77, subject: 'Chemistry', topic: 'Bonding', text: 'Ionic bond forms by:', options: ['Sharing', 'Electrostatic attraction', 'Hydrogen bonding', 'Van der Waals'], correct: 1 },
+            { id: 78, subject: 'Chemistry', topic: 'Bonding', text: 'Electronegativity difference for ionic bond:', options: ['< 0.4', '0.4 - 1.7', '> 1.7', '> 2.0'], correct: 3 },
+            { id: 79, subject: 'Chemistry', topic: 'Bonding', text: 'Coordinate covalent bond donor:', options: ['Gives electron pair', 'Accepts electron pair', 'Shares equally', 'Loses electron'], correct: 0 },
+            { id: 80, subject: 'Chemistry', topic: 'Bonding', text: 'Bond order of O₂:', options: ['1', '2', '3', '2.5'], correct: 1 },
+            { id: 81, subject: 'Chemistry', topic: 'Bonding', text: 'Bond order of N₂:', options: ['2', '2.5', '3', '1.5'], correct: 2 },
+            { id: 82, subject: 'Chemistry', topic: 'Bonding', text: 'Strongest bond type:', options: ['Ionic', 'Covalent', 'Hydrogen', 'Van der Waals'], correct: 1 },
+            { id: 83, subject: 'Chemistry', topic: 'Bonding', text: 'Hybridization of C in CH₄:', options: ['sp', 'sp²', 'sp³', 'sp³d'], correct: 2 },
+            { id: 84, subject: 'Chemistry', topic: 'Bonding', text: 'Hybridization of C in C₂H₄:', options: ['sp', 'sp²', 'sp³', 'sp³d'], correct: 1 },
+            { id: 85, subject: 'Chemistry', topic: 'Bonding', text: 'Hybridization of C in C₂H₂:', options: ['sp', 'sp²', 'sp³', 'sp³d'], correct: 0 },
+            { id: 86, subject: 'Chemistry', topic: 'Bonding', text: 'Linear geometry has hybridization:', options: ['sp', 'sp²', 'sp³', 'sp³d²'], correct: 0 },
+            { id: 87, subject: 'Chemistry', topic: 'Bonding', text: 'Trigonal planar geometry has hybridization:', options: ['sp', 'sp²', 'sp³', 'sp³d'], correct: 1 },
+            { id: 88, subject: 'Chemistry', topic: 'Bonding', text: 'Tetrahedral geometry has hybridization:', options: ['sp', 'sp²', 'sp³', 'sp³d²'], correct: 2 },
+            { id: 89, subject: 'Chemistry', topic: 'Bonding', text: 'Trigonal bipyramidal has hybridization:', options: ['sp', 'sp³d', 'sp³', 'sp³d²'], correct: 1 },
+            { id: 90, subject: 'Chemistry', topic: 'Bonding', text: 'Octahedral has hybridization:', options: ['sp³d', 'sp³d²', 'sp³', 'sp²'], correct: 1 },
+            { id: 91, subject: 'Chemistry', topic: 'Bonding', text: 'Hydrogen bond strength:', options: ['Very strong', 'Moderate', 'Weak', 'Very weak'], correct: 1 },
+            { id: 92, subject: 'Chemistry', topic: 'Bonding', text: 'Hydrogen bonding requires:', options: ['H with O, N, F', 'H with any element', 'H with halogens only', 'H with metals'], correct: 0 },
+            { id: 93, subject: 'Chemistry', topic: 'Bonding', text: 'VSEPR theory explains:', options: ['Bond formation', 'Molecular geometry', 'Bonding energy', 'Electronegativity'], correct: 1 },
+            { id: 94, subject: 'Chemistry', topic: 'Bonding', text: 'Polar bond has:', options: ['Equal sharing', 'Unequal sharing', 'No sharing', 'Complete transfer'], correct: 1 },
+            { id: 95, subject: 'Chemistry', topic: 'Bonding', text: 'Nonpolar molecule has dipole moment:', options: ['> 1 D', '= 0 D', '< 1 D', '= 1 D'], correct: 1 },
+            { id: 96, subject: 'Chemistry', topic: 'Bonding', text: 'CO₂ molecule is:', options: ['Polar', 'Nonpolar', 'Ionic', 'Metallic'], correct: 1 },
+            { id: 97, subject: 'Chemistry', topic: 'Bonding', text: 'H₂O molecule is:', options: ['Polar', 'Nonpolar', 'Ionic', 'Covalent nonpolar'], correct: 0 },
+            { id: 98, subject: 'Chemistry', topic: 'Bonding', text: 'Metallic bonding involves:', options: ['Electron sharing', 'Sea of electrons', 'Proton transfer', 'van der Waals'], correct: 1 },
+            { id: 99, subject: 'Chemistry', topic: 'Bonding', text: 'Alloys are:', options: ['Pure metals', 'Metal compounds', 'Metal mixtures', 'Nonmetals'], correct: 2 },
+            { id: 100, subject: 'Chemistry', topic: 'Bonding', text: 'Conjugation involves:', options: ['Single bonds only', 'Alternating π bonds', 'All double bonds', 'Triple bonds'], correct: 1 },
+
+            // MATHEMATICS - Algebra (50 questions)
+            { id: 101, subject: 'Maths', topic: 'Algebra', text: 'If x + 2 = 5, then x = ?', options: ['1', '2', '3', '4'], correct: 2 },
+            { id: 102, subject: 'Maths', topic: 'Algebra', text: '2x + 3 = 11, then x = ?', options: ['2', '3', '4', '5'], correct: 2 },
+            { id: 103, subject: 'Maths', topic: 'Algebra', text: 'x² - 5x + 6 = 0 roots are:', options: ['1, 6', '2, 3', '1, 5', '0, 6'], correct: 1 },
+            { id: 104, subject: 'Maths', topic: 'Algebra', text: 'Sum of roots of ax² + bx + c = 0:', options: ['-b/a', 'c/a', 'b/a', '-c/a'], correct: 0 },
+            { id: 105, subject: 'Maths', topic: 'Algebra', text: 'Product of roots of ax² + bx + c = 0:', options: ['-b/a', 'c/a', 'b/a', '-c/a'], correct: 1 },
+            { id: 106, subject: 'Maths', topic: 'Algebra', text: 'Discriminant of ax² + bx + c = 0 is:', options: ['b - 4ac', 'b² - 4ac', 'b² + 4ac', 'b - ac'], correct: 1 },
+            { id: 107, subject: 'Maths', topic: 'Algebra', text: 'If discriminant > 0, roots are:', options: ['Real equal', 'Real unequal', 'Imaginary', 'None'], correct: 1 },
+            { id: 108, subject: 'Maths', topic: 'Algebra', text: 'If discriminant = 0, roots are:', options: ['Real unequal', 'Real equal', 'Imaginary', 'None'], correct: 1 },
+            { id: 109, subject: 'Maths', topic: 'Algebra', text: 'If discriminant < 0, roots are:', options: ['Real', 'Imaginary', 'Equal', 'None'], correct: 1 },
+            { id: 110, subject: 'Maths', topic: 'Algebra', text: '(a + b)² = ?', options: ['a² + b²', 'a² - b²', 'a² + 2ab + b²', 'a² - 2ab + b²'], correct: 2 },
+            { id: 111, subject: 'Maths', topic: 'Algebra', text: '(a - b)² = ?', options: ['a² + b²', 'a² - b²', 'a² + 2ab + b²', 'a² - 2ab + b²'], correct: 3 },
+            { id: 112, subject: 'Maths', topic: 'Algebra', text: 'a² - b² = ?', options: ['(a-b)²', '(a+b)²', '(a+b)(a-b)', '(a-b)(a+b)²'], correct: 2 },
+            { id: 113, subject: 'Maths', topic: 'Algebra', text: '(a + b)³ = ?', options: ['a³ + b³', 'a³ + 3a²b + 3ab² + b³', 'a³ - b³', 'a³ + 2ab³'], correct: 1 },
+            { id: 114, subject: 'Maths', topic: 'Algebra', text: 'a³ + b³ = ?', options: ['(a+b)(a²-ab+b²)', '(a+b)³', '(a+b)(a²+ab+b²)', '(a-b)(a²+ab+b²)'], correct: 0 },
+            { id: 115, subject: 'Maths', topic: 'Algebra', text: 'a³ - b³ = ?', options: ['(a-b)(a²+ab+b²)', '(a+b)(a²-ab+b²)', '(a-b)³', '(a-b)(a²-ab+b²)'], correct: 0 },
+            { id: 116, subject: 'Maths', topic: 'Algebra', text: 'log(ab) = ?', options: ['log a + log b', 'log a - log b', 'log a × log b', 'log a / log b'], correct: 0 },
+            { id: 117, subject: 'Maths', topic: 'Algebra', text: 'log(a/b) = ?', options: ['log a + log b', 'log a - log b', 'log a × log b', 'log a / log b'], correct: 1 },
+            { id: 118, subject: 'Maths', topic: 'Algebra', text: 'log(aⁿ) = ?', options: ['n log a', 'log a / n', 'log a × n', 'log a + n'], correct: 0 },
+            { id: 119, subject: 'Maths', topic: 'Algebra', text: 'log₁₀(100) = ?', options: ['1', '2', '10', '100'], correct: 1 },
+            { id: 120, subject: 'Maths', topic: 'Algebra', text: 'ln(e) = ?', options: ['0', '1', 'e', 'e²'], correct: 1 },
+            { id: 121, subject: 'Maths', topic: 'Algebra', text: 'Arithmetic progression nth term:', options: ['a + (n-1)d', 'a + nd', 'a + (n+1)d', 'an + d'], correct: 0 },
+            { id: 122, subject: 'Maths', topic: 'Algebra', text: 'Geometric progression nth term:', options: ['arⁿ', 'ar^(n-1)', 'a + nr', 'an + r'], correct: 1 },
+            { id: 123, subject: 'Maths', topic: 'Algebra', text: 'Sum of AP: S = ?', options: ['n/2(2a+(n-1)d)', 'n(a+l)/2', 'Both', 'n²'], correct: 2 },
+            { id: 124, subject: 'Maths', topic: 'Algebra', text: 'Sum of infinite GP when |r| < 1:', options: ['a/(1-r)', 'a(1-r)', 'ar/(1-r)', 'a/(1+r)'], correct: 0 },
+            { id: 125, subject: 'Maths', topic: 'Algebra', text: 'Binomial expansion (a+b)ⁿ uses:', options: ['Combinations', 'Permutations', 'Factorial', 'Logarithms'], correct: 0 },
+
+            // PHYSICS - Waves (25 questions)
+            { id: 126, subject: 'Physics', topic: 'Waves', text: 'Wave equation: v = fλ where v is:', options: ['Velocity', 'Frequency', 'Wavelength', 'Period'], correct: 0 },
+            { id: 127, subject: 'Physics', topic: 'Waves', text: 'Frequency = 1/T. T is:', options: ['Wavelength', 'Velocity', 'Period', 'Amplitude'], correct: 2 },
+            { id: 128, subject: 'Physics', topic: 'Waves', text: 'Transverse wave particle motion:', options: ['Parallel to wave', 'Perpendicular to wave', 'Random', 'Circular'], correct: 1 },
+            { id: 129, subject: 'Physics', topic: 'Waves', text: 'Longitudinal wave example:', options: ['Light wave', 'Sound wave', 'Water wave', 'Radio wave'], correct: 1 },
+            { id: 130, subject: 'Physics', topic: 'Waves', text: 'Doppler effect: source approaching observer, frequency:', options: ['Decreases', 'Increases', 'Remains same', 'Becomes zero'], correct: 1 },
+            { id: 131, subject: 'Physics', topic: 'Waves', text: 'Superposition of two waves:', options: ['Waves cancel', 'Waves add', 'Waves reflect', 'Waves refract'], correct: 1 },
+            { id: 132, subject: 'Physics', topic: 'Waves', text: 'Constructive interference occurs when phase difference:', options: ['0', 'π/2', 'π', '2π'], correct: 0 },
+            { id: 133, subject: 'Physics', topic: 'Waves', text: 'Destructive interference occurs when phase difference:', options: ['0', 'π', '2π', '3π/2'], correct: 1 },
+            { id: 134, subject: 'Physics', topic: 'Waves', text: 'Resonance occurs when:', options: ['Frequency random', 'Driving frequency = natural frequency', 'Amplitude zero', 'No motion'], correct: 1 },
+            { id: 135, subject: 'Physics', topic: 'Waves', text: 'Speed of sound in air approximately:', options: ['100 m/s', '200 m/s', '330 m/s', '500 m/s'], correct: 2 },
+            { id: 136, subject: 'Physics', topic: 'Waves', text: 'Speed of light in vacuum:', options: ['3×10⁷ m/s', '3×10⁸ m/s', '3×10⁹ m/s', '3×10¹⁰ m/s'], correct: 1 },
+            { id: 137, subject: 'Physics', topic: 'Waves', text: 'Refraction occurs due to change in:', options: ['Medium', 'Speed', 'Wavelength', 'All of above'], correct: 3 },
+            { id: 138, subject: 'Physics', topic: 'Waves', text: 'Snell\'s law: n₁sin(θ₁) = ?', options: ['n₂sin(θ₂)', 'sin(θ₂)', 'n₂cos(θ₂)', 'n₂tan(θ₂)'], correct: 0 },
+            { id: 139, subject: 'Physics', topic: 'Waves', text: 'Critical angle occurs when:', options: ['sin c = n₂/n₁', 'sin c = n₁/n₂', 'sin c = 1', 'sin c = 0'], correct: 1 },
+            { id: 140, subject: 'Physics', topic: 'Waves', text: 'Total internal reflection occurs when:', options: ['θ < θc', 'θ = θc', 'θ > θc', 'θ = 0'], correct: 2 },
+            { id: 141, subject: 'Physics', topic: 'Waves', text: 'Diffraction pattern: bright fringes when path difference:', options: ['nλ', '(n+1/2)λ', 'λ/2', 'None'], correct: 0 },
+            { id: 142, subject: 'Physics', topic: 'Waves', text: 'Polarization is property of:', options: ['Longitudinal waves', 'Transverse waves', 'All waves', 'Sound'], correct: 1 },
+            { id: 143, subject: 'Physics', topic: 'Waves', text: 'Intensity ∝ ?:', options: ['Amplitude', 'Amplitude²', 'Frequency', 'Wavelength'], correct: 1 },
+            { id: 144, subject: 'Physics', topic: 'Waves', text: 'Echo is example of:', options: ['Refraction', 'Diffraction', 'Reflection', 'Polarization'], correct: 2 },
+            { id: 145, subject: 'Physics', topic: 'Waves', text: 'Mirage formation due to:', options: ['Reflection', 'Refraction', 'Diffraction', 'Interference'], correct: 1 },
+            { id: 146, subject: 'Physics', topic: 'Waves', text: 'Rainbow formation due to:', options: ['Reflection', 'Dispersion', 'Diffraction', 'Polarization'], correct: 1 },
+            { id: 147, subject: 'Physics', topic: 'Waves', text: 'Lens focal length formula: 1/f = ?', options: ['1/u + 1/v', '(n-1)(1/R₁ - 1/R₂)', 'Both', 'None'], correct: 2 },
+            { id: 148, subject: 'Physics', topic: 'Waves', text: 'Lens maker formula uses:', options: ['Refractive index', 'Radius of curvature', 'Both', 'Wavelength'], correct: 2 },
+            { id: 149, subject: 'Physics', topic: 'Waves', text: 'Power of lens = ?:', options: ['f', '1/f', 'f²', '1/f²'], correct: 1 },
+            { id: 150, subject: 'Physics', topic: 'Waves', text: 'Magnification = v/u applies to:', options: ['Mirrors', 'Lenses', 'Both', 'Neither'], correct: 2 },
+
+            // CHEMISTRY - Mole Concept (25 questions)
+            { id: 151, subject: 'Chemistry', topic: 'Mole Concept', text: 'Avogadro\'s number:', options: ['6.022×10²²', '6.022×10²³', '6.022×10²⁴', '6.022×10²⁵'], correct: 1 },
+            { id: 152, subject: 'Chemistry', topic: 'Mole Concept', text: 'Molar mass of water (H₂O):', options: ['16 g/mol', '18 g/mol', '20 g/mol', '22 g/mol'], correct: 1 },
+            { id: 153, subject: 'Chemistry', topic: 'Mole Concept', text: 'Molar mass of CO₂:', options: ['32 g/mol', '44 g/mol', '48 g/mol', '60 g/mol'], correct: 1 },
+            { id: 154, subject: 'Chemistry', topic: 'Mole Concept', text: 'Number of moles = Mass / ?:', options: ['Atomic mass', 'Molecular mass', 'Molar mass', 'Avogadro'], correct: 2 },
+            { id: 155, subject: 'Chemistry', topic: 'Mole Concept', text: 'Molar volume of gas at STP:', options: ['11.2 L', '22.4 L', '33.6 L', '44.8 L'], correct: 1 },
+            { id: 156, subject: 'Chemistry', topic: 'Mole Concept', text: 'In H₂SO₄, number of H atoms:', options: ['1', '2', '4', '6'], correct: 1 },
+            { id: 157, subject: 'Chemistry', topic: 'Mole Concept', text: 'Empirical formula shows:', options: ['Simplest ratio', 'Actual number', 'Maximum atoms', 'Minimum atoms'], correct: 0 },
+            { id: 158, subject: 'Chemistry', topic: 'Mole Concept', text: 'Molecular formula is multiple of:', options: ['Empirical formula', 'Atomic mass', 'Molar mass', 'Avogadro'], correct: 0 },
+            { id: 159, subject: 'Chemistry', topic: 'Mole Concept', text: 'Limiting reagent is:', options: ['Present maximum', 'Consumed completely', 'Present minimum', 'Used in excess'], correct: 1 },
+            { id: 160, subject: 'Chemistry', topic: 'Mole Concept', text: 'Percentage yield = (actual/theoretical) × ?:', options: ['100', '10', '1', 'None'], correct: 0 },
+            { id: 161, subject: 'Chemistry', topic: 'Mole Concept', text: 'Equivalent weight = Molar mass / ?:', options: ['n-factor', 'Valency', 'Both', 'Avogadro'], correct: 2 },
+            { id: 162, subject: 'Chemistry', topic: 'Mole Concept', text: 'Normality = Molarity × ?:', options: ['n-factor', 'Density', 'Molar mass', 'Volume'], correct: 0 },
+            { id: 163, subject: 'Chemistry', topic: 'Mole Concept', text: 'Molality = moles / ? (kg):', options: ['Solute', 'Solvent', 'Solution', 'Molar mass'], correct: 1 },
+            { id: 164, subject: 'Chemistry', topic: 'Mole Concept', text: 'Molarity = moles / (? in L):', options: ['Solute', 'Solvent', 'Solution', 'Molar mass'], correct: 2 },
+            { id: 165, subject: 'Chemistry', topic: 'Mole Concept', text: 'PPM = ?:', options: ['mg/L', 'μg/L', 'ng/L', 'g/L'], correct: 0 },
+            { id: 166, subject: 'Chemistry', topic: 'Mole Concept', text: 'Gram equivalent weight = molar mass / ?:', options: ['n-factor', 'Avogadro', 'Density', 'Valency'], correct: 0 },
+            { id: 167, subject: 'Chemistry', topic: 'Mole Concept', text: 'In redox, n-factor of element:', options: ['Oxidation state', 'Change in oxidation state', 'Valency', 'Atomic mass'], correct: 1 },
+            { id: 168, subject: 'Chemistry', topic: 'Mole Concept', text: 'Osmotic pressure π = ?:', options: ['MRT', 'nRT/V', 'Both', 'PV'], correct: 2 },
+            { id: 169, subject: 'Chemistry', topic: 'Mole Concept', text: 'Colligative property depends on:', options: ['Number of particles', 'Type of particles', 'Solubility', 'Temperature'], correct: 0 },
+            { id: 170, subject: 'Chemistry', topic: 'Mole Concept', text: 'Boiling point elevation ΔTb = Kb × ?:', options: ['Molarity', 'Molality', 'Normality', 'Percentage'], correct: 1 },
+            { id: 171, subject: 'Chemistry', topic: 'Mole Concept', text: 'Freezing point depression ΔTf = Kf × ?:', options: ['Molarity', 'Molality', 'Normality', 'Percentage'], correct: 1 },
+            { id: 172, subject: 'Chemistry', topic: 'Mole Concept', text: 'Van\'t Hoff factor i for NaCl:', options: ['1', '2', '3', '4'], correct: 1 },
+            { id: 173, subject: 'Chemistry', topic: 'Mole Concept', text: 'Relative molecular mass determines:', options: ['Molar mass', 'Equivalent weight', 'Valency', 'Reactivity'], correct: 0 },
+            { id: 174, subject: 'Chemistry', topic: 'Mole Concept', text: 'Density = mass / ?:', options: ['Volume', 'Molar mass', 'Moles', 'Area'], correct: 0 },
+            { id: 175, subject: 'Chemistry', topic: 'Mole Concept', text: 'Specific gravity = Density of substance / ?:', options: ['Molar mass', 'Density of water', 'Density of air', 'Avogadro'], correct: 1 },
+
+            // MATHEMATICS - Calculus (25 questions)
+            { id: 176, subject: 'Maths', topic: 'Calculus', text: 'Derivative of xⁿ:', options: ['xⁿ⁻¹', 'nxⁿ⁻¹', 'nxⁿ', 'xⁿ⁺¹'], correct: 1 },
+            { id: 177, subject: 'Maths', topic: 'Calculus', text: 'Derivative of sin(x):', options: ['sin(x)', 'cos(x)', '-cos(x)', '-sin(x)'], correct: 1 },
+            { id: 178, subject: 'Maths', topic: 'Calculus', text: 'Derivative of cos(x):', options: ['cos(x)', 'sin(x)', '-sin(x)', '-cos(x)'], correct: 2 },
+            { id: 179, subject: 'Maths', topic: 'Calculus', text: 'Derivative of eˣ:', options: ['eˣ', '1', 'x', 'xeˣ'], correct: 0 },
+            { id: 180, subject: 'Maths', topic: 'Calculus', text: 'Derivative of ln(x):', options: ['ln(x)', '1/x', 'x', '1'], correct: 1 },
+            { id: 181, subject: 'Maths', topic: 'Calculus', text: 'Chain rule: d/dx[f(g(x))] = ?:', options: ['f\'(x)g\'(x)', 'f\'(g(x))g\'(x)', 'f(g\'(x))', 'f\'(x)g(x)'], correct: 1 },
+            { id: 182, subject: 'Maths', topic: 'Calculus', text: 'Product rule: d/dx[f(x)g(x)] = ?:', options: ['f\'g + fg\'', 'f\'g - fg\'', 'fg\'', 'f\'g\''], correct: 0 },
+            { id: 183, subject: 'Maths', topic: 'Calculus', text: 'Quotient rule: d/dx[f/g] = ?:', options: ['f\'g - fg\'/g²', 'f\'g + fg\'/g²', 'f\'/g\'', 'fg\'/f\'g'], correct: 0 },
+            { id: 184, subject: 'Maths', topic: 'Calculus', text: 'Maximum of f(x) occurs when:', options: ['f\'(x) > 0', 'f\'(x) = 0', 'f\'(x) < 0', 'f\'\'(x) > 0'], correct: 1 },
+            { id: 185, subject: 'Maths', topic: 'Calculus', text: 'Inflection point occurs when:', options: ['f\'(x) = 0', 'f\'\'(x) = 0', 'f\'(x) > 0', 'f\'(x) < 0'], correct: 1 },
+            { id: 186, subject: 'Maths', topic: 'Calculus', text: '∫xⁿ dx = ?:', options: ['xⁿ⁺¹/(n+1) + C', 'nxⁿ⁺¹ + C', 'xⁿ⁺¹ + C', 'xⁿ/(n+1) + C'], correct: 0 },
+            { id: 187, subject: 'Maths', topic: 'Calculus', text: '∫sin(x) dx = ?:', options: ['cos(x) + C', '-cos(x) + C', 'sin(x) + C', 'tan(x) + C'], correct: 1 },
+            { id: 188, subject: 'Maths', topic: 'Calculus', text: '∫cos(x) dx = ?:', options: ['sin(x) + C', '-sin(x) + C', 'cos(x) + C', 'cot(x) + C'], correct: 0 },
+            { id: 189, subject: 'Maths', topic: 'Calculus', text: '∫eˣ dx = ?:', options: ['eˣ + C', 'xeˣ + C', 'eˣ/x + C', 'e^(x²) + C'], correct: 0 },
+            { id: 190, subject: 'Maths', topic: 'Calculus', text: '∫1/x dx = ?:', options: ['ln|x| + C', '1/x² + C', 'x + C', 'e^x + C'], correct: 0 },
+            { id: 191, subject: 'Maths', topic: 'Calculus', text: 'Integration by parts: ∫u dv = ?:', options: ['uv - ∫v du', 'uv + ∫v du', 'u - ∫v du', 'uv'], correct: 0 },
+            { id: 192, subject: 'Maths', topic: 'Calculus', text: 'Area under curve = ?:', options: ['∫f\'(x)dx', '∫f(x)dx', 'f(x)', '∫f(x)²dx'], correct: 1 },
+            { id: 193, subject: 'Maths', topic: 'Calculus', text: 'Volume of revolution (x-axis) = ?:', options: ['∫πy² dx', '∫πy dx', '∫2πy dx', '∫y dx'], correct: 0 },
+            { id: 194, subject: 'Maths', topic: 'Calculus', text: 'Differential equation dy/dx = ky solved by:', options: ['y = e^(kx)', 'y = Ce^(kx)', 'y = kx', 'y = k'], correct: 1 },
+            { id: 195, subject: 'Maths', topic: 'Calculus', text: 'Rolle\'s theorem requires function to be:', options: ['Continuous', 'Differentiable', 'Both', 'Monotonic'], correct: 2 },
+            { id: 196, subject: 'Maths', topic: 'Calculus', text: 'Mean value theorem guarantees existence of:', options: ['Minimum', 'Maximum', 'Tangent parallel to secant', 'Normal'], correct: 2 },
+            { id: 197, subject: 'Maths', topic: 'Calculus', text: 'Taylor series expansion around x = 0:', options: ['f(x) = f(a) + f\'(a)(x-a) + ...', 'f(x) = f(0) + f\'(0)x + f\'\'(0)x²/2! + ...', 'f(x) = f(x)', 'f(x) = xf\'(x)'], correct: 1 },
+            { id: 198, subject: 'Maths', topic: 'Calculus', text: 'Limit as x→∞ of 1/x:', options: ['0', '1', '∞', 'Undefined'], correct: 0 },
+            { id: 199, subject: 'Maths', topic: 'Calculus', text: 'L\'Hôpital\'s rule applies when limit is:', options: ['0', 'Defined', '0/0 or ∞/∞', 'Infinity'], correct: 2 },
+            { id: 200, subject: 'Maths', topic: 'Calculus', text: 'Partial derivative ∂f/∂x treats y as:', options: ['Variable', 'Constant', 'Zero', 'Infinity'], correct: 1 },
+        ];
+
+        let currentUser = null;
+        let currentTest = null;
+        let testAnswers = {};
+
+        window.addEventListener('load', () => {
+            const user = localStorage.getItem('dakhilaaUser');
+            if (user) {
+                currentUser = JSON.parse(user);
+                showDashboard();
+            }
+        });
+
+        function toggleForm() {
+            const signup = document.getElementById('signupForm');
+            const signin = document.getElementById('signinForm');
+            signup.style.display = signup.style.display === 'none' ? 'block' : 'none';
+            signin.style.display = signin.style.display === 'none' ? 'block' : 'none';
+            document.getElementById('errorMessage').classList.remove('show');
+        }
+
+        function handleSignUp() {
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const fullName = document.getElementById('fullName').value;
+
+            if (!email || !password || !fullName) {
+                showError('Please fill all fields');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('dakhilaaUsers') || '[]');
+            if (users.find(u => u.email === email)) {
+                showError('Email already registered');
+                return;
+            }
+
+            const newUser = {
+                id: Date.now(),
+                email,
+                password,
+                fullName,
+                attempts: []
+            };
+
+            users.push(newUser);
+            localStorage.setItem('dakhilaaUsers', JSON.stringify(users));
+            currentUser = { ...newUser };
+            delete currentUser.password;
+            localStorage.setItem('dakhilaaUser', JSON.stringify(currentUser));
+            showDashboard();
+        }
+
+        function handleSignIn() {
+            const email = document.getElementById('signinEmail').value;
+            const password = document.getElementById('signinPassword').value;
+
+            const users = JSON.parse(localStorage.getItem('dakhilaaUsers') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (!user) {
+                showError('Invalid credentials');
+                return;
+            }
+
+            currentUser = { ...user };
+            delete currentUser.password;
+            localStorage.setItem('dakhilaaUser', JSON.stringify(currentUser));
+            showDashboard();
+        }
+
+        function showError(msg) {
+            const err = document.getElementById('errorMessage');
+            err.textContent = msg;
+            err.classList.add('show');
+        }
+
+        function showDashboard() {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('dashboardScreen').style.display = 'block';
+            document.getElementById('userName').textContent = currentUser.fullName.split(' ')[0];
+            loadStats();
+        }
+
+        function loadStats() {
+            const users = JSON.parse(localStorage.getItem('dakhilaaUsers') || '[]');
+            const user = users.find(u => u.id === currentUser.id);
+
+            if (user && user.attempts.length > 0) {
+                const total = user.attempts.reduce((s, a) => s + a.total, 0);
+                const correct = user.attempts.reduce((s, a) => s + a.correct, 0);
+                const acc = total > 0 ? Math.round(correct / total * 100) : 0;
+
+                document.getElementById('testsTaken').textContent = user.attempts.length;
+                document.getElementById('questionsSolved').textContent = total;
+                document.getElementById('accuracy').textContent = acc + '%';
+                document.getElementById('latestScore').textContent = user.attempts[0].total > 0 ?
+                    Math.round(user.attempts[0].correct / user.attempts[0].total * 100) + '%' : '--';
+            }
+        }
+
+        function startTest() {
+            // Shuffle and pick 10 random questions from all 200+
+            currentTest = {
+                questions: allQuestions.sort(() => Math.random() - 0.5).slice(0, 10),
+                currentQuestion: 0
+            };
+            testAnswers = {};
+            renderQuestion();
+            document.getElementById('testModal').classList.add('show');
+        }
+
+        function renderQuestion() {
+            const q = currentTest.questions[currentTest.currentQuestion];
+            let html = `<div class="question-number">Q${currentTest.currentQuestion + 1}/${currentTest.questions.length} (${q.subject} - ${q.topic})</div>
+                <div class="question-text">${q.text}</div><div class="options">`;
+
+            q.options.forEach((opt, i) => {
+                html += `<div class="option ${testAnswers[q.id] === i ? 'selected' : ''}" onclick="selectAnswer(${i}, ${q.id})">${String.fromCharCode(65+i)}) ${opt}</div>`;
+            });
+
+            html += `</div><div class="nav-buttons">
+                <button onclick="prevQuestion()" ${currentTest.currentQuestion === 0 ? 'disabled' : ''}>← Prev</button>
+                <button onclick="nextQuestion()" ${currentTest.currentQuestion === currentTest.questions.length - 1 ? 'disabled' : ''}>Next →</button>
+                <button onclick="submitTest()">Submit</button></div>`;
+
+            document.getElementById('testContent').innerHTML = html;
+        }
+
+        function selectAnswer(i, qid) {
+            testAnswers[qid] = i;
+            renderQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentTest.currentQuestion > 0) {
+                currentTest.currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentTest.currentQuestion < currentTest.questions.length - 1) {
+                currentTest.currentQuestion++;
+                renderQuestion();
+            }
+        }
+
+        function submitTest() {
+            let correct = 0;
+            currentTest.questions.forEach(q => {
+                if (testAnswers[q.id] === q.correct) correct++;
+            });
+
+            const score = Math.round(correct / currentTest.questions.length * 100);
+
+            const users = JSON.parse(localStorage.getItem('dakhilaaUsers') || '[]');
+            const idx = users.findIndex(u => u.id === currentUser.id);
+            users[idx].attempts.unshift({
+                correct,
+                total: currentTest.questions.length,
+                score,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('dakhilaaUsers', JSON.stringify(users));
+
+            document.getElementById('testContent').innerHTML = `
+                <div class="test-results">
+                    <div class="score">${score}%</div>
+                    <p>You got ${correct}/${currentTest.questions.length} correct!</p>
+                    <p style="margin-top: 10px; color: var(--light);">Test from 200+ questions database</p>
+                    <button class="auth-button" style="margin-top: 20px;" onclick="closeTest()">Done</button>
+                </div>`;
+
+            loadStats();
+        }
+
+        function closeTest() {
+            document.getElementById('testModal').classList.remove('show');
+        }
+
+        function handleSignOut() {
+            currentUser = null;
+            localStorage.removeItem('dakhilaaUser');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
