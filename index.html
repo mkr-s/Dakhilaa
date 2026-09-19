@@ -186,17 +186,27 @@
   .tm-empty{ text-align:center; color:var(--muted); background:var(--card); border:1px dashed var(--border-2); border-radius:14px; padding:26px; }
 
   /* PRICING */
-  .price-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
-  @media(max-width:900px){ .price-grid{ grid-template-columns:repeat(2,1fr); } }
-  @media(max-width:520px){ .price-grid{ grid-template-columns:1fr; } }
-  .price-card{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px 20px; display:flex; flex-direction:column; position:relative; transition:.18s; }
+  .price-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; align-items:stretch; }
+  @media(max-width:900px){ .price-grid{ grid-template-columns:1fr; max-width:440px; margin:0 auto; } }
+  .price-card{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:26px 22px; display:flex; flex-direction:column; position:relative; transition:.18s; }
   .price-card:hover{ transform:translateY(-4px); border-color:var(--border-2); }
   .price-card.pop{ border-color:var(--orange); box-shadow:0 12px 40px rgba(249,115,22,.18); }
-  .price-tag{ position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:var(--orange); color:#fff; font-size:11px; font-weight:800; padding:4px 14px; border-radius:20px; }
-  .price-name{ font-size:17px; font-weight:800; }
-  .price-amt{ font-size:34px; font-weight:900; margin:8px 0 2px; }
+  .price-tag{ position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:var(--orange); color:#fff; font-size:11px; font-weight:800; padding:4px 14px; border-radius:20px; white-space:nowrap; }
+  .price-name{ font-size:19px; font-weight:800; }
+  .price-badge{ align-self:flex-start; font-size:11px; font-weight:700; color:var(--orange); background:rgba(249,115,22,.12); border-radius:20px; padding:3px 10px; margin-top:8px; }
+  .price-amt{ font-size:34px; font-weight:900; margin:12px 0 2px; }
   .price-amt span{ font-size:14px; color:var(--muted); font-weight:600; }
   .price-desc{ color:var(--muted); font-size:13px; margin-bottom:16px; }
+  /* What You Get box */
+  .wyg{ background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:16px; }
+  .wyg-title{ font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin-bottom:10px; }
+  .wyg-row{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+  .wyg-stat{ background:var(--card); border:1px solid var(--border); border-radius:9px; padding:8px 10px; text-align:center; }
+  .wyg-num{ font-size:20px; font-weight:900; color:var(--orange); line-height:1.1; }
+  .wyg-lbl{ font-size:10.5px; color:var(--muted); margin-top:2px; }
+  .wyg-sub{ font-size:11px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--dim); margin:8px 0 6px; }
+  .wyg-mini{ display:flex; justify-content:space-between; font-size:12px; color:var(--muted); padding:2px 0; }
+  .wyg-mini b{ color:var(--text); font-weight:700; }
   .price-feats{ list-style:none; margin-bottom:20px; flex:1; }
   .price-feats li{ font-size:13.5px; color:var(--text); padding:6px 0 6px 24px; position:relative; }
   .price-feats li::before{ content:"✓"; color:var(--green); position:absolute; left:0; font-weight:800; }
@@ -345,56 +355,88 @@
     <h2 class="section-title reveal" style="font-size:clamp(21px,3.4vw,30px);max-width:860px;margin:0 auto;line-height:1.35;"><span style="color:var(--orange)">30%</span> of our serious students crack JEE. <span style="color:var(--orange)">65%</span> of droppers who stay 4+ months score <span style="color:var(--orange)">90+</span>. This isn't luck — it's proven strategy.</h2>
     <p class="section-sub reveal">Start free. Upgrade any time. All plans are yearly.</p>
     <div class="price-grid">
+      <!-- 11th Grade Prep -->
       <div class="price-card reveal">
-        <div class="price-name">Free</div>
-        <div class="price-amt">₹0</div>
-        <div class="price-desc">To get started</div>
+        <div class="price-name">11th Grade Prep</div>
+        <div class="price-badge">Foundation Builder</div>
+        <div class="price-amt">₹1,499 <span>/year</span></div>
+        <div class="price-desc">Build a strong base before the pressure years.</div>
+        <div class="wyg">
+          <div class="wyg-title">What you get</div>
+          <div class="wyg-row">
+            <div class="wyg-stat"><div class="wyg-num">600</div><div class="wyg-lbl">Questions</div></div>
+            <div class="wyg-stat"><div class="wyg-num">45</div><div class="wyg-lbl">Mock Tests</div></div>
+          </div>
+          <div class="wyg-sub">Topic-wise</div>
+          <div class="wyg-mini"><span>Maths</span><b>200</b></div>
+          <div class="wyg-mini"><span>Physics</span><b>200</b></div>
+          <div class="wyg-mini"><span>Chemistry</span><b>200</b></div>
+        </div>
         <ul class="price-feats">
-          <li>Weak-area diagnostic</li>
-          <li>Daily practice (10 Qs)</li>
-          <li>College predictor</li>
-          <li class="no">Full mock tests</li>
-          <li class="no">Full question bank</li>
+          <li>Grade-matched problems (no 12th panic)</li>
+          <li>Diagnostic test included</li>
+          <li>Weekly progress tracking</li>
+          <li>Topic-wise performance analysis</li>
+          <li>Peer community (11th graders)</li>
         </ul>
-        <a class="btn btn-primary" href="app.html">Start Free</a>
+        <a class="btn btn-ghost" href="app.html">Choose 11th Prep</a>
       </div>
-      <div class="price-card reveal">
-        <div class="price-name">Mains</div>
-        <div class="price-amt">₹799 <span>/year</span></div>
-        <div class="price-desc">For JEE Main focus</div>
-        <ul class="price-feats">
-          <li>Everything in Free</li>
-          <li>Full JEE Main mock tests</li>
-          <li>Full question bank</li>
-          <li>Progress analytics</li>
-          <li class="no">JEE Advanced mocks</li>
-        </ul>
-        <a class="btn btn-ghost" href="app.html">Choose Mains</a>
-      </div>
+
+      <!-- 12th Grade Intensive -->
       <div class="price-card pop reveal">
         <div class="price-tag">MOST POPULAR</div>
-        <div class="price-name">Advanced</div>
-        <div class="price-amt">₹899 <span>/year</span></div>
-        <div class="price-desc">For JEE Advanced aspirants</div>
+        <div class="price-name">12th Grade Intensive</div>
+        <div class="price-badge">Serious Preparation</div>
+        <div class="price-amt">₹1,799 <span>/year</span></div>
+        <div class="price-desc">Exam-year intensity with full mock practice.</div>
+        <div class="wyg">
+          <div class="wyg-title">What you get</div>
+          <div class="wyg-row">
+            <div class="wyg-stat"><div class="wyg-num">600</div><div class="wyg-lbl">Questions</div></div>
+            <div class="wyg-stat"><div class="wyg-num">45</div><div class="wyg-lbl">Mock Tests</div></div>
+          </div>
+          <div class="wyg-sub">Topic-wise</div>
+          <div class="wyg-mini"><span>Maths</span><b>200</b></div>
+          <div class="wyg-mini"><span>Physics</span><b>200</b></div>
+          <div class="wyg-mini"><span>Chemistry</span><b>200</b></div>
+        </div>
         <ul class="price-feats">
-          <li>Everything in Mains</li>
-          <li>JEE Advanced mock tests</li>
-          <li>AI study planner</li>
-          <li>Priority support</li>
+          <li>Advanced 12th-level problems</li>
+          <li>Diagnostic test included</li>
+          <li>Weekly competitive rankings</li>
+          <li>Performance analytics</li>
+          <li>Success stories from peers</li>
+          <li>Priority community support</li>
         </ul>
-        <a class="btn btn-primary" href="app.html">Choose Advanced</a>
+        <a class="btn btn-primary" href="app.html">Choose 12th Intensive</a>
       </div>
+
+      <!-- Dropper Focused -->
       <div class="price-card reveal">
-        <div class="price-name">Bundle</div>
-        <div class="price-amt">₹1099 <span>/year</span></div>
-        <div class="price-desc">Mains + Advanced, everything</div>
+        <div class="price-name">Dropper Focused</div>
+        <div class="price-badge">Proven Strategy</div>
+        <div class="price-amt">₹1,999 <span>/year</span></div>
+        <div class="price-desc">A focused comeback path built for droppers.</div>
+        <div class="wyg">
+          <div class="wyg-title">What you get</div>
+          <div class="wyg-row">
+            <div class="wyg-stat"><div class="wyg-num">600</div><div class="wyg-lbl">Questions</div></div>
+            <div class="wyg-stat"><div class="wyg-num">45</div><div class="wyg-lbl">Mock Tests</div></div>
+          </div>
+          <div class="wyg-sub">Topic-wise</div>
+          <div class="wyg-mini"><span>Maths</span><b>200</b></div>
+          <div class="wyg-mini"><span>Physics</span><b>200</b></div>
+          <div class="wyg-mini"><span>Chemistry</span><b>200</b></div>
+        </div>
         <ul class="price-feats">
-          <li>Everything unlocked</li>
-          <li>Main + Advanced mocks</li>
-          <li>AI planner + analytics</li>
-          <li>Best value for full prep</li>
+          <li>Optimized revision path</li>
+          <li>Diagnostic test included</li>
+          <li>Dropper-specific strategies</li>
+          <li>Weekly strategy reviews</li>
+          <li>Comeback success stories</li>
+          <li>One-on-one support</li>
         </ul>
-        <a class="btn btn-ghost" href="app.html">Get Bundle</a>
+        <a class="btn btn-ghost" href="app.html">Choose Dropper Plan</a>
       </div>
     </div>
     <p style="text-align:center;color:var(--dim);font-size:13px;margin-top:18px" class="reveal">Yearly plans · Cancel anytime · Secure payments</p>
