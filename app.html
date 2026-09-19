@@ -1136,13 +1136,22 @@ var rateVal=0;
 function openRate(){ document.getElementById("rateModal").classList.add("show"); }
 function closeRate(){ document.getElementById("rateModal").classList.remove("show"); }
 (function(){ var stars=document.querySelectorAll("#rateStars span"); for(var i=0;i<stars.length;i++){ (function(el){ el.onclick=function(){ rateVal=parseInt(el.getAttribute("data-v"),10); for(var j=0;j<stars.length;j++){ stars[j].classList.toggle("on", j<rateVal); } }; })(stars[i]); } })();
+function rateDone(msg){
+  msg.style.color="var(--green)"; msg.textContent="Thank you for your feedback! 🙌";
+  setTimeout(function(){ closeRate(); msg.textContent=""; rateVal=0; document.getElementById("rateText").value=""; var st=document.querySelectorAll("#rateStars span"); for(var i=0;i<st.length;i++) st[i].classList.remove("on"); }, 1300);
+}
 function submitRate(){
   var msg=document.getElementById("rateMsg"); msg.className="msg";
   if(!rateVal){ msg.className="msg err"; msg.textContent="Please pick a star rating."; return; }
   var fb={ rating:rateVal, text:document.getElementById("rateText").value.trim(), name:(currentProfile?currentProfile.name:"Student"), approved:false, date:Date.now() };
-  if(USE_FIREBASE && fbDB){ fbDB.collection("feedback").add(fb).catch(function(e){ console.error(e); }); }
-  msg.style.color="var(--green)"; msg.textContent="Thank you for your feedback! 🙌";
-  setTimeout(function(){ closeRate(); msg.textContent=""; rateVal=0; document.getElementById("rateText").value=""; var st=document.querySelectorAll("#rateStars span"); for(var i=0;i<st.length;i++) st[i].classList.remove("on"); }, 1200);
+  if(USE_FIREBASE && fbDB){
+    msg.style.color="var(--muted)"; msg.textContent="Saving…";
+    fbDB.collection("feedback").add(fb)
+      .then(function(){ rateDone(msg); })
+      .catch(function(e){ console.error("feedback save failed:", e); msg.className="msg err"; msg.textContent="Couldn't save your review. If this keeps happening, the Firestore rules may need updating."; });
+  } else {
+    rateDone(msg);
+  }
 }
 
 /* ---------- init ---------- */
