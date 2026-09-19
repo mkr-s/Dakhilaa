@@ -56,6 +56,8 @@
   .switch a{ color:var(--primary); font-weight:600; cursor:pointer; text-decoration:none; }
   .msg{ font-size:13px; margin-top:10px; text-align:center; min-height:18px; }
   .msg.err{ color:var(--red); } .msg.ok{ color:var(--green); }
+  .spinner{ width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+  @keyframes spin{ to{ transform:rotate(360deg);} }
 
   .topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
   .topbar .btn{ width:auto; padding:8px 14px; font-size:14px; }
@@ -127,7 +129,14 @@
 </head>
 <body>
 
-<div id="authScreen" class="auth-wrap">
+<div id="loadingScreen" class="auth-wrap">
+  <div style="text-align:center">
+    <div class="spinner"></div>
+    <div style="color:var(--muted);font-size:14px">Loading Dakhilaa…</div>
+  </div>
+</div>
+
+<div id="authScreen" class="auth-wrap hidden">
   <div class="card auth-card">
     <div class="brand"><span class="logo">📘</span><span>Dakh<span class="accent">ilaa</span></span></div>
     <div class="tagline">JEE Main Previous Year Questions · Real Papers</div>
@@ -135,8 +144,8 @@
     <div id="signupForm">
       <div class="field"><label>Name</label><input id="su_name" type="text" placeholder="Your name"></div>
       <div class="field"><label>Email</label><input id="su_email" type="email" placeholder="you@example.com"></div>
-      <div class="field"><label>Password</label><input id="su_pass" type="password" placeholder="Create a password"></div>
-      <button class="btn" onclick="handleSignup()">Create Account</button>
+      <div class="field"><label>Password</label><input id="su_pass" type="password" placeholder="At least 6 characters"></div>
+      <button class="btn" id="su_btn" onclick="handleSignup()">Create Account</button>
       <div class="msg" id="su_msg"></div>
       <div class="switch">Already have an account? <a onclick="showSignin()">Sign in</a></div>
     </div>
@@ -144,7 +153,7 @@
     <div id="signinForm" class="hidden">
       <div class="field"><label>Email</label><input id="si_email" type="email" placeholder="you@example.com"></div>
       <div class="field"><label>Password</label><input id="si_pass" type="password" placeholder="Your password"></div>
-      <button class="btn" onclick="handleSignin()">Sign In</button>
+      <button class="btn" id="si_btn" onclick="handleSignin()">Sign In</button>
       <div class="msg" id="si_msg"></div>
       <div class="switch">New here? <a onclick="showSignup()">Create an account</a></div>
     </div>
@@ -220,42 +229,69 @@
   </div>
 </div>
 
+<!-- Firebase SDK (loaded from Google CDN). Harmless until you add your config below. -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
 <script>
 "use strict";
 
+/* ============================================================
+   FIREBASE CONFIG
+   Paste your Firebase project's config below to turn ON
+   real cross-device login. Until you do, the app keeps working
+   with simple per-device (local) accounts — nothing breaks.
+   Steps to get this config are in the setup guide.
+   ============================================================ */
+var firebaseConfig = {
+  apiKey: "AIzaSyA-W_3VSzsTujSYWV0HtwUkWc7OBLqpQxc",
+  authDomain: "dakhilaa-cb41a.firebaseapp.com",
+  projectId: "dakhilaa-cb41a",
+  storageBucket: "dakhilaa-cb41a.firebasestorage.app",
+  messagingSenderId: "1055517618428",
+  appId: "1:1055517618428:web:b6dcd8d696ccb94b7a6779"
+};
+
+var USE_FIREBASE = firebaseConfig.apiKey.indexOf("PASTE") === -1 && typeof firebase !== "undefined";
+var fbAuth = null, fbDB = null;
+if (USE_FIREBASE) {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    fbAuth = firebase.auth();
+    fbDB = firebase.firestore();
+  } catch (e) {
+    console.error("Firebase init failed, falling back to local accounts:", e);
+    USE_FIREBASE = false;
+  }
+}
+
+/* ---------------- State ---------------- */
 var allQuestions = [];
-var currentUser = null;
+var currentUser = null;      // email (local) or uid (firebase)
+var currentProfile = null;   // { name, stats:{testsTaken,questionsSolved,correctAnswers} }
 var selectedSubject = "Mixed";
 var testState = { questions: [], answers: [], current: 0, active: false };
+var MIN_PASS = 6;
 
-// In-memory user store, mirrored to localStorage on a best-effort basis.
-// This keeps the app fully working even when the browser blocks storage
-// (private mode, some in-app browsers), so signup -> dashboard never fails.
+/* ---------------- Local store (fallback when Firebase is off) ---------------- */
 var usersDB = {};
 var storageOK = true;
-
 function loadDB(){
-  try {
-    var raw = localStorage.getItem("dakhilaaUsers");
-    usersDB = raw ? JSON.parse(raw) : {};
-  } catch(e){ usersDB = {}; storageOK = false; }
+  try { var raw = localStorage.getItem("dakhilaaUsers"); usersDB = raw ? JSON.parse(raw) : {}; }
+  catch(e){ usersDB = {}; storageOK = false; }
 }
 function persistDB(){
   try { localStorage.setItem("dakhilaaUsers", JSON.stringify(usersDB)); }
   catch(e){ storageOK = false; }
 }
-function persistCurrent(email){
-  try { localStorage.setItem("dakhilaaCurrent", email); } catch(e){ storageOK = false; }
-}
-function readCurrent(){
-  try { return localStorage.getItem("dakhilaaCurrent"); } catch(e){ return null; }
-}
-function clearCurrentStore(){
-  try { localStorage.removeItem("dakhilaaCurrent"); } catch(e){}
-}
+function persistCurrent(email){ try { localStorage.setItem("dakhilaaCurrent", email); } catch(e){ storageOK = false; } }
+function readCurrent(){ try { return localStorage.getItem("dakhilaaCurrent"); } catch(e){ return null; } }
+function clearCurrentStore(){ try { localStorage.removeItem("dakhilaaCurrent"); } catch(e){} }
 
+/* ---------------- Screens ---------------- */
 function show(id){
-  ["authScreen","dashboard","testScreen","resultsScreen"].forEach(function(s){
+  ["loadingScreen","authScreen","dashboard","testScreen","resultsScreen"].forEach(function(s){
     document.getElementById(s).classList.add("hidden");
   });
   document.getElementById(id).classList.remove("hidden");
@@ -263,7 +299,26 @@ function show(id){
 }
 function showSignup(){ document.getElementById("signupForm").classList.remove("hidden"); document.getElementById("signinForm").classList.add("hidden"); }
 function showSignin(){ document.getElementById("signinForm").classList.remove("hidden"); document.getElementById("signupForm").classList.add("hidden"); }
+function setBtnBusy(id, busy, busyText){
+  var b = document.getElementById(id);
+  if(!b) return;
+  b.disabled = busy;
+  if(busy){ b.dataset.label = b.textContent; b.textContent = busyText || "Please wait…"; }
+  else if(b.dataset.label){ b.textContent = b.dataset.label; }
+}
+function fbError(err){
+  var c = (err && err.code) ? err.code : "";
+  if(c.indexOf("email-already-in-use")>=0) return "This email is already registered. Please sign in.";
+  if(c.indexOf("invalid-email")>=0) return "Please enter a valid email address.";
+  if(c.indexOf("weak-password")>=0) return "Password must be at least 6 characters.";
+  if(c.indexOf("user-not-found")>=0) return "No account found for this email.";
+  if(c.indexOf("wrong-password")>=0 || c.indexOf("invalid-credential")>=0 || c.indexOf("invalid-login")>=0) return "Incorrect email or password.";
+  if(c.indexOf("network")>=0) return "Network error. Please check your internet connection.";
+  if(c.indexOf("too-many-requests")>=0) return "Too many attempts. Please wait a moment and try again.";
+  return "Something went wrong. Please try again.";
+}
 
+/* ---------------- Sign up ---------------- */
 function handleSignup(){
   var name = document.getElementById("su_name").value.trim();
   var email = document.getElementById("su_email").value.trim().toLowerCase();
@@ -271,41 +326,106 @@ function handleSignup(){
   var msg = document.getElementById("su_msg");
   msg.className = "msg err";
   if(!name || !email || !pass){ msg.textContent = "Please fill all fields."; return; }
-  if(pass.length < 4){ msg.textContent = "Password must be at least 4 characters."; return; }
-  if(usersDB[email]){ msg.textContent = "This email is already registered. Please sign in."; return; }
-  usersDB[email] = { name:name, password:pass, stats:{ testsTaken:0, questionsSolved:0, correctAnswers:0 } };
-  persistDB();
-  currentUser = email;
-  persistCurrent(email);
-  openDashboard();
+  if(pass.length < MIN_PASS){ msg.textContent = "Password must be at least " + MIN_PASS + " characters."; return; }
+
+  if(USE_FIREBASE){
+    setBtnBusy("su_btn", true, "Creating account…");
+    fbAuth.createUserWithEmailAndPassword(email, pass)
+      .then(function(cred){
+        return cred.user.updateProfile({ displayName: name }).then(function(){
+          return fbDB.collection("users").doc(cred.user.uid).set({
+            name: name, email: email, testsTaken: 0, questionsSolved: 0, correctAnswers: 0
+          });
+        });
+      })
+      .then(function(){ /* onAuthStateChanged opens the dashboard */ })
+      .catch(function(err){ msg.textContent = fbError(err); setBtnBusy("su_btn", false); });
+  } else {
+    if(usersDB[email]){ msg.textContent = "This email is already registered. Please sign in."; return; }
+    usersDB[email] = { name:name, password:pass, stats:{ testsTaken:0, questionsSolved:0, correctAnswers:0 } };
+    persistDB();
+    currentUser = email; currentProfile = usersDB[email];
+    persistCurrent(email);
+    openDashboard();
+  }
 }
+
+/* ---------------- Sign in ---------------- */
 function handleSignin(){
   var email = document.getElementById("si_email").value.trim().toLowerCase();
   var pass = document.getElementById("si_pass").value;
   var msg = document.getElementById("si_msg");
   msg.className = "msg err";
-  if(!usersDB[email]){ msg.textContent = "No account found for this email."; return; }
-  if(usersDB[email].password !== pass){ msg.textContent = "Incorrect password."; return; }
-  currentUser = email;
-  persistCurrent(email);
-  openDashboard();
-}
-function logout(){ clearCurrentStore(); currentUser = null; show("authScreen"); showSignin(); }
+  if(!email || !pass){ msg.textContent = "Please enter your email and password."; return; }
 
-function openDashboard(){
-  var u = usersDB[currentUser];
-  if(!u){ show("authScreen"); showSignup(); return; }
-  document.getElementById("dash_name").textContent = u.name;
-  if(!storageOK){
-    document.getElementById("dash_msg").className = "msg";
-    document.getElementById("dash_msg").style.color = "#f59e0b";
-    document.getElementById("dash_msg").textContent = "Note: your browser is blocking saved logins, so this account is only for this session. For a permanent account, open the site in Chrome (not a private window or an in-app browser).";
+  if(USE_FIREBASE){
+    setBtnBusy("si_btn", true, "Signing in…");
+    fbAuth.signInWithEmailAndPassword(email, pass)
+      .then(function(){ /* onAuthStateChanged opens the dashboard */ })
+      .catch(function(err){ msg.textContent = fbError(err); setBtnBusy("si_btn", false); });
+  } else {
+    if(!usersDB[email]){ msg.textContent = "No account found for this email."; return; }
+    if(usersDB[email].password !== pass){ msg.textContent = "Incorrect password."; return; }
+    currentUser = email; currentProfile = usersDB[email];
+    persistCurrent(email);
+    openDashboard();
   }
-  var s = u.stats;
-  document.getElementById("st_tests").textContent = s.testsTaken;
-  document.getElementById("st_solved").textContent = s.questionsSolved;
-  var acc = s.questionsSolved > 0 ? Math.round(100 * s.correctAnswers / s.questionsSolved) : 0;
+}
+
+function logout(){
+  if(USE_FIREBASE){
+    fbAuth.signOut();  // onAuthStateChanged shows the auth screen
+  } else {
+    clearCurrentStore(); currentUser = null; currentProfile = null;
+    show("authScreen"); showSignin();
+  }
+}
+
+/* ---------------- Firebase auth listener ---------------- */
+function initFirebaseAuth(){
+  fbAuth.onAuthStateChanged(function(user){
+    setBtnBusy("su_btn", false); setBtnBusy("si_btn", false);
+    if(user){
+      fbDB.collection("users").doc(user.uid).get()
+        .then(function(doc){
+          var d = doc.exists ? doc.data() : {};
+          currentUser = user.uid;
+          currentProfile = {
+            name: d.name || user.displayName || "Student",
+            stats: {
+              testsTaken: d.testsTaken || 0,
+              questionsSolved: d.questionsSolved || 0,
+              correctAnswers: d.correctAnswers || 0
+            }
+          };
+          openDashboard();
+        })
+        .catch(function(){
+          currentUser = user.uid;
+          currentProfile = { name: user.displayName || "Student", stats:{ testsTaken:0, questionsSolved:0, correctAnswers:0 } };
+          openDashboard();
+        });
+    } else {
+      currentUser = null; currentProfile = null;
+      show("authScreen"); showSignin();
+    }
+  });
+}
+
+/* ---------------- Dashboard ---------------- */
+function openDashboard(){
+  var p = currentProfile;
+  if(!p){ show("authScreen"); showSignup(); return; }
+  document.getElementById("dash_name").textContent = p.name;
+  document.getElementById("st_tests").textContent = p.stats.testsTaken;
+  document.getElementById("st_solved").textContent = p.stats.questionsSolved;
+  var acc = p.stats.questionsSolved > 0 ? Math.round(100 * p.stats.correctAnswers / p.stats.questionsSolved) : 0;
   document.getElementById("st_acc").textContent = acc + "%";
+  var dm = document.getElementById("dash_msg");
+  if(!USE_FIREBASE && !storageOK){
+    dm.className = "msg"; dm.style.color = "var(--amber)";
+    dm.textContent = "Note: your browser is blocking saved logins, so this account is only for this session. Open the site in Chrome (not a private/in-app browser) for a saved account.";
+  } else { dm.textContent = ""; }
   updateSubjectCounts();
   show("dashboard");
 }
@@ -324,19 +444,15 @@ function selectSubject(btn){
   btn.classList.add("active");
 }
 
+/* ---------------- Test flow ---------------- */
 function shuffle(arr){
-  for(var i=arr.length-1;i>0;i--){
-    var j = Math.floor(Math.random()*(i+1));
-    var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
-  }
+  for(var i=arr.length-1;i>0;i--){ var j = Math.floor(Math.random()*(i+1)); var t = arr[i]; arr[i]=arr[j]; arr[j]=t; }
   return arr;
 }
 function startTest(){
   var msg = document.getElementById("dash_msg");
   msg.className = "msg err"; msg.textContent = "";
-  var pool = allQuestions.filter(function(q){
-    return selectedSubject === "Mixed" ? true : q.subject === selectedSubject;
-  });
+  var pool = allQuestions.filter(function(q){ return selectedSubject === "Mixed" ? true : q.subject === selectedSubject; });
   if(pool.length < 1){ msg.textContent = "No questions available. Please try again."; return; }
   var picked = shuffle(pool.slice()).slice(0, Math.min(10, pool.length));
   testState = { questions: picked, answers: new Array(picked.length).fill(null), current: 0, active: true };
@@ -349,7 +465,6 @@ function displayQuestion(){
   document.getElementById("q_now").textContent = (idx+1);
   document.getElementById("q_paper").textContent = q.paper || "JEE Main 2024";
   document.getElementById("q_fill").style.width = ((idx+1)/testState.questions.length*100) + "%";
-
   var wrap = document.getElementById("q_imgwrap");
   wrap.innerHTML = '<div class="q-loading">Loading question…</div>';
   var img = new Image();
@@ -357,11 +472,8 @@ function displayQuestion(){
   img.onerror = function(){ wrap.innerHTML = '<div class="q-loading">Image could not load.</div>'; };
   img.alt = "JEE question";
   img.src = q.img;
-
   var opts = document.querySelectorAll(".opt");
-  for(var i=0;i<opts.length;i++){
-    opts[i].classList.toggle("selected", testState.answers[idx] === i);
-  }
+  for(var i=0;i<opts.length;i++){ opts[i].classList.toggle("selected", testState.answers[idx] === i); }
   document.getElementById("prevBtn").disabled = (idx === 0);
   document.getElementById("nextBtn").textContent = (idx === testState.questions.length-1) ? "Submit Test" : "Next";
 }
@@ -372,40 +484,38 @@ function selectAnswer(i){
 }
 function nextQuestion(){
   if(testState.current === testState.questions.length - 1){ submitTest(); return; }
-  testState.current++;
-  displayQuestion();
+  testState.current++; displayQuestion();
 }
-function prevQuestion(){
-  if(testState.current > 0){ testState.current--; displayQuestion(); }
-}
+function prevQuestion(){ if(testState.current > 0){ testState.current--; displayQuestion(); } }
 function exitTest(){
-  if(confirm("Exit this test? Your progress will not be saved.")){
-    testState.active = false;
-    openDashboard();
-  }
+  if(confirm("Exit this test? Your progress will not be saved.")){ testState.active = false; openDashboard(); }
 }
 function submitTest(){
   var correct = 0;
-  testState.questions.forEach(function(q, i){
-    if(testState.answers[i] === q.correct) correct++;
-  });
+  testState.questions.forEach(function(q, i){ if(testState.answers[i] === q.correct) correct++; });
   var total = testState.questions.length;
   var pct = Math.round(100 * correct / total);
 
-  var u = usersDB[currentUser];
-  if(u){
-    u.stats.testsTaken += 1;
-    u.stats.questionsSolved += total;
-    u.stats.correctAnswers += correct;
-    persistDB();
+  if(currentProfile){
+    currentProfile.stats.testsTaken += 1;
+    currentProfile.stats.questionsSolved += total;
+    currentProfile.stats.correctAnswers += correct;
+    if(USE_FIREBASE && fbDB && currentUser){
+      fbDB.collection("users").doc(currentUser).set({
+        testsTaken: firebase.firestore.FieldValue.increment(1),
+        questionsSolved: firebase.firestore.FieldValue.increment(total),
+        correctAnswers: firebase.firestore.FieldValue.increment(correct)
+      }, { merge: true }).catch(function(e){ console.error("Stat save failed:", e); });
+    } else {
+      persistDB();
+    }
   }
 
   document.getElementById("r_pct").textContent = pct + "%";
   document.getElementById("r_sub").textContent = correct + " / " + total;
   var circle = document.querySelector(".score-circle");
   circle.style.borderColor = pct >= 70 ? "var(--green)" : (pct >= 40 ? "var(--amber)" : "var(--red)");
-  document.getElementById("r_summary").innerHTML =
-    "You answered <b>" + correct + "</b> out of <b>" + total + "</b> correctly.";
+  document.getElementById("r_summary").innerHTML = "You answered <b>" + correct + "</b> out of <b>" + total + "</b> correctly.";
 
   var review = document.getElementById("r_review");
   review.innerHTML = "";
@@ -429,15 +539,20 @@ function submitTest(){
 }
 function backToDashboard(){ openDashboard(); }
 
+/* ---------------- Init ---------------- */
 function initApp(){
   loadDB();
   fetch("questions.json")
     .then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); })
     .then(function(data){
       allQuestions = data;
-      var saved = readCurrent();
-      if(saved && usersDB[saved]){ currentUser = saved; openDashboard(); }
-      else { show("authScreen"); showSignup(); }
+      if(USE_FIREBASE){
+        initFirebaseAuth();   // decides dashboard vs auth once Firebase responds
+      } else {
+        var saved = readCurrent();
+        if(saved && usersDB[saved]){ currentUser = saved; currentProfile = usersDB[saved]; openDashboard(); }
+        else { show("authScreen"); showSignup(); }
+      }
     })
     .catch(function(){
       allQuestions = [];
