@@ -200,13 +200,20 @@
   /* What You Get box */
   .wyg{ background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:16px; }
   .wyg-title{ font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin-bottom:10px; }
+  /* hero total-questions banner */
+  .wyg-hero{ background:linear-gradient(135deg,rgba(249,115,22,.16),rgba(249,115,22,.05)); border:1px solid rgba(249,115,22,.3); border-radius:11px; padding:12px; text-align:center; margin-bottom:12px; }
+  .wyg-hnum{ font-size:30px; font-weight:900; color:var(--orange); line-height:1; letter-spacing:-.5px; }
+  .wyg-hlbl{ font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-top:4px; }
   .wyg-row{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
   .wyg-stat{ background:var(--card); border:1px solid var(--border); border-radius:9px; padding:8px 10px; text-align:center; }
   .wyg-num{ font-size:20px; font-weight:900; color:var(--orange); line-height:1.1; }
   .wyg-lbl{ font-size:10.5px; color:var(--muted); margin-top:2px; }
-  .wyg-sub{ font-size:11px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--dim); margin:8px 0 6px; }
-  .wyg-mini{ display:flex; justify-content:space-between; font-size:12px; color:var(--muted); padding:2px 0; }
-  .wyg-mini b{ color:var(--text); font-weight:700; }
+  .wyg-sub{ font-size:11px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--dim); margin:10px 0 6px; }
+  .wyg-mini{ display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); padding:3px 0; }
+  .wyg-mini .mk-name{ width:64px; flex-shrink:0; }
+  .wyg-mini .mk-bar{ flex:1; height:6px; background:var(--card); border-radius:4px; overflow:hidden; }
+  .wyg-mini .mk-fill{ height:100%; background:linear-gradient(90deg,var(--orange),var(--orange-l)); border-radius:4px; }
+  .wyg-mini b{ color:var(--text); font-weight:800; width:34px; text-align:right; flex-shrink:0; }
   .price-feats{ list-style:none; margin-bottom:20px; flex:1; }
   .price-feats li{ font-size:13.5px; color:var(--text); padding:6px 0 6px 24px; position:relative; }
   .price-feats li::before{ content:"✓"; color:var(--green); position:absolute; left:0; font-weight:800; }
@@ -363,14 +370,16 @@
         <div class="price-desc">Build a strong base before the pressure years.</div>
         <div class="wyg">
           <div class="wyg-title">What you get</div>
+          <div class="wyg-hero"><div class="wyg-hnum">~4,700</div><div class="wyg-hlbl">Total Questions</div></div>
+          <div class="wyg-sub">Mock Tests</div>
           <div class="wyg-row">
-            <div class="wyg-stat"><div class="wyg-num">600</div><div class="wyg-lbl">Questions</div></div>
-            <div class="wyg-stat"><div class="wyg-num">45</div><div class="wyg-lbl">Mock Tests</div></div>
+            <div class="wyg-stat"><div class="wyg-num">25</div><div class="wyg-lbl">Mains Mocks</div></div>
+            <div class="wyg-stat"><div class="wyg-num">20</div><div class="wyg-lbl">Advanced Mocks</div></div>
           </div>
-          <div class="wyg-sub">Topic-wise</div>
-          <div class="wyg-mini"><span>Maths</span><b>200</b></div>
-          <div class="wyg-mini"><span>Physics</span><b>200</b></div>
-          <div class="wyg-mini"><span>Chemistry</span><b>200</b></div>
+          <div class="wyg-sub">Topic-wise (per subject)</div>
+          <div class="wyg-mini"><span class="mk-name">Maths</span><span class="mk-bar"><span class="mk-fill" style="width:100%"></span></span><b>600</b></div>
+          <div class="wyg-mini"><span class="mk-name">Physics</span><span class="mk-bar"><span class="mk-fill" style="width:100%"></span></span><b>600</b></div>
+          <div class="wyg-mini"><span class="mk-name">Chemistry</span><span class="mk-bar"><span class="mk-fill" style="width:100%"></span></span><b>600</b></div>
         </div>
         <ul class="price-feats">
           <li>Grade-matched problems (no 12th panic)</li>
@@ -391,14 +400,16 @@
         <div class="price-desc">Exam-year intensity with full mock practice.</div>
         <div class="wyg">
           <div class="wyg-title">What you get</div>
+          <div class="wyg-hero"><div class="wyg-hnum">~4,700</div><div class="wyg-hlbl">Total Questions</div></div>
+          <div class="wyg-sub">Mock Tests</div>
           <div class="wyg-row">
-            <div class="wyg-stat"><div class="wyg-num">600</div><div class="wyg-lbl">Questions</div></div>
-            <div class="wyg-stat"><div class="wyg-num">45</div><div class="wyg-lbl">Mock Tests</div></div>
+            <div class="wyg-stat"><div class="wyg-num">25</div><div class="wyg-lbl">Mains Mocks</div></div>
+            <div class="wyg-stat"><div class="wyg-num">20</div><div class="wyg-lbl">Advanced Mocks</div></div>
           </div>
-          <div class="wyg-sub">Topic-wise</div>
-          <div class="wyg-mini"><span>Maths</span><b>200</b></div>
-          <div class="wyg-mini"><span>Physics</span><b>200</b></div>
-          <div class="wyg-mini"><span>Chemistry</span><b>200</b></div>
+          <div class="wyg-sub">Topic-wise (per subject)</div>
+          <div class="wyg-mini"><span class="mk-name">Maths</span><span class="mk-bar"><span class="mk-fill" style="width:100%"></span></span><b>600</b></div>
+          <div class="wyg-mini"><span class="mk-name">Physics</span><span class="mk-bar"><span class="mk-fill" style="width:100%"></span></span><b>600</b></div>
+          <div class="wyg-mini"><span class="mk-name">Chemistry</span><span class="mk-bar"><span class="mk-fill" style="width:100%"></span></span><b>600</b></div>
         </div>
         <ul class="price-feats">
           <li>Advanced 12th-level problems</li>
@@ -419,14 +430,16 @@
         <div class="price-desc">A focused comeback path built for droppers.</div>
         <div class="wyg">
           <div class="wyg-title">What you get</div>
+          <div class="wyg-hero"><div class="wyg-hnum">~6,200</div><div class="wyg-hlbl">Total Questions</div></div>
+          <div class="wyg-sub">Mock Tests</div>
           <div class="wyg-row">
-            <div class="wyg-stat"><div class="wyg-num">600</div><div class="wyg-lbl">Questions</div></div>
-            <div class="wyg-stat"><div class="wyg-num">45</div><div class="wyg-lbl">Mock Tests</div></div>
+            <div class="wyg-stat"><div class="wyg-num">25</div><div class="wyg-lbl">Mains Mocks</div></div>
+            <div class="wyg-stat"><div class="wyg-num">25</div><div class="wyg-lbl">Advanced Mocks</div></div>
           </div>
-          <div class="wyg-sub">Topic-wise</div>
-          <div class="wyg-mini"><span>Maths</span><b>200</b></div>
-          <div class="wyg-mini"><span>Physics</span><b>200</b></div>
-          <div class="wyg-mini"><span>Chemistry</span><b>200</b></div>
+          <div class="wyg-sub">Topic-wise (per subject)</div>
+          <div class="wyg-mini"><span class="mk-name">Maths</span><span class="mk-bar"><span class="mk-fill" style="width:100%"></span></span><b>1000</b></div>
+          <div class="wyg-mini"><span class="mk-name">Physics</span><span class="mk-bar"><span class="mk-fill" style="width:100%"></span></span><b>1000</b></div>
+          <div class="wyg-mini"><span class="mk-name">Chemistry</span><span class="mk-bar"><span class="mk-fill" style="width:100%"></span></span><b>1000</b></div>
         </div>
         <ul class="price-feats">
           <li>Optimized revision path</li>
