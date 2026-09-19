@@ -16,6 +16,7 @@
     --green:#22c55e; --blue:#38bdf8; --purple:#a78bfa;
   }
   html{ scroll-behavior:smooth; }
+  .hidden{ display:none !important; }
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
     background:var(--bg); color:var(--text); line-height:1.6; -webkit-font-smoothing:antialiased;
@@ -165,6 +166,43 @@
   .foot-grid a:hover{ color:var(--text); }
   .foot-about{ color:var(--muted); font-size:14px; max-width:280px; margin-top:12px; }
   .foot-bottom{ text-align:center; color:var(--dim); font-size:13px; border-top:1px solid var(--border); padding-top:22px; line-height:2; }
+
+  /* scroll reveal animation */
+  .reveal{ opacity:0; transform:translateY(34px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+  @media(prefers-reduced-motion:reduce){ .reveal{ opacity:1; transform:none; transition:none; } }
+
+  /* TESTIMONIALS marquee */
+  .tm-viewport{ overflow:hidden; position:relative; -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); }
+  .tm-track{ display:flex; gap:16px; width:max-content; animation:tm-scroll 40s linear infinite; }
+  .tm-viewport:hover .tm-track{ animation-play-state:paused; }
+  @keyframes tm-scroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  .tm-card{ width:270px; flex-shrink:0; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; }
+  .tm-head{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .tm-av{ width:40px; height:40px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; font-size:16px; flex-shrink:0; }
+  .tm-name{ font-weight:700; font-size:14px; }
+  .tm-stars{ color:var(--amber); font-size:13px; letter-spacing:1px; }
+  .tm-text{ color:var(--muted); font-size:13px; line-height:1.5; }
+  .tm-empty{ text-align:center; color:var(--muted); background:var(--card); border:1px dashed var(--border-2); border-radius:14px; padding:26px; }
+
+  /* PRICING */
+  .price-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  @media(max-width:900px){ .price-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:520px){ .price-grid{ grid-template-columns:1fr; } }
+  .price-card{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px 20px; display:flex; flex-direction:column; position:relative; transition:.18s; }
+  .price-card:hover{ transform:translateY(-4px); border-color:var(--border-2); }
+  .price-card.pop{ border-color:var(--orange); box-shadow:0 12px 40px rgba(249,115,22,.18); }
+  .price-tag{ position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:var(--orange); color:#fff; font-size:11px; font-weight:800; padding:4px 14px; border-radius:20px; }
+  .price-name{ font-size:17px; font-weight:800; }
+  .price-amt{ font-size:34px; font-weight:900; margin:8px 0 2px; }
+  .price-amt span{ font-size:14px; color:var(--muted); font-weight:600; }
+  .price-desc{ color:var(--muted); font-size:13px; margin-bottom:16px; }
+  .price-feats{ list-style:none; margin-bottom:20px; flex:1; }
+  .price-feats li{ font-size:13.5px; color:var(--text); padding:6px 0 6px 24px; position:relative; }
+  .price-feats li::before{ content:"✓"; color:var(--green); position:absolute; left:0; font-weight:800; }
+  .price-feats li.no{ color:var(--dim); }
+  .price-feats li.no::before{ content:"✕"; color:var(--dim); }
+  .price-card .btn{ width:100%; }
 </style>
 </head>
 <body>
@@ -177,7 +215,7 @@
       <a href="#how">How it works</a>
       <a href="#features">Features</a>
       <a href="#blog">Blog</a>
-      <a href="#cta">Pricing</a>
+      <a href="#pricing">Pricing</a>
       <a class="nav-cta" href="app.html">Go to Dashboard</a>
     </nav>
     <button class="menu-btn" onclick="location.href='app.html'">☰</button>
@@ -287,6 +325,82 @@
   </div>
 </section>
 
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="wrap">
+    <div class="eyebrow reveal">Loved by students</div>
+    <h2 class="section-title reveal">What Students Say</h2>
+    <p class="section-sub reveal">Real reviews from Dakhilaa students.</p>
+  </div>
+  <div class="tm-viewport reveal" id="tmViewport">
+    <div class="tm-track" id="tmTrack"></div>
+  </div>
+  <div class="wrap"><div id="tmEmpty" class="tm-empty reveal hidden">Reviews coming soon — try Dakhilaa and share yours from the dashboard. ⭐</div></div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="background:var(--bg-2);">
+  <div class="wrap">
+    <div class="eyebrow reveal">Pricing</div>
+    <h2 class="section-title reveal">Simple, Student-Friendly Pricing</h2>
+    <p class="section-sub reveal">Start free. Upgrade any time. All plans are yearly.</p>
+    <div class="price-grid">
+      <div class="price-card reveal">
+        <div class="price-name">Free</div>
+        <div class="price-amt">₹0</div>
+        <div class="price-desc">To get started</div>
+        <ul class="price-feats">
+          <li>Weak-area diagnostic</li>
+          <li>Daily practice (10 Qs)</li>
+          <li>College predictor</li>
+          <li class="no">Full mock tests</li>
+          <li class="no">Full question bank</li>
+        </ul>
+        <a class="btn btn-primary" href="app.html">Start Free</a>
+      </div>
+      <div class="price-card reveal">
+        <div class="price-name">Mains</div>
+        <div class="price-amt">₹799 <span>/year</span></div>
+        <div class="price-desc">For JEE Main focus</div>
+        <ul class="price-feats">
+          <li>Everything in Free</li>
+          <li>Full JEE Main mock tests</li>
+          <li>Full question bank</li>
+          <li>Progress analytics</li>
+          <li class="no">JEE Advanced mocks</li>
+        </ul>
+        <a class="btn btn-ghost" href="app.html">Choose Mains</a>
+      </div>
+      <div class="price-card pop reveal">
+        <div class="price-tag">MOST POPULAR</div>
+        <div class="price-name">Advanced</div>
+        <div class="price-amt">₹899 <span>/year</span></div>
+        <div class="price-desc">For JEE Advanced aspirants</div>
+        <ul class="price-feats">
+          <li>Everything in Mains</li>
+          <li>JEE Advanced mock tests</li>
+          <li>AI study planner</li>
+          <li>Priority support</li>
+        </ul>
+        <a class="btn btn-primary" href="app.html">Choose Advanced</a>
+      </div>
+      <div class="price-card reveal">
+        <div class="price-name">Bundle</div>
+        <div class="price-amt">₹1099 <span>/year</span></div>
+        <div class="price-desc">Mains + Advanced, everything</div>
+        <ul class="price-feats">
+          <li>Everything unlocked</li>
+          <li>Main + Advanced mocks</li>
+          <li>AI planner + analytics</li>
+          <li>Best value for full prep</li>
+        </ul>
+        <a class="btn btn-ghost" href="app.html">Get Bundle</a>
+      </div>
+    </div>
+    <p style="text-align:center;color:var(--dim);font-size:13px;margin-top:18px" class="reveal">Yearly plans · Cancel anytime · Secure payments</p>
+  </div>
+</section>
+
 <!-- BLOG -->
 <section id="blog">
   <div class="wrap">
@@ -374,7 +488,7 @@
         <a href="#how">How it works</a>
         <a href="#features">Features</a>
         <a href="#blog">Blog</a>
-        <a href="#cta">Pricing</a>
+        <a href="#pricing">Pricing</a>
         <a href="mailto:Support@dakhilaa.com?subject=Partner%20Program">Become a Partner</a>
       </div>
       <div>
@@ -391,6 +505,8 @@
   </div>
 </footer>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script>
 // FAQ accordion
 function toggleFaq(btn){
@@ -503,6 +619,58 @@ function checkCutoff(){
   html += '<div class="note">These are approximate estimates based on past-year trends and vary by category, branch, home state and exam difficulty. For your full, personalised weak-topic report, <a href="app.html" style="color:var(--orange-l);font-weight:700">take the free diagnostic →</a></div>';
   box.innerHTML = html;
 }
+
+/* ---- Testimonials (real, approved 4+ reviews from Firestore) ---- */
+var TM_CONFIG = {
+  apiKey: "AIzaSyA-W_3VSzsTujSYWV0HtwUkWc7OBLqpQxc",
+  authDomain: "dakhilaa-cb41a.firebaseapp.com",
+  projectId: "dakhilaa-cb41a",
+  storageBucket: "dakhilaa-cb41a.firebasestorage.app",
+  messagingSenderId: "1055517618428",
+  appId: "1:1055517618428:web:b6dcd8d696ccb94b7a6779"
+};
+var tmDB = null;
+try { if(typeof firebase !== "undefined"){ firebase.initializeApp(TM_CONFIG); tmDB = firebase.firestore(); } } catch(e){ tmDB = null; }
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function avatarColor(name){ var colors=["#f97316","#8b5cf6","#22c55e","#38bdf8","#f59e0b","#ec4899","#14b8a6"]; var h=0; name=name||"S"; for(var i=0;i<name.length;i++) h=(h*31+name.charCodeAt(i))%colors.length; return colors[h]; }
+function stars(n){ n=Math.max(0,Math.min(5,n||0)); var s=""; for(var i=1;i<=5;i++) s+= (i<=n?"★":"☆"); return s; }
+function tmCard(t){
+  var nm=t.name||"Student", initial=nm.charAt(0).toUpperCase();
+  var txt=t.text?('<div class="tm-text">'+escapeHtml(t.text)+'</div>'):'';
+  return '<div class="tm-card"><div class="tm-head"><div class="tm-av" style="background:'+avatarColor(nm)+'">'+escapeHtml(initial)+'</div><div><div class="tm-name">'+escapeHtml(nm)+'</div><div class="tm-stars">'+stars(t.rating)+'</div></div></div>'+txt+'</div>';
+}
+function renderTestimonials(list){
+  var track=document.getElementById("tmTrack"), vp=document.getElementById("tmViewport"), empty=document.getElementById("tmEmpty");
+  if(!list.length){ vp.classList.add("hidden"); empty.classList.remove("hidden"); return; }
+  vp.classList.remove("hidden"); empty.classList.add("hidden");
+  var html=list.map(tmCard).join("");
+  track.innerHTML=html+html; // duplicate for seamless right-to-left loop
+  track.style.animationDuration=Math.max(24, list.length*7)+"s";
+}
+function loadTestimonials(){
+  if(!tmDB){ renderTestimonials([]); return; }
+  tmDB.collection("feedback").where("approved","==",true).limit(40).get().then(function(snap){
+    var arr=[]; snap.forEach(function(d){ var v=d.data(); if((v.rating||0)>=4) arr.push(v); });
+    arr.sort(function(a,b){ return (b.date||0)-(a.date||0); });
+    renderTestimonials(arr.slice(0,20));
+  }).catch(function(e){ console.warn("testimonials load failed", e); renderTestimonials([]); });
+}
+
+/* ---- Scroll reveal animation (whole page) ---- */
+(function(){
+  var sels = ".eyebrow,.section-title,.section-sub,.fcard,.step,.scard,.bcard,.qa,.price-card,.stat,.pills,.hero-btns,.checks,.predictor,.cta,.partner,.tm-viewport,.foot-grid,.hero h1,.hero p.lead,.badge";
+  var picked = [].slice.call(document.querySelectorAll(sels));
+  picked.forEach(function(el){ el.classList.add("reveal"); });
+  var all = [].slice.call(document.querySelectorAll(".reveal"));
+  if(!("IntersectionObserver" in window)){ all.forEach(function(e){ e.classList.add("in"); }); }
+  else {
+    var obs = new IntersectionObserver(function(entries){ entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("in"); obs.unobserve(en.target); } }); }, { threshold:0.08, rootMargin:"0px 0px -40px 0px" });
+    all.forEach(function(e){ obs.observe(e); });
+    setTimeout(function(){ all.forEach(function(e){ e.classList.add("in"); }); }, 3000);
+  }
+})();
+loadTestimonials();
 </script>
 </body>
 </html>

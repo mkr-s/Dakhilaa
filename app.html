@@ -1139,7 +1139,7 @@ function closeRate(){ document.getElementById("rateModal").classList.remove("sho
 function submitRate(){
   var msg=document.getElementById("rateMsg"); msg.className="msg";
   if(!rateVal){ msg.className="msg err"; msg.textContent="Please pick a star rating."; return; }
-  var fb={ rating:rateVal, text:document.getElementById("rateText").value.trim(), name:(currentProfile?currentProfile.name:""), email:(currentProfile?currentProfile.email:""), date:Date.now() };
+  var fb={ rating:rateVal, text:document.getElementById("rateText").value.trim(), name:(currentProfile?currentProfile.name:"Student"), approved:false, date:Date.now() };
   if(USE_FIREBASE && fbDB){ fbDB.collection("feedback").add(fb).catch(function(e){ console.error(e); }); }
   msg.style.color="var(--green)"; msg.textContent="Thank you for your feedback! 🙌";
   setTimeout(function(){ closeRate(); msg.textContent=""; rateVal=0; document.getElementById("rateText").value=""; var st=document.querySelectorAll("#rateStars span"); for(var i=0;i<st.length;i++) st[i].classList.remove("on"); }, 1200);
