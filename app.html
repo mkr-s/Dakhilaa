@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dakhilaa — JEE Diagnostic</title>
+<title>Dakhilaa — Student Dashboard</title>
 <link rel="icon" href="logo.png">
 <style>
   *{ margin:0; padding:0; box-sizing:border-box; }
@@ -12,28 +12,24 @@
     --border:#1e2739; --border-2:#293349;
     --text:#f8fafc; --muted:#94a3b8; --dim:#64748b;
     --orange:#f97316; --orange-l:#fb923c; --orange-d:#ea580c;
-    --green:#22c55e; --red:#ef4444; --amber:#f59e0b; --blue:#38bdf8; --purple:#a78bfa;
+    --green:#22c55e; --red:#ef4444; --amber:#f59e0b; --blue:#38bdf8; --purple:#a78bfa; --teal:#2dd4bf;
   }
-  body{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-    background:var(--bg); color:var(--text); line-height:1.6; min-height:100vh; }
-  .container{ max-width:820px; margin:0 auto; padding:20px 16px; }
-  .hidden{ display:none !important; }
+  body{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text); line-height:1.55; -webkit-font-smoothing:antialiased; }
   button{ font-family:inherit; cursor:pointer; border:none; }
-  .btn{ background:var(--orange); color:#fff; padding:14px 22px; border-radius:12px; font-size:16px; font-weight:700;
-    transition:.16s; width:100%; box-shadow:0 8px 24px rgba(249,115,22,.28); }
+  a{ color:inherit; text-decoration:none; }
+  .hidden{ display:none !important; }
+  .btn{ background:var(--orange); color:#fff; padding:11px 18px; border-radius:10px; font-size:15px; font-weight:700; transition:.15s; box-shadow:0 6px 18px rgba(249,115,22,.25); }
   .btn:hover{ background:var(--orange-d); }
   .btn-outline{ background:transparent; color:var(--text); border:1px solid var(--border-2); box-shadow:none; }
   .btn-outline:hover{ background:var(--card-2); }
+  .btn-block{ width:100%; }
   .btn:disabled{ opacity:.5; cursor:not-allowed; }
 
-  .brand{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:20px; }
-  .brand .dia{ width:18px; height:18px; background:var(--orange); transform:rotate(45deg); border-radius:4px; }
-  .brand .logo-img{ height:32px; width:auto; display:block; }
-
+  /* AUTH */
   .auth-wrap{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
-  .card{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:28px; width:100%; }
-  .auth-card{ max-width:400px; }
-  .auth-card .brand{ justify-content:center; margin-bottom:6px; }
+  .auth-card{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:28px; width:100%; max-width:400px; }
+  .auth-brand{ display:flex; align-items:center; gap:10px; justify-content:center; font-weight:800; font-size:20px; margin-bottom:6px; }
+  .auth-brand img{ height:34px; }
   .tagline{ text-align:center; color:var(--muted); font-size:14px; margin-bottom:22px; }
   .field{ margin-bottom:15px; }
   .field label{ display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
@@ -46,79 +42,215 @@
   .spinner{ width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
   @keyframes spin{ to{ transform:rotate(360deg);} }
 
-  .topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
-  .topbar .btn{ width:auto; padding:8px 14px; font-size:14px; }
-  .welcome{ font-size:16px; color:var(--muted); margin-bottom:16px; }
-  .welcome b{ color:var(--text); }
+  /* SHELL */
+  .shell{ display:flex; min-height:100vh; }
+  .sidebar{ width:240px; background:var(--bg-2); border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; bottom:0; left:0; z-index:60; transition:transform .22s; }
+  .sb-brand{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:19px; padding:18px 18px 14px; }
+  .sb-brand img{ height:30px; }
+  .sb-nav{ flex:1; overflow-y:auto; padding:6px 10px; }
+  .sb-nav .navi{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:10px; color:var(--muted); font-size:14.5px; font-weight:600; cursor:pointer; margin-bottom:2px; }
+  .sb-nav .navi .ic{ font-size:17px; width:22px; text-align:center; }
+  .sb-nav .navi:hover{ background:var(--card); color:var(--text); }
+  .sb-nav .navi.active{ background:rgba(249,115,22,.12); color:var(--orange-l); }
+  .sb-nav .divider{ height:1px; background:var(--border); margin:8px 6px; }
+  .sb-user{ padding:14px; border-top:1px solid var(--border); }
+  .sb-user .ucard{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; text-align:center; }
+  .sb-user .av{ width:44px; height:44px; border-radius:12px; margin:0 auto 8px; background:linear-gradient(135deg,var(--orange),#a855f7); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px; color:#fff; }
+  .sb-user .un{ font-weight:700; font-size:14px; }
+  .sb-user .up{ font-size:11px; color:var(--muted); margin-bottom:8px; }
 
-  .lastcard{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 18px; margin-bottom:16px; display:flex; align-items:center; gap:14px; }
-  .lastcard .ring{ flex-shrink:0; width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:15px; }
-  .lastcard .info{ font-size:14px; color:var(--muted); }
-  .lastcard .info b{ color:var(--text); }
+  .main{ flex:1; margin-left:240px; min-width:0; }
+  .topbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 24px; flex-wrap:wrap; }
+  .topbar .hb{ display:none; background:none; border:none; color:var(--text); font-size:24px; cursor:pointer; }
+  .topbar h1{ font-size:24px; font-weight:800; }
+  .topbar .sub{ color:var(--muted); font-size:14px; }
+  .topbar .tb-actions{ display:flex; gap:10px; }
+  .topbar .tb-actions .btn{ padding:9px 14px; font-size:13px; }
+  .content{ padding:0 24px 40px; max-width:1000px; }
+  .backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:55; display:none; }
 
-  .stats-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:22px; }
-  .stat{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; text-align:center; }
-  .stat .num{ font-size:24px; font-weight:800; color:var(--orange); }
-  .stat .lbl{ font-size:12px; color:var(--muted); margin-top:2px; }
+  @media(max-width:900px){
+    .sidebar{ transform:translateX(-100%); box-shadow:0 0 40px rgba(0,0,0,.5); }
+    .sidebar.open{ transform:translateX(0); }
+    .main{ margin-left:0; }
+    .topbar .hb{ display:block; }
+    .backdrop.show{ display:block; }
+    .content{ padding:0 16px 40px; }
+    .topbar{ padding:14px 16px; }
+  }
 
-  .hero-card{ background:linear-gradient(135deg,rgba(249,115,22,.14),rgba(124,45,18,.08)); border:1px solid rgba(249,115,22,.28);
-    border-radius:16px; padding:24px; margin-bottom:18px; }
-  .hero-card .badge{ display:inline-block; background:rgba(249,115,22,.16); color:var(--orange-l); font-size:12px; font-weight:700; padding:4px 12px; border-radius:20px; margin-bottom:10px; }
-  .hero-card h2{ font-size:22px; margin-bottom:6px; }
-  .hero-card p{ color:var(--muted); font-size:14px; margin-bottom:16px; }
+  .banner{ background:linear-gradient(110deg,var(--orange-d),#0f766e); border-radius:16px; padding:22px 24px; margin-bottom:22px; }
+  .banner .tag{ display:inline-block; background:rgba(255,255,255,.18); font-size:11px; font-weight:700; letter-spacing:.5px; padding:4px 12px; border-radius:20px; margin-bottom:8px; }
+  .banner h2{ font-size:22px; margin-bottom:4px; }
+  .banner p{ font-size:14px; opacity:.92; }
 
-  .section-title{ font-size:13px; color:var(--muted); margin:20px 0 10px; text-transform:uppercase; letter-spacing:.6px; font-weight:700; }
-  .subject-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:12px; }
-  .subject-btn{ background:var(--card); border:1px solid var(--border); color:var(--text); padding:13px; border-radius:11px; font-size:14px; font-weight:600; text-align:left; }
-  .subject-btn.active{ border-color:var(--orange); background:rgba(249,115,22,.10); }
+  .sec-h{ font-size:22px; font-weight:800; margin-bottom:2px; }
+  .sec-sub{ color:var(--muted); font-size:14px; margin-bottom:18px; }
 
-  /* test */
-  .test-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
-  .qcount{ font-size:14px; color:var(--muted); font-weight:600; }
-  .paper-tag{ font-size:12px; color:var(--muted); background:var(--card-2); padding:4px 10px; border-radius:20px; }
-  .progress-bar{ height:6px; background:var(--card-2); border-radius:10px; overflow:hidden; margin-bottom:18px; }
+  .tiles{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px; }
+  @media(max-width:760px){ .tiles{ grid-template-columns:repeat(2,1fr); } }
+  .tile{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; }
+  .tile .lbl{ font-size:11px; letter-spacing:.5px; text-transform:uppercase; color:var(--dim); }
+  .tile .val{ font-size:28px; font-weight:800; color:var(--orange); margin:4px 0 2px; }
+  .tile .foot{ font-size:12px; color:var(--muted); }
+  .tile .track{ height:5px; background:var(--card-2); border-radius:6px; margin-top:10px; overflow:hidden; }
+  .tile .track .f{ height:100%; background:linear-gradient(90deg,var(--orange),var(--teal)); }
+
+  .weak-banner{ background:linear-gradient(120deg,rgba(249,115,22,.12),rgba(168,85,247,.06)); border:1px solid rgba(249,115,22,.3); border-radius:14px; padding:18px; margin-bottom:22px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+  .weak-banner .lbl{ display:inline-block; border:1px solid var(--orange); color:var(--orange-l); font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; margin-bottom:6px; }
+  .weak-banner h3{ font-size:18px; }
+  .weak-banner p{ color:var(--muted); font-size:13px; }
+  .weak-banner .btn{ padding:9px 16px; font-size:13px; }
+
+  .grid2{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+  @media(max-width:700px){ .grid2{ grid-template-columns:1fr; } }
+  .bcard{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; }
+  .bcard .ic{ font-size:24px; }
+  .bcard h4{ font-size:15px; margin:6px 0 2px; }
+  .bcard p{ color:var(--muted); font-size:13px; }
+  .bcard .pill{ display:inline-block; margin-top:10px; background:var(--card-2); color:var(--orange-l); font-size:12px; font-weight:600; padding:3px 10px; border-radius:20px; }
+
+  .chips{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+  .chip{ background:var(--card); border:1px solid var(--border); color:var(--muted); padding:7px 15px; border-radius:20px; font-size:14px; font-weight:600; cursor:pointer; }
+  .chip.active{ background:var(--orange); color:#fff; border-color:var(--orange); }
+
+  /* Question bank card */
+  .qcard{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; }
+  .qcard .qtop{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:13px; color:var(--dim); }
+  .qcard .qimg{ background:#fff; border-radius:10px; padding:8px; overflow-x:auto; margin-bottom:14px; }
+  .qcard .qimg img{ width:100%; height:auto; display:block; }
+  .qopts{ display:flex; flex-direction:column; gap:10px; }
+  .qopt{ display:flex; align-items:center; gap:12px; background:var(--bg-2); border:1px solid var(--border-2); border-radius:10px; padding:14px; font-size:15px; font-weight:700; cursor:pointer; color:var(--text); text-align:left; }
+  .qopt .lt{ width:26px; height:26px; border-radius:7px; background:var(--card-2); display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+  .qopt.sel{ border-color:var(--orange); }
+  .qopt.correct{ border-color:var(--green); background:rgba(34,197,94,.12); }
+  .qopt.wrong{ border-color:var(--red); background:rgba(239,68,68,.12); }
+  .qopt.correct .lt{ background:var(--green); color:#fff; }
+  .qopt.wrong .lt{ background:var(--red); color:#fff; }
+  .qcard .qfoot{ display:flex; justify-content:flex-end; margin-top:14px; }
+
+  /* Mock cards */
+  .mockrow{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:24px; }
+  @media(max-width:700px){ .mockrow{ grid-template-columns:1fr; } }
+  .mock{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; }
+  .mock .pat{ display:inline-block; background:rgba(45,212,191,.14); color:var(--teal); font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; margin-bottom:8px; }
+  .mock h4{ font-size:17px; margin-bottom:8px; }
+  .mock ul{ list-style:none; margin-bottom:14px; }
+  .mock li{ color:var(--muted); font-size:13px; padding-left:16px; position:relative; margin-bottom:4px; }
+  .mock li::before{ content:"•"; color:var(--orange); position:absolute; left:2px; }
+
+  .tcard{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; }
+  .tcard h4{ font-size:15px; margin-bottom:4px; }
+  .tcard .meta{ color:var(--dim); font-size:12px; margin-bottom:10px; }
+
+  .coming{ background:var(--card); border:1px dashed var(--border-2); border-radius:14px; padding:34px 20px; text-align:center; color:var(--muted); }
+  .coming .ic{ font-size:34px; margin-bottom:8px; }
+
+  /* history / my tests */
+  .htcard{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; }
+  .htcard .hh{ display:flex; justify-content:space-between; font-size:12px; color:var(--dim); margin-bottom:6px; }
+  .htcard .type{ background:var(--card-2); padding:2px 8px; border-radius:20px; color:var(--purple); font-weight:600; }
+  .htcard .score{ font-size:22px; font-weight:800; color:var(--orange); }
+  .htcard .score span{ font-size:13px; color:var(--muted); font-weight:400; }
+  .htcard .tags{ margin-top:8px; display:flex; gap:6px; flex-wrap:wrap; }
+  .htcard .tags .t{ background:var(--card-2); color:var(--muted); font-size:11px; padding:2px 8px; border-radius:6px; }
+
+  /* progress chart */
+  .chartbox{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; }
+  .bars{ display:flex; align-items:flex-end; gap:14px; height:170px; padding-top:10px; }
+  .bars .col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; }
+  .bars .col .bar{ width:70%; max-width:46px; background:linear-gradient(180deg,var(--orange-l),var(--orange-d)); border-radius:6px 6px 0 0; min-height:4px; }
+  .bars .col .v{ font-size:12px; font-weight:700; color:var(--orange-l); margin-bottom:4px; }
+  .bars .col .x{ font-size:11px; color:var(--dim); margin-top:6px; }
+
+  /* AI planner */
+  .ai-wrap{ max-width:720px; }
+  .ai-hero{ text-align:center; margin-bottom:16px; }
+  .ai-hero .bot{ width:76px; height:76px; border-radius:20px; margin:0 auto 10px; background:linear-gradient(135deg,#1e293b,#0f766e); display:flex; align-items:center; justify-content:center; font-size:38px; }
+  .ai-hero h3{ font-size:18px; }
+  .ai-hero .st{ color:var(--teal); font-size:13px; }
+  .chatbox{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; min-height:180px; max-height:340px; overflow-y:auto; margin-bottom:12px; }
+  .bubble{ padding:11px 14px; border-radius:12px; font-size:14px; margin-bottom:10px; max-width:88%; }
+  .bubble.bot{ background:var(--bg-2); border:1px solid var(--border); }
+  .bubble.me{ background:var(--orange); color:#fff; margin-left:auto; }
+  .ai-quick{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:12px; }
+  .ai-quick .q{ background:var(--card-2); border:1px solid var(--border); color:var(--text); font-size:13px; padding:8px 14px; border-radius:20px; cursor:pointer; }
+  .ai-input{ display:flex; gap:8px; }
+  .ai-input input{ flex:1; padding:12px 14px; background:var(--bg-2); border:1px solid var(--border-2); border-radius:10px; color:var(--text); font-size:14px; }
+  .ai-input input:focus{ outline:none; border-color:var(--orange); }
+  .ai-input button{ background:var(--orange); color:#fff; border-radius:10px; width:46px; font-size:18px; }
+
+  /* predictor */
+  .predictor{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; max-width:720px; }
+  .pred-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+  @media(max-width:560px){ .pred-row{ grid-template-columns:1fr; } }
+  .pred-row label{ display:block; font-size:11px; letter-spacing:.5px; color:var(--dim); text-transform:uppercase; margin-bottom:6px; font-weight:700; }
+  .pred-row input, .pred-row select{ width:100%; padding:12px 14px; background:var(--bg-2); border:1px solid var(--border-2); border-radius:10px; color:var(--text); font-size:15px; }
+  .pred-row input:focus, .pred-row select:focus{ outline:none; border-color:var(--orange); }
+  .pred-result{ margin-top:16px; padding:16px; border-radius:12px; background:var(--bg-2); border:1px solid var(--border-2); display:none; font-size:14px; }
+  .status-in{ color:var(--green); font-weight:800; } .status-close{ color:var(--amber); font-weight:800; } .status-far{ color:var(--orange-l); font-weight:800; }
+  .pred-note{ color:var(--dim); font-size:12px; margin-top:10px; }
+
+  /* settings */
+  .setcard{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; max-width:520px; }
+  .setrow{ display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border); font-size:14px; }
+  .setrow:last-child{ border-bottom:none; }
+  .setrow .k{ color:var(--muted); }
+
+  /* TEST + REPORT full screen */
+  .fullpage{ max-width:820px; margin:0 auto; padding:20px 16px; }
+  .test-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .test-head .exit{ background:none; border:none; color:var(--muted); font-size:14px; cursor:pointer; }
+  .test-head .timer{ color:var(--teal); font-weight:800; font-size:16px; }
+  .test-head .mid{ color:var(--dim); font-size:13px; }
+  .progress-bar{ height:5px; background:var(--card-2); border-radius:8px; overflow:hidden; margin-bottom:16px; }
   .progress-bar .fill{ height:100%; background:var(--orange); width:0; transition:width .25s; }
-  .q-image-wrap{ background:#fff; border-radius:12px; padding:10px; margin-bottom:18px; overflow-x:auto; text-align:center; }
-  .q-image-wrap img{ width:100%; max-width:100%; height:auto; display:block; margin:0 auto; }
-  .q-loading{ color:#64748b; padding:40px; font-size:14px; }
-  .options{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:20px; }
-  .opt{ background:var(--card); border:2px solid var(--border); color:var(--text); padding:16px; border-radius:12px; font-size:17px; font-weight:700; display:flex; align-items:center; gap:10px; }
-  .opt .circle{ width:28px; height:28px; border-radius:50%; border:2px solid var(--muted); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+  .q-image-wrap{ background:#fff; border-radius:12px; padding:10px; margin-bottom:16px; overflow-x:auto; text-align:center; }
+  .q-image-wrap img{ width:100%; height:auto; display:block; }
+  .q-loading{ color:#64748b; padding:36px; font-size:14px; }
+  .options{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:18px; }
+  @media(max-width:560px){ .options{ grid-template-columns:1fr; } }
+  .opt{ background:var(--card); border:2px solid var(--border); color:var(--text); padding:15px; border-radius:12px; font-size:16px; font-weight:700; display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .opt .circle{ width:27px;height:27px;border-radius:50%;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0; }
   .opt.selected{ border-color:var(--orange); background:rgba(249,115,22,.12); }
   .opt.selected .circle{ border-color:var(--orange); background:var(--orange); color:#fff; }
   .nav-row{ display:flex; gap:12px; }
   .nav-row .btn{ flex:1; }
+  .palette{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; justify-content:center; }
+  .palette .pq{ width:34px; height:34px; border-radius:8px; background:var(--card); border:1px solid var(--border); color:var(--muted); font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .palette .pq.done{ background:rgba(34,197,94,.14); color:var(--green); border-color:rgba(34,197,94,.3); }
+  .palette .pq.cur{ border-color:var(--orange); color:var(--orange-l); }
 
-  /* report */
   .report-ring{ width:150px; height:150px; border-radius:50%; margin:6px auto 16px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--card); }
-  .report-ring .pct{ font-size:36px; font-weight:900; }
-  .report-ring .sub{ font-size:12px; color:var(--muted); }
-  .est-line{ text-align:center; font-size:16px; margin-bottom:6px; }
-  .est-line b{ color:var(--orange); font-size:20px; }
-  .est-note{ text-align:center; color:var(--dim); font-size:12px; margin-bottom:20px; }
-  .subj-row{ margin-bottom:14px; }
+  .report-ring .pct{ font-size:36px; font-weight:900; } .report-ring .subx{ font-size:12px; color:var(--muted); }
+  .est-line{ text-align:center; font-size:16px; margin-bottom:4px; } .est-line b{ color:var(--orange); font-size:20px; }
+  .est-note{ text-align:center; color:var(--dim); font-size:12px; margin-bottom:18px; }
+  .subj-row{ margin-bottom:12px; }
   .subj-row .top{ display:flex; justify-content:space-between; font-size:14px; margin-bottom:5px; }
   .subj-row .top .sc{ color:var(--muted); }
-  .bar{ height:10px; background:var(--card-2); border-radius:8px; overflow:hidden; }
-  .bar .fill{ height:100%; border-radius:8px; transition:width .4s; }
-  .weak-card{ background:rgba(249,115,22,.10); border:1px solid rgba(249,115,22,.3); border-radius:14px; padding:18px; margin:20px 0; }
-  .weak-card h3{ font-size:16px; margin-bottom:6px; }
-  .weak-card p{ color:var(--muted); font-size:14px; }
-  .path-card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:20px; }
-  .path-card h3{ font-size:15px; margin-bottom:6px; }
-  .path-card p{ color:var(--muted); font-size:14px; }
-  .path-card .tier{ color:var(--orange-l); font-weight:700; }
-
+  .bar{ height:10px; background:var(--card-2); border-radius:8px; overflow:hidden; } .bar .f{ height:100%; border-radius:8px; }
+  .weak-card{ background:rgba(249,115,22,.10); border:1px solid rgba(249,115,22,.3); border-radius:14px; padding:16px; margin:18px 0; }
+  .weak-card h3{ font-size:16px; margin-bottom:6px; } .weak-card p{ color:var(--muted); font-size:14px; }
+  .path-card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:18px; }
+  .path-card h3{ font-size:15px; margin-bottom:6px; } .path-card p{ color:var(--muted); font-size:14px; } .path-card .tier{ color:var(--orange-l); font-weight:700; }
   .review-item{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:12px; }
   .review-item .rhead{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:13px; }
   .badge2{ padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700; }
-  .badge2.correct{ background:rgba(34,197,94,.15); color:var(--green); }
-  .badge2.wrong{ background:rgba(239,68,68,.15); color:var(--red); }
+  .badge2.correct{ background:rgba(34,197,94,.15); color:var(--green); } .badge2.wrong{ background:rgba(239,68,68,.15); color:var(--red); }
   .review-item img{ max-width:100%; border-radius:8px; background:#fff; padding:6px; }
-  .ans-line{ font-size:13px; color:var(--muted); margin-top:8px; }
-  .ans-line .g{ color:var(--green); font-weight:700; } .ans-line .r{ color:var(--red); font-weight:700; }
+  .ans-line{ font-size:13px; color:var(--muted); margin-top:8px; } .ans-line .g{ color:var(--green); font-weight:700; } .ans-line .r{ color:var(--red); font-weight:700; }
 
-  @media(max-width:520px){ .stats-grid{ gap:8px; } .stat .num{ font-size:20px; } .subject-grid{ grid-template-columns:1fr; } }
+  /* modal */
+  .modal-bg{ position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:80; display:none; align-items:center; justify-content:center; padding:20px; }
+  .modal-bg.show{ display:flex; }
+  .modal{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; width:100%; max-width:420px; position:relative; }
+  .modal .x{ position:absolute; top:14px; right:16px; background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; }
+  .modal h3{ font-size:18px; margin-bottom:4px; }
+  .modal .sub{ color:var(--muted); font-size:13px; margin-bottom:16px; }
+  .stars{ font-size:26px; color:var(--dim); margin-bottom:14px; }
+  .stars span{ cursor:pointer; }
+  .stars span.on{ color:var(--amber); }
+  .modal textarea{ width:100%; height:90px; background:var(--bg-2); border:1px solid var(--border-2); border-radius:10px; color:var(--text); padding:10px; font-family:inherit; font-size:14px; resize:vertical; }
 </style>
 </head>
 <body>
@@ -127,68 +259,242 @@
   <div style="text-align:center"><div class="spinner"></div><div style="color:var(--muted);font-size:14px">Loading Dakhilaa…</div></div>
 </div>
 
+<!-- AUTH -->
 <div id="authScreen" class="auth-wrap hidden">
-  <div class="card auth-card">
-    <div class="brand"><img class="logo-img" src="logo.png" alt="Dakhilaa"> Dakhilaa</div>
-    <div class="tagline">Find your weakest JEE topics · Free diagnostic</div>
+  <div class="auth-card">
+    <div class="auth-brand"><img src="logo.png" alt=""> Dakhilaa</div>
+    <div class="tagline">Find your weak areas · Free diagnostic</div>
     <div id="signupForm">
       <div class="field"><label>Name</label><input id="su_name" type="text" placeholder="Your name"></div>
       <div class="field"><label>Email</label><input id="su_email" type="email" placeholder="you@example.com"></div>
       <div class="field"><label>Password</label><input id="su_pass" type="password" placeholder="At least 6 characters"></div>
-      <button class="btn" id="su_btn" onclick="handleSignup()">Create Account</button>
+      <button class="btn btn-block" id="su_btn" onclick="handleSignup()">Create Account</button>
       <div class="msg" id="su_msg"></div>
       <div class="switch">Already have an account? <a onclick="showSignin()">Sign in</a></div>
     </div>
     <div id="signinForm" class="hidden">
       <div class="field"><label>Email</label><input id="si_email" type="email" placeholder="you@example.com"></div>
       <div class="field"><label>Password</label><input id="si_pass" type="password" placeholder="Your password"></div>
-      <button class="btn" id="si_btn" onclick="handleSignin()">Sign In</button>
+      <button class="btn btn-block" id="si_btn" onclick="handleSignin()">Sign In</button>
       <div class="msg" id="si_msg"></div>
       <div class="switch">New here? <a onclick="showSignup()">Create an account</a></div>
     </div>
   </div>
 </div>
 
-<div id="dashboard" class="container hidden">
-  <div class="topbar">
-    <a class="brand" href="index.html"><img class="logo-img" src="logo.png" alt="Dakhilaa"> Dakhilaa</a>
-    <button class="btn btn-outline" onclick="logout()">Logout</button>
-  </div>
-  <div class="welcome">Welcome, <b id="dash_name">Student</b> 👋</div>
+<!-- DASHBOARD SHELL -->
+<div id="shell" class="shell hidden">
+  <div class="backdrop" id="backdrop" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand"><img src="logo.png" alt=""> Dakhilaa</div>
+    <nav class="sb-nav" id="sbnav">
+      <div class="navi active" data-sec="overview" onclick="go('overview')"><span class="ic">📊</span> Overview</div>
+      <div class="navi" data-sec="qbank" onclick="go('qbank')"><span class="ic">📝</span> Question Bank</div>
+      <div class="navi" data-sec="tests" onclick="go('tests')"><span class="ic">✅</span> Mock / Chapter Tests</div>
+      <div class="navi" data-sec="mytests" onclick="go('mytests')"><span class="ic">🗒️</span> My Tests</div>
+      <div class="navi" data-sec="daily" onclick="go('daily')"><span class="ic">⚡</span> Daily Practice</div>
+      <div class="navi" data-sec="weak" onclick="go('weak')"><span class="ic">🎯</span> Weak Topics</div>
+      <div class="navi" data-sec="progress" onclick="go('progress')"><span class="ic">📈</span> Progress</div>
+      <div class="navi" data-sec="ai" onclick="go('ai')"><span class="ic">🤖</span> AI Planner</div>
+      <div class="navi" data-sec="predictor" onclick="go('predictor')"><span class="ic">🏆</span> College Predictor</div>
+      <div class="divider"></div>
+      <div class="navi" data-sec="live" onclick="go('live')"><span class="ic">🖥️</span> Live NTA CBT Portal</div>
+      <div class="navi" data-sec="settings" onclick="go('settings')"><span class="ic">⚙️</span> Settings &amp; Profile</div>
+      <div class="navi" onclick="openRate()"><span class="ic">⭐</span> Rate Us</div>
+    </nav>
+    <div class="sb-user">
+      <div class="ucard">
+        <div class="av" id="sb_av">S</div>
+        <div class="un" id="sb_name">Student</div>
+        <div class="up">Free plan</div>
+        <button class="btn btn-block" style="padding:8px;font-size:13px" onclick="openRate()">Rate Dakhilaa</button>
+      </div>
+    </div>
+  </aside>
 
-  <div class="lastcard hidden" id="lastCard">
-    <div class="ring" id="lastRing">—</div>
-    <div class="info" id="lastInfo"></div>
-  </div>
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="hb" onclick="openSidebar()">☰</button>
+        <div>
+          <h1>Welcome, <span id="dash_name">Student</span> 👋</h1>
+          <div class="sub">Find your weak areas and fix them, one test at a time.</div>
+        </div>
+      </div>
+      <div class="tb-actions">
+        <button class="btn btn-outline" onclick="go('settings')">⚙️ Settings</button>
+        <button class="btn" onclick="startDaily()">Start Daily Practice</button>
+      </div>
+    </div>
 
-  <div class="stats-grid">
-    <div class="stat"><div class="num" id="st_tests">0</div><div class="lbl">Diagnostics</div></div>
-    <div class="stat"><div class="num" id="st_solved">0</div><div class="lbl">Questions Solved</div></div>
-    <div class="stat"><div class="num" id="st_acc">0%</div><div class="lbl">Accuracy</div></div>
-  </div>
+    <div class="content">
+      <div class="banner">
+        <span class="tag">DAKHILAA</span>
+        <h2>Your JEE Preparation Hub</h2>
+        <p>1,200+ real previous-year questions, full mocks, a weak-area diagnostic, and IIT + NIT college predictors — all in one place.</p>
+      </div>
 
-  <div class="hero-card">
-    <span class="badge">⏱ 15-Minute Diagnostic</span>
-    <h2>Find Your Weak Areas</h2>
-    <p>5 questions each from Physics, Chemistry & Maths. Get a full weak-area report with your estimated JEE score and college path.</p>
-    <button class="btn" onclick="startDiagnostic()">Start Diagnostic →</button>
-  </div>
+      <!-- OVERVIEW -->
+      <section id="sec-overview">
+        <div class="weak-banner" id="ov_weak"></div>
+        <div class="tiles" id="ov_tiles"></div>
+        <h3 class="sec-h" style="font-size:18px;margin-bottom:2px">Topics to work on</h3>
+        <div class="sec-sub">Based on your latest diagnostic</div>
+        <div id="ov_topics" style="margin-bottom:24px"></div>
+        <h3 class="sec-h" style="font-size:18px;margin-bottom:2px">What's included</h3>
+        <div class="sec-sub">Everything you can use right now</div>
+        <div class="grid2">
+          <div class="bcard"><div class="ic">📚</div><h4>1,200+ Real Questions</h4><p>From 20 official JEE Main 2024 papers.</p><span class="pill">Live</span></div>
+          <div class="bcard"><div class="ic">✅</div><h4>Full Mock Tests</h4><p>JEE Main pattern, 75 questions, timed.</p><span class="pill">Live</span></div>
+          <div class="bcard"><div class="ic">⚡</div><h4>Daily Practice</h4><p>10 fresh questions every day.</p><span class="pill">Live</span></div>
+          <div class="bcard"><div class="ic">🎯</div><h4>Weak-Area Diagnostic</h4><p>Find the subjects costing you marks.</p><span class="pill">Live</span></div>
+          <div class="bcard"><div class="ic">🏆</div><h4>College Predictor</h4><p>All IITs + NITs with score gaps.</p><span class="pill">Live</span></div>
+          <div class="bcard"><div class="ic">📈</div><h4>Progress Tracking</h4><p>Score history and accuracy over time.</p><span class="pill">Live</span></div>
+        </div>
+      </section>
 
-  <div class="section-title">Or practice by subject</div>
-  <div class="subject-grid">
-    <button class="subject-btn active" data-subject="Mixed" onclick="selectSubject(this)">Mixed</button>
-    <button class="subject-btn" data-subject="Physics" onclick="selectSubject(this)">Physics</button>
-    <button class="subject-btn" data-subject="Chemistry" onclick="selectSubject(this)">Chemistry</button>
-    <button class="subject-btn" data-subject="Mathematics" onclick="selectSubject(this)">Mathematics</button>
+      <!-- QUESTION BANK -->
+      <section id="sec-qbank" class="hidden">
+        <h3 class="sec-h">Question Bank</h3>
+        <div class="sec-sub">Practice by subject with instant feedback.</div>
+        <div class="chips" id="qb_chips">
+          <div class="chip active" data-s="Mixed" onclick="qbFilter(this)">All</div>
+          <div class="chip" data-s="Physics" onclick="qbFilter(this)">Physics</div>
+          <div class="chip" data-s="Chemistry" onclick="qbFilter(this)">Chemistry</div>
+          <div class="chip" data-s="Mathematics" onclick="qbFilter(this)">Maths</div>
+        </div>
+        <div class="qcard" id="qb_card"></div>
+      </section>
+
+      <!-- TESTS -->
+      <section id="sec-tests" class="hidden">
+        <h3 class="sec-h">Full Mock Tests</h3>
+        <div class="sec-sub">Full-length JEE Main pattern — 75 questions, +4 / −1 marking.</div>
+        <div class="mockrow">
+          <div class="mock">
+            <span class="pat">JEE Main Pattern</span>
+            <h4>Full Mock Test</h4>
+            <ul><li>75 questions (25 each subject)</li><li>Timed, exam-style</li><li>Weak-area report at the end</li></ul>
+            <button class="btn btn-block" onclick="startMock()">Start Mock Test</button>
+          </div>
+          <div class="mock">
+            <span class="pat">By Subject</span>
+            <h4>Subject Test</h4>
+            <ul><li>25 questions from one subject</li><li>Focus on a single area</li><li>Instant scoring</li></ul>
+            <div class="chips" style="margin-bottom:12px">
+              <div class="chip active" data-st="Physics" onclick="subjPick(this)">Physics</div>
+              <div class="chip" data-st="Chemistry" onclick="subjPick(this)">Chemistry</div>
+              <div class="chip" data-st="Mathematics" onclick="subjPick(this)">Maths</div>
+            </div>
+            <button class="btn btn-block btn-outline" onclick="startSubjectTest()">Start Subject Test</button>
+          </div>
+        </div>
+        <h3 class="sec-h" style="font-size:18px">Chapter-wise Tests</h3>
+        <div class="sec-sub">Practice one chapter at a time.</div>
+        <div class="coming"><div class="ic">🧩</div><b>Chapter-wise tests coming soon</b><p style="margin-top:6px">We're tagging every question by chapter (Kinematics, Thermodynamics, Calculus…). Until then, use subject tests above.</p></div>
+      </section>
+
+      <!-- MY TESTS -->
+      <section id="sec-mytests" class="hidden">
+        <h3 class="sec-h">My Tests</h3>
+        <div class="sec-sub">Review any of your past tests.</div>
+        <div class="grid2" id="mt_list"></div>
+        <div id="mt_empty" class="coming hidden"><div class="ic">🗒️</div><b>No tests yet</b><p style="margin-top:6px">Take a diagnostic or mock test — it'll show up here.</p></div>
+      </section>
+
+      <!-- DAILY -->
+      <section id="sec-daily" class="hidden">
+        <h3 class="sec-h">Daily Practice</h3>
+        <div class="sec-sub">10 fresh questions to keep your streak going.</div>
+        <div class="qcard" style="text-align:center;padding:34px 18px">
+          <div style="font-size:40px;margin-bottom:8px">⚡</div>
+          <h4 style="font-size:18px;margin-bottom:6px">Today's 10 Questions</h4>
+          <p style="color:var(--muted);font-size:14px;margin-bottom:16px">A quick mixed set across Physics, Chemistry and Maths.</p>
+          <button class="btn" onclick="startDaily()">Start Daily Practice →</button>
+        </div>
+      </section>
+
+      <!-- WEAK -->
+      <section id="sec-weak" class="hidden">
+        <h3 class="sec-h">Weak Topics</h3>
+        <div class="sec-sub">Based on your latest diagnostic. Focus here to gain the most marks.</div>
+        <div id="weak_body"></div>
+      </section>
+
+      <!-- PROGRESS -->
+      <section id="sec-progress" class="hidden">
+        <h3 class="sec-h">Progress</h3>
+        <div class="sec-sub">Your performance over time.</div>
+        <div class="tiles" id="pr_tiles"></div>
+        <h3 class="sec-h" style="font-size:16px;margin-bottom:12px">Score history</h3>
+        <div class="chartbox"><div class="bars" id="pr_bars"></div></div>
+      </section>
+
+      <!-- AI PLANNER -->
+      <section id="sec-ai" class="hidden">
+        <div class="ai-wrap">
+          <div class="ai-hero">
+            <div class="bot">🤖</div>
+            <h3>Dakhilaa Study Planner</h3>
+            <div class="st">Your study buddy · always here</div>
+          </div>
+          <div class="chatbox" id="ai_chat"></div>
+          <div class="ai-quick">
+            <div class="q" onclick="aiQuick('plan')">📋 Get my study plan</div>
+            <div class="q" onclick="aiQuick('weak')">🎯 Solve my weak topics</div>
+            <div class="q" onclick="aiQuick('motivate')">💪 Motivate me</div>
+          </div>
+          <div class="ai-input">
+            <input id="ai_in" type="text" placeholder="Ask about your plan, weak topics, colleges…" onkeydown="if(event.key==='Enter')aiSend()">
+            <button onclick="aiSend()">↑</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PREDICTOR -->
+      <section id="sec-predictor" class="hidden">
+        <h3 class="sec-h">College Predictor</h3>
+        <div class="sec-sub">Branch-wise score gaps for all IITs, NITs.</div>
+        <div class="predictor">
+          <div class="pred-row">
+            <div><label>Your Score (out of 300)</label><input id="curScore" type="number" min="0" max="300" placeholder="e.g. 220"></div>
+            <div><label>Target College</label><select id="targetCollege"><option value="">Select college</option></select></div>
+          </div>
+          <button class="btn btn-block" onclick="checkCutoff()">Check Cutoff &amp; Gap</button>
+          <div class="pred-result" id="predResult"></div>
+        </div>
+      </section>
+
+      <!-- LIVE -->
+      <section id="sec-live" class="hidden">
+        <h3 class="sec-h">Live NTA CBT Portal</h3>
+        <div class="sec-sub">Exam-day-style tests with an all-India leaderboard.</div>
+        <div class="coming"><div class="ic">🏆</div><b>Live Test Arena — coming soon</b><p style="margin-top:6px">No live test is scheduled right now. Competitive, timed tests with a leaderboard are on the way.</p></div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section id="sec-settings" class="hidden">
+        <h3 class="sec-h">Settings &amp; Profile</h3>
+        <div class="sec-sub">Your account details.</div>
+        <div class="setcard">
+          <div class="setrow"><span class="k">Name</span><span id="set_name">—</span></div>
+          <div class="setrow"><span class="k">Email</span><span id="set_email">—</span></div>
+          <div class="setrow"><span class="k">Plan</span><span>Free</span></div>
+          <div class="setrow"><span class="k">Diagnostics taken</span><span id="set_tests">0</span></div>
+          <div style="margin-top:16px"><button class="btn btn-outline btn-block" onclick="logout()">Log out</button></div>
+        </div>
+      </section>
+
+    </div>
   </div>
-  <button class="btn btn-outline" onclick="startPractice()">Start 10-Question Practice</button>
-  <div class="msg" id="dash_msg"></div>
 </div>
 
-<div id="testScreen" class="container hidden">
+<!-- TEST SCREEN -->
+<div id="testScreen" class="hidden"><div class="fullpage">
   <div class="test-head">
-    <span class="qcount"><span id="q_mode">Diagnostic</span> · <span id="q_now">1</span>/<span id="q_total">15</span></span>
-    <span class="paper-tag" id="q_paper">JEE Main 2024</span>
+    <button class="exit" onclick="exitTest()">← Exit</button>
+    <span class="mid"><span id="q_mode">Test</span> · <span id="q_now">1</span> of <span id="q_total">15</span></span>
+    <span class="timer" id="q_timer"></span>
   </div>
   <div class="progress-bar"><div class="fill" id="q_fill"></div></div>
   <div class="q-image-wrap" id="q_imgwrap"><div class="q-loading">Loading question…</div></div>
@@ -202,33 +508,44 @@
     <button class="btn btn-outline" id="prevBtn" onclick="prevQuestion()">Previous</button>
     <button class="btn" id="nextBtn" onclick="nextQuestion()">Next</button>
   </div>
-  <div style="margin-top:12px"><button class="btn btn-outline" onclick="exitTest()">Exit</button></div>
-</div>
+  <div class="palette" id="palette"></div>
+</div></div>
 
-<div id="resultsScreen" class="container hidden">
-  <h2 style="text-align:center;margin-bottom:4px" id="r_title">Your Diagnostic Report</h2>
-  <div class="report-ring" id="r_ring">
-    <div class="pct" id="r_pct">0%</div><div class="sub">Readiness</div>
-  </div>
+<!-- RESULTS -->
+<div id="resultsScreen" class="hidden"><div class="fullpage">
+  <h2 style="text-align:center;margin-bottom:4px" id="r_title">Your Report</h2>
+  <div class="report-ring" id="r_ring"><div class="pct" id="r_pct">0%</div><div class="subx">Score</div></div>
   <div id="r_estwrap">
     <div class="est-line">Estimated JEE Main score: <b id="r_est">0</b> / 300</div>
-    <div class="est-note">An indicator based on this 15-question diagnostic — not an official score.</div>
+    <div class="est-note">An indicator based on this test — not an official score.</div>
   </div>
   <div id="r_subjects"></div>
   <div id="r_weak"></div>
   <div id="r_path"></div>
-  <div class="section-title">Review</div>
+  <h3 class="sec-h" style="font-size:16px;margin:18px 0 10px">Review</h3>
   <div id="r_review"></div>
   <div class="nav-row" style="margin-top:8px">
-    <button class="btn btn-outline" onclick="backToDashboard()">Dashboard</button>
-    <button class="btn" id="r_retake" onclick="startDiagnostic()">Retake</button>
+    <button class="btn btn-outline" onclick="backToDash()">Dashboard</button>
+    <button class="btn" id="r_again" onclick="startDiagnostic()">Retake</button>
+  </div>
+</div></div>
+
+<!-- RATE MODAL -->
+<div class="modal-bg" id="rateModal">
+  <div class="modal">
+    <button class="x" onclick="closeRate()">×</button>
+    <h3>Rate your experience</h3>
+    <div class="sub">Your feedback helps us improve Dakhilaa.</div>
+    <div class="stars" id="rateStars"><span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span></div>
+    <textarea id="rateText" placeholder="What did you like? What can we improve?"></textarea>
+    <button class="btn btn-block" style="margin-top:14px" onclick="submitRate()">Submit Feedback</button>
+    <div class="msg" id="rateMsg"></div>
   </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-
 <script>
 "use strict";
 
@@ -241,39 +558,31 @@ var firebaseConfig = {
   appId: "1:1055517618428:web:b6dcd8d696ccb94b7a6779"
 };
 var USE_FIREBASE = firebaseConfig.apiKey.indexOf("PASTE") === -1 && typeof firebase !== "undefined";
-var fbAuth = null, fbDB = null;
-if (USE_FIREBASE) {
-  try { firebase.initializeApp(firebaseConfig); fbAuth = firebase.auth(); fbDB = firebase.firestore(); }
-  catch(e){ console.error("Firebase init failed, using local accounts:", e); USE_FIREBASE = false; }
-}
+var fbAuth=null, fbDB=null;
+if(USE_FIREBASE){ try{ firebase.initializeApp(firebaseConfig); fbAuth=firebase.auth(); fbDB=firebase.firestore(); }catch(e){ console.error(e); USE_FIREBASE=false; } }
 
-var allQuestions = [];
-var currentUser = null;
-var currentProfile = null;   // { name, stats:{testsTaken,questionsSolved,correctAnswers}, last:{readiness,weakest,est} }
-var selectedSubject = "Mixed";
-var testState = { questions: [], answers: [], current: 0, active: false, mode: "diagnostic" };
-var MIN_PASS = 6;
-var SUBJECTS = ["Physics", "Chemistry", "Mathematics"];
+var allQuestions=[];
+var currentUser=null, currentEmail="", currentProfile=null;
+var SUBJECTS=["Physics","Chemistry","Mathematics"];
+var MIN_PASS=6;
+var testState={ questions:[], answers:[], current:0, active:false, mode:"diagnostic", timed:false, endAt:0, timerId:null };
+var qb={ pool:[], idx:0, answered:false, subject:"Mixed" };
+var subjTestPick="Physics";
 
-/* ---- local store ---- */
-var usersDB = {}; var storageOK = true;
+/* ---------- storage ---------- */
+var usersDB={}, storageOK=true;
 function loadDB(){ try{ var r=localStorage.getItem("dakhilaaUsers"); usersDB=r?JSON.parse(r):{}; }catch(e){ usersDB={}; storageOK=false; } }
 function persistDB(){ try{ localStorage.setItem("dakhilaaUsers", JSON.stringify(usersDB)); }catch(e){ storageOK=false; } }
-function persistCurrent(e){ try{ localStorage.setItem("dakhilaaCurrent", e); }catch(x){ storageOK=false; } }
+function persistCurrent(e){ try{ localStorage.setItem("dakhilaaCurrent", e); }catch(x){} }
 function readCurrent(){ try{ return localStorage.getItem("dakhilaaCurrent"); }catch(e){ return null; } }
 function clearCurrentStore(){ try{ localStorage.removeItem("dakhilaaCurrent"); }catch(e){} }
 
-/* ---- screens ---- */
-function show(id){
-  ["loadingScreen","authScreen","dashboard","testScreen","resultsScreen"].forEach(function(s){ document.getElementById(s).classList.add("hidden"); });
-  document.getElementById(id).classList.remove("hidden");
-  window.scrollTo(0,0);
-}
+/* ---------- top-level views ---------- */
+function view(id){ ["loadingScreen","authScreen","shell","testScreen","resultsScreen"].forEach(function(s){ document.getElementById(s).classList.add("hidden"); }); document.getElementById(id).classList.remove("hidden"); window.scrollTo(0,0); }
 function showSignup(){ document.getElementById("signupForm").classList.remove("hidden"); document.getElementById("signinForm").classList.add("hidden"); }
 function showSignin(){ document.getElementById("signinForm").classList.remove("hidden"); document.getElementById("signupForm").classList.add("hidden"); }
-function setBtnBusy(id,busy,t){ var b=document.getElementById(id); if(!b)return; b.disabled=busy; if(busy){ b.dataset.label=b.textContent; b.textContent=t||"Please wait…"; } else if(b.dataset.label){ b.textContent=b.dataset.label; } }
-function fbError(err){
-  var c=(err&&err.code)?err.code:"";
+function setBtnBusy(id,b,t){ var x=document.getElementById(id); if(!x)return; x.disabled=b; if(b){ x.dataset.l=x.textContent; x.textContent=t||"Please wait…"; } else if(x.dataset.l){ x.textContent=x.dataset.l; } }
+function fbError(err){ var c=(err&&err.code)?err.code:"";
   if(c.indexOf("email-already-in-use")>=0) return "This email is already registered. Please sign in.";
   if(c.indexOf("invalid-email")>=0) return "Please enter a valid email address.";
   if(c.indexOf("weak-password")>=0) return "Password must be at least 6 characters.";
@@ -281,10 +590,9 @@ function fbError(err){
   if(c.indexOf("wrong-password")>=0||c.indexOf("invalid-credential")>=0||c.indexOf("invalid-login")>=0) return "Incorrect email or password.";
   if(c.indexOf("network")>=0) return "Network error. Please check your connection.";
   if(c.indexOf("too-many-requests")>=0) return "Too many attempts. Please wait and try again.";
-  return "Something went wrong. Please try again.";
-}
+  return "Something went wrong. Please try again."; }
 
-/* ---- auth ---- */
+/* ---------- auth ---------- */
 function handleSignup(){
   var name=document.getElementById("su_name").value.trim();
   var email=document.getElementById("su_email").value.trim().toLowerCase();
@@ -296,13 +604,13 @@ function handleSignup(){
     setBtnBusy("su_btn",true,"Creating account…");
     fbAuth.createUserWithEmailAndPassword(email,pass).then(function(cred){
       return cred.user.updateProfile({displayName:name}).then(function(){
-        return fbDB.collection("users").doc(cred.user.uid).set({ name:name, email:email, testsTaken:0, questionsSolved:0, correctAnswers:0 });
+        return fbDB.collection("users").doc(cred.user.uid).set({ name:name, email:email, testsTaken:0, questionsSolved:0, correctAnswers:0, history:[] });
       });
-    }).then(function(){}).catch(function(err){ msg.textContent=fbError(err); setBtnBusy("su_btn",false); });
+    }).catch(function(err){ msg.textContent=fbError(err); setBtnBusy("su_btn",false); });
   } else {
     if(usersDB[email]){ msg.textContent="This email is already registered. Please sign in."; return; }
-    usersDB[email]={ name:name, password:pass, stats:{testsTaken:0,questionsSolved:0,correctAnswers:0}, last:null };
-    persistDB(); currentUser=email; currentProfile=usersDB[email]; persistCurrent(email); openDashboard();
+    usersDB[email]={ name:name, email:email, password:pass, stats:{testsTaken:0,questionsSolved:0,correctAnswers:0}, last:null, history:[] };
+    persistDB(); currentUser=email; currentEmail=email; currentProfile=usersDB[email]; persistCurrent(email); enterApp();
   }
 }
 function handleSignin(){
@@ -312,259 +620,405 @@ function handleSignin(){
   if(!email||!pass){ msg.textContent="Please enter your email and password."; return; }
   if(USE_FIREBASE){
     setBtnBusy("si_btn",true,"Signing in…");
-    fbAuth.signInWithEmailAndPassword(email,pass).then(function(){}).catch(function(err){ msg.textContent=fbError(err); setBtnBusy("si_btn",false); });
+    fbAuth.signInWithEmailAndPassword(email,pass).catch(function(err){ msg.textContent=fbError(err); setBtnBusy("si_btn",false); });
   } else {
     if(!usersDB[email]){ msg.textContent="No account found for this email."; return; }
     if(usersDB[email].password!==pass){ msg.textContent="Incorrect password."; return; }
-    currentUser=email; currentProfile=usersDB[email]; persistCurrent(email); openDashboard();
+    currentUser=email; currentEmail=email; currentProfile=usersDB[email]; persistCurrent(email); enterApp();
   }
 }
-function logout(){
-  if(USE_FIREBASE){ fbAuth.signOut(); }
-  else { clearCurrentStore(); currentUser=null; currentProfile=null; show("authScreen"); showSignin(); }
-}
+function logout(){ if(USE_FIREBASE){ fbAuth.signOut(); } else { clearCurrentStore(); currentUser=null; currentProfile=null; view("authScreen"); showSignin(); } }
 function initFirebaseAuth(){
   fbAuth.onAuthStateChanged(function(user){
     setBtnBusy("su_btn",false); setBtnBusy("si_btn",false);
     if(user){
       fbDB.collection("users").doc(user.uid).get().then(function(doc){
         var d=doc.exists?doc.data():{};
-        currentUser=user.uid;
-        currentProfile={ name:d.name||user.displayName||"Student",
+        currentUser=user.uid; currentEmail=d.email||user.email||"";
+        currentProfile={ name:d.name||user.displayName||"Student", email:currentEmail,
           stats:{ testsTaken:d.testsTaken||0, questionsSolved:d.questionsSolved||0, correctAnswers:d.correctAnswers||0 },
-          last:(typeof d.lastReadiness==="number")?{ readiness:d.lastReadiness, weakest:d.weakestSubject||"", est:d.lastEst||0 }:null };
-        openDashboard();
-      }).catch(function(){
-        currentUser=user.uid;
-        currentProfile={ name:user.displayName||"Student", stats:{testsTaken:0,questionsSolved:0,correctAnswers:0}, last:null };
-        openDashboard();
-      });
-    } else { currentUser=null; currentProfile=null; show("authScreen"); showSignin(); }
+          last:(typeof d.lastReadiness==="number")?{ readiness:d.lastReadiness, weakest:d.weakestSubject||"", est:d.lastEst||0, per:d.lastPer||null }:null,
+          history:Array.isArray(d.history)?d.history:[] };
+        enterApp();
+      }).catch(function(){ currentUser=user.uid; currentEmail=user.email||""; currentProfile={ name:user.displayName||"Student", email:currentEmail, stats:{testsTaken:0,questionsSolved:0,correctAnswers:0}, last:null, history:[] }; enterApp(); });
+    } else { currentUser=null; currentProfile=null; view("authScreen"); showSignin(); }
   });
 }
 
-/* ---- dashboard ---- */
-function openDashboard(){
-  var p=currentProfile;
-  if(!p){ show("authScreen"); showSignup(); return; }
+/* ---------- enter app ---------- */
+function enterApp(){
+  var p=currentProfile; if(!p){ view("authScreen"); showSignup(); return; }
   document.getElementById("dash_name").textContent=p.name;
-  document.getElementById("st_tests").textContent=p.stats.testsTaken;
-  document.getElementById("st_solved").textContent=p.stats.questionsSolved;
-  var acc=p.stats.questionsSolved>0?Math.round(100*p.stats.correctAnswers/p.stats.questionsSolved):0;
-  document.getElementById("st_acc").textContent=acc+"%";
-  var lc=document.getElementById("lastCard");
-  if(p.last){
-    lc.classList.remove("hidden");
-    var ring=document.getElementById("lastRing");
-    ring.textContent=p.last.readiness+"%";
-    ring.style.background=ringColor(p.last.readiness);
-    ring.style.color="#fff";
-    document.getElementById("lastInfo").innerHTML="Last diagnostic — <b>"+p.last.readiness+"% readiness</b><br>Weakest area: <b>"+p.last.weakest+"</b> · Est. score <b>~"+p.last.est+"/300</b>";
-  } else { lc.classList.add("hidden"); }
-  var dm=document.getElementById("dash_msg");
-  if(!USE_FIREBASE && !storageOK){ dm.style.color="var(--amber)"; dm.textContent="Note: your browser is blocking saved logins, so this account is only for this session."; }
-  else { dm.textContent=""; }
-  show("dashboard");
-}
-function ringColor(pct){ return pct>=70?"var(--green)":(pct>=40?"var(--amber)":"var(--orange)"); }
-function selectSubject(btn){
-  selectedSubject=btn.getAttribute("data-subject");
-  var b=document.querySelectorAll(".subject-btn"); for(var i=0;i<b.length;i++) b[i].classList.remove("active");
-  btn.classList.add("active");
+  document.getElementById("sb_name").textContent=p.name;
+  document.getElementById("sb_av").textContent=(p.name||"S").charAt(0).toUpperCase();
+  document.getElementById("set_name").textContent=p.name;
+  document.getElementById("set_email").textContent=p.email||"—";
+  view("shell"); go("overview");
 }
 
-/* ---- test setup ---- */
-function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
-function startDiagnostic(){
-  var picked=[];
-  SUBJECTS.forEach(function(sub){
-    var pool=allQuestions.filter(function(q){ return q.subject===sub; });
-    picked=picked.concat(shuffle(pool.slice()).slice(0,5));
+/* ---------- navigation ---------- */
+function go(sec){
+  var navs=document.querySelectorAll(".sb-nav .navi"); for(var i=0;i<navs.length;i++){ navs[i].classList.toggle("active", navs[i].getAttribute("data-sec")===sec); }
+  ["overview","qbank","tests","mytests","daily","weak","progress","ai","predictor","live","settings"].forEach(function(s){
+    var el=document.getElementById("sec-"+s); if(el) el.classList.toggle("hidden", s!==sec);
   });
-  if(picked.length<3){ document.getElementById("dash_msg").textContent="Questions unavailable, please refresh."; return; }
-  picked=shuffle(picked);
-  testState={ questions:picked, answers:new Array(picked.length).fill(null), current:0, active:true, mode:"diagnostic" };
-  document.getElementById("q_mode").textContent="Diagnostic";
-  document.getElementById("q_total").textContent=picked.length;
-  show("testScreen"); displayQuestion();
+  closeSidebar();
+  if(sec==="overview") renderOverview();
+  if(sec==="qbank") qbLoad();
+  if(sec==="mytests") renderMyTests();
+  if(sec==="weak") renderWeak();
+  if(sec==="progress") renderProgress();
+  if(sec==="ai") aiInit();
+  if(sec==="settings"){ document.getElementById("set_tests").textContent=currentProfile.stats.testsTaken; }
+  window.scrollTo(0,0);
 }
-function startPractice(){
-  var msg=document.getElementById("dash_msg"); msg.style.color="var(--red)"; msg.textContent="";
-  var pool=allQuestions.filter(function(q){ return selectedSubject==="Mixed"?true:q.subject===selectedSubject; });
-  if(pool.length<1){ msg.textContent="No questions available."; return; }
-  var picked=shuffle(pool.slice()).slice(0,Math.min(10,pool.length));
-  testState={ questions:picked, answers:new Array(picked.length).fill(null), current:0, active:true, mode:"practice" };
-  document.getElementById("q_mode").textContent="Practice";
-  document.getElementById("q_total").textContent=picked.length;
-  show("testScreen"); displayQuestion();
+function openSidebar(){ document.getElementById("sidebar").classList.add("open"); document.getElementById("backdrop").classList.add("show"); }
+function closeSidebar(){ document.getElementById("sidebar").classList.remove("open"); document.getElementById("backdrop").classList.remove("show"); }
+
+/* ---------- overview ---------- */
+function renderOverview(){
+  var p=currentProfile, s=p.stats;
+  var acc=s.questionsSolved>0?Math.round(100*s.correctAnswers/s.questionsSolved):0;
+  var latest=(p.history&&p.history.length)?p.history[p.history.length-1].score:0;
+  var wb=document.getElementById("ov_weak");
+  if(p.last){
+    wb.innerHTML='<div><div class="lbl">Your weak area</div><h3>Focus on '+p.last.weakest+'</h3><p>Your accuracy here is the lowest. Fixing it gives the fastest score gain.</p></div><button class="btn" onclick="startDiagnostic()">Retake diagnostic</button>';
+    wb.classList.remove("hidden");
+  } else {
+    wb.innerHTML='<div><div class="lbl">Get started</div><h3>Take your first diagnostic</h3><p>15 questions to find exactly where you\'re losing marks.</p></div><button class="btn" onclick="startDiagnostic()">Start diagnostic</button>';
+    wb.classList.remove("hidden");
+  }
+  document.getElementById("ov_tiles").innerHTML=
+    tile("Questions Solved", s.questionsSolved, "Across all tests", Math.min(100,s.questionsSolved/12))+
+    tile("Accuracy", acc+"%", "Your overall accuracy", acc)+
+    tile("Tests Taken", s.testsTaken, "Diagnostic + practice", Math.min(100,s.testsTaken*10))+
+    tile("Latest Score", latest+"%", "Most recent test", latest);
+  var ot=document.getElementById("ov_topics");
+  if(p.last && p.last.per){
+    var html="";
+    SUBJECTS.forEach(function(su){
+      var d=p.last.per[su]; if(!d) return;
+      var a=d.t>0?Math.round(100*d.c/d.t):0;
+      html+='<div class="subj-row"><div class="top"><span>'+su+'</span><span class="sc">'+a+'% accuracy</span></div><div class="bar"><div class="f" style="width:'+a+'%;background:'+subColor(su)+'"></div></div></div>';
+    });
+    ot.innerHTML=html;
+  } else { ot.innerHTML='<div class="coming" style="padding:20px"><b>No diagnostic yet</b><p style="margin-top:6px">Take the diagnostic to see your topic breakdown.</p></div>'; }
 }
+function tile(lbl,val,foot,pct){ return '<div class="tile"><div class="lbl">'+lbl+'</div><div class="val">'+val+'</div><div class="foot">'+foot+'</div><div class="track"><div class="f" style="width:'+Math.max(4,Math.min(100,pct))+'%"></div></div></div>'; }
+function subColor(s){ return s==="Physics"?"#fbbf24":(s==="Chemistry"?"#34d399":"#a78bfa"); }
+
+/* ---------- question bank ---------- */
+function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function qbFilter(el){ var c=document.querySelectorAll("#qb_chips .chip"); for(var i=0;i<c.length;i++) c[i].classList.remove("active"); el.classList.add("active"); qb.subject=el.getAttribute("data-s"); qbLoad(); }
+function qbLoad(){
+  qb.pool=shuffle(allQuestions.filter(function(q){ return qb.subject==="Mixed"?true:q.subject===qb.subject; }).slice());
+  qb.idx=0; qbRender();
+}
+function qbRender(){
+  if(!qb.pool.length){ document.getElementById("qb_card").innerHTML="<p style='color:var(--muted)'>No questions.</p>"; return; }
+  var q=qb.pool[qb.idx]; qb.answered=false;
+  var html='<div class="qtop"><span>'+q.subject+' · '+(q.paper||"")+'</span><span>Question '+(qb.idx+1)+' of '+qb.pool.length+'</span></div>'+
+    '<div class="qimg"><img src="'+q.img+'" alt="question" loading="lazy"></div>'+
+    '<div class="qopts">';
+  for(var i=0;i<4;i++){ html+='<button class="qopt" data-i="'+i+'" onclick="qbAnswer('+i+')"><span class="lt">'+(i+1)+'</span> Option '+(i+1)+'</button>'; }
+  html+='</div><div class="qfoot"><button class="btn" onclick="qbNext()">Next Question →</button></div>';
+  document.getElementById("qb_card").innerHTML=html;
+}
+function qbAnswer(i){
+  if(qb.answered) return; qb.answered=true;
+  var q=qb.pool[qb.idx];
+  var opts=document.querySelectorAll("#qb_card .qopt");
+  opts[i].classList.add(i===q.correct?"correct":"wrong");
+  if(i!==q.correct) opts[q.correct].classList.add("correct");
+  // count towards stats
+  bumpStats(1, i===q.correct?1:0, false);
+}
+function qbNext(){ qb.idx=(qb.idx+1)%qb.pool.length; qbRender(); }
+
+/* ---------- tests ---------- */
+function subjPick(el){ var c=el.parentElement.querySelectorAll(".chip"); for(var i=0;i<c.length;i++) c[i].classList.remove("active"); el.classList.add("active"); subjTestPick=el.getAttribute("data-st"); }
+function pickBalanced(perSubject){ var out=[]; SUBJECTS.forEach(function(su){ var pool=allQuestions.filter(function(q){ return q.subject===su; }); out=out.concat(shuffle(pool.slice()).slice(0,perSubject)); }); return shuffle(out); }
+function startDiagnostic(){ beginTest(pickBalanced(5), "diagnostic", false); }
+function startMock(){ beginTest(pickBalanced(25), "mock", true, 180); }
+function startDaily(){ var pool=shuffle(allQuestions.slice()).slice(0,10); beginTest(pool, "daily", false); }
+function startSubjectTest(){ var pool=allQuestions.filter(function(q){ return q.subject===subjTestPick; }); beginTest(shuffle(pool.slice()).slice(0,25), "subject", false); }
+function beginTest(qs, mode, timed, minutes){
+  if(qs.length<1){ alert("Questions unavailable, please refresh."); return; }
+  testState={ questions:qs, answers:new Array(qs.length).fill(null), current:0, active:true, mode:mode, timed:!!timed, endAt:0, timerId:null };
+  document.getElementById("q_mode").textContent=modeLabel(mode);
+  document.getElementById("q_total").textContent=qs.length;
+  var tEl=document.getElementById("q_timer");
+  if(timed){ testState.endAt=Date.now()+minutes*60000; tEl.classList.remove("hidden"); tick(); testState.timerId=setInterval(tick,1000); } else { tEl.textContent=""; }
+  buildPalette();
+  view("testScreen"); displayQuestion();
+}
+function modeLabel(m){ return m==="diagnostic"?"Diagnostic":(m==="mock"?"Mock Test":(m==="subject"?"Subject Test":(m==="daily"?"Daily Practice":"Test"))); }
+function tick(){
+  var ms=testState.endAt-Date.now();
+  if(ms<=0){ ms=0; clearInterval(testState.timerId); submitTest(); }
+  var m=Math.floor(ms/60000), s=Math.floor((ms%60000)/1000);
+  document.getElementById("q_timer").textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+}
+function buildPalette(){
+  var p=document.getElementById("palette"); p.innerHTML="";
+  for(var i=0;i<testState.questions.length;i++){ var d=document.createElement("div"); d.className="pq"; d.textContent=(i+1); d.onclick=(function(k){ return function(){ testState.current=k; displayQuestion(); }; })(i); p.appendChild(d); }
+}
+function refreshPalette(){ var els=document.querySelectorAll("#palette .pq"); for(var i=0;i<els.length;i++){ els[i].classList.toggle("done", testState.answers[i]!==null); els[i].classList.toggle("cur", i===testState.current); } }
 function displayQuestion(){
   var idx=testState.current, q=testState.questions[idx];
   document.getElementById("q_now").textContent=(idx+1);
-  document.getElementById("q_paper").textContent=q.paper||"JEE Main 2024";
   document.getElementById("q_fill").style.width=((idx+1)/testState.questions.length*100)+"%";
-  var wrap=document.getElementById("q_imgwrap");
-  wrap.innerHTML='<div class="q-loading">Loading question…</div>';
-  var img=new Image();
-  img.onload=function(){ wrap.innerHTML=""; wrap.appendChild(img); };
-  img.onerror=function(){ wrap.innerHTML='<div class="q-loading">Image could not load.</div>'; };
-  img.alt="JEE question"; img.src=q.img;
-  var opts=document.querySelectorAll(".opt");
-  for(var i=0;i<opts.length;i++) opts[i].classList.toggle("selected", testState.answers[idx]===i);
+  var wrap=document.getElementById("q_imgwrap"); wrap.innerHTML='<div class="q-loading">Loading question…</div>';
+  var img=new Image(); img.onload=function(){ wrap.innerHTML=""; wrap.appendChild(img); }; img.onerror=function(){ wrap.innerHTML='<div class="q-loading">Image could not load.</div>'; }; img.alt="JEE question"; img.src=q.img;
+  var opts=document.querySelectorAll("#testScreen .opt"); for(var i=0;i<opts.length;i++) opts[i].classList.toggle("selected", testState.answers[idx]===i);
   document.getElementById("prevBtn").disabled=(idx===0);
   document.getElementById("nextBtn").textContent=(idx===testState.questions.length-1)?"Submit":"Next";
+  refreshPalette();
 }
-function selectAnswer(i){
-  testState.answers[testState.current]=i;
-  var opts=document.querySelectorAll(".opt");
-  for(var k=0;k<opts.length;k++) opts[k].classList.toggle("selected", k===i);
-}
+function selectAnswer(i){ testState.answers[testState.current]=i; var opts=document.querySelectorAll("#testScreen .opt"); for(var k=0;k<opts.length;k++) opts[k].classList.toggle("selected",k===i); refreshPalette(); }
 function nextQuestion(){ if(testState.current===testState.questions.length-1){ submitTest(); return; } testState.current++; displayQuestion(); }
 function prevQuestion(){ if(testState.current>0){ testState.current--; displayQuestion(); } }
-function exitTest(){ if(confirm("Exit this test? Progress will not be saved.")){ testState.active=false; openDashboard(); } }
+function exitTest(){ if(confirm("Exit this test? Progress will not be saved.")){ testState.active=false; if(testState.timerId) clearInterval(testState.timerId); view("shell"); go("overview"); } }
 
-/* ---- submit & report ---- */
-function tierFor(score){
-  if(score>=250) return "Top NITs / IIIT-Hyderabad range";
-  if(score>=200) return "Top NITs — core branches";
-  if(score>=150) return "NITs (home-state) / IIITs / GFTIs";
-  if(score>=100) return "State Government Engineering Colleges";
-  return "Foundation-building stage";
+/* ---------- submit + report ---------- */
+function tierFor(sc){ if(sc>=250)return "Top NITs / IIIT-Hyderabad range"; if(sc>=200)return "Top NITs — core branches"; if(sc>=150)return "NITs (home-state) / IIITs / GFTIs"; if(sc>=100)return "State Government Engineering Colleges"; return "Foundation-building stage"; }
+function nextMilestone(sc){ var t=[100,150,200,250,280]; for(var i=0;i<t.length;i++){ if(sc<t[i]) return t[i]; } return null; }
+function bumpStats(qCount, correctCount, isTest){
+  if(!currentProfile) return;
+  currentProfile.stats.questionsSolved+=qCount;
+  currentProfile.stats.correctAnswers+=correctCount;
+  if(isTest) currentProfile.stats.testsTaken+=1;
+  if(USE_FIREBASE && fbDB && currentUser){
+    var upd={ questionsSolved:firebase.firestore.FieldValue.increment(qCount), correctAnswers:firebase.firestore.FieldValue.increment(correctCount) };
+    if(isTest) upd.testsTaken=firebase.firestore.FieldValue.increment(1);
+    fbDB.collection("users").doc(currentUser).set(upd,{merge:true}).catch(function(e){ console.error(e); });
+  } else { persistDB(); }
 }
-function nextMilestone(score){ var t=[100,150,200,250,280]; for(var i=0;i<t.length;i++){ if(score<t[i]) return t[i]; } return null; }
-
 function submitTest(){
-  var qs=testState.questions, ans=testState.answers;
-  var total=qs.length, correct=0;
+  if(testState.timerId) clearInterval(testState.timerId);
+  var qs=testState.questions, ans=testState.answers, total=qs.length, correct=0;
   var per={}; SUBJECTS.forEach(function(s){ per[s]={c:0,t:0}; });
-  qs.forEach(function(q,i){
-    if(per[q.subject]){ per[q.subject].t++; if(ans[i]===q.correct) per[q.subject].c++; }
-    if(ans[i]===q.correct) correct++;
-  });
-  var readiness=Math.round(100*correct/total);
+  qs.forEach(function(q,i){ if(per[q.subject]){ per[q.subject].t++; if(ans[i]===q.correct) per[q.subject].c++; } if(ans[i]===q.correct) correct++; });
+  var score=Math.round(100*correct/total);
+  var diag=(testState.mode==="diagnostic"||testState.mode==="mock");
 
-  // update counters
-  if(currentProfile){
-    currentProfile.stats.testsTaken+=1;
-    currentProfile.stats.questionsSolved+=total;
-    currentProfile.stats.correctAnswers+=correct;
-  }
+  // subjects present (for history tags)
+  var subjTags={}; qs.forEach(function(q){ subjTags[q.subject]=(subjTags[q.subject]||0)+1; });
 
-  if(testState.mode==="diagnostic"){
-    renderDiagnosticReport(per, correct, total, readiness, qs, ans);
-  } else {
-    renderPracticeResult(correct, total, readiness, qs, ans);
-  }
+  // stats + history
+  currentProfile.stats.testsTaken+=1;
+  currentProfile.stats.questionsSolved+=total;
+  currentProfile.stats.correctAnswers+=correct;
+  var histEntry={ type:modeLabel(testState.mode), score:score, correct:correct, total:total, subjects:subjTags, date:Date.now() };
+  currentProfile.history=(currentProfile.history||[]).concat([histEntry]);
+  if(currentProfile.history.length>30) currentProfile.history=currentProfile.history.slice(-30);
+
+  if(diag){ renderDiagnosticReport(per, correct, total, score, qs, ans); if(currentProfile.last) {} }
+  else { renderPracticeResult(correct, total, score, qs, ans); }
 
   // persist
-  if(currentProfile){
-    if(USE_FIREBASE && fbDB && currentUser){
-      var upd={ testsTaken:firebase.firestore.FieldValue.increment(1),
-        questionsSolved:firebase.firestore.FieldValue.increment(total),
-        correctAnswers:firebase.firestore.FieldValue.increment(correct) };
-      if(testState.mode==="diagnostic" && currentProfile.last){
-        upd.lastReadiness=currentProfile.last.readiness; upd.weakestSubject=currentProfile.last.weakest; upd.lastEst=currentProfile.last.est;
-      }
-      fbDB.collection("users").doc(currentUser).set(upd,{merge:true}).catch(function(e){ console.error(e); });
-    } else { persistDB(); }
-  }
+  if(USE_FIREBASE && fbDB && currentUser){
+    var upd={ testsTaken:firebase.firestore.FieldValue.increment(1), questionsSolved:firebase.firestore.FieldValue.increment(total), correctAnswers:firebase.firestore.FieldValue.increment(correct), history:currentProfile.history };
+    if(diag && currentProfile.last){ upd.lastReadiness=currentProfile.last.readiness; upd.weakestSubject=currentProfile.last.weakest; upd.lastEst=currentProfile.last.est; upd.lastPer=currentProfile.last.per; }
+    fbDB.collection("users").doc(currentUser).set(upd,{merge:true}).catch(function(e){ console.error(e); });
+  } else { persistDB(); }
+
   testState.active=false;
-  show("resultsScreen");
+  view("resultsScreen");
 }
-
-function renderDiagnosticReport(per, correct, total, readiness, qs, ans){
-  document.getElementById("r_title").textContent="Your Diagnostic Report";
+function renderDiagnosticReport(per, correct, total, score, qs, ans){
+  document.getElementById("r_title").textContent=(testState.mode==="mock")?"Your Mock Test Report":"Your Diagnostic Report";
   document.getElementById("r_estwrap").classList.remove("hidden");
-  document.getElementById("r_retake").classList.remove("hidden");
-  document.getElementById("r_pct").textContent=readiness+"%";
-  document.getElementById("r_ring").style.border="8px solid "+ringColor(readiness);
-
-  // estimated JEE Main score /300 = sum of per-subject accuracy * 100
-  var est=0, accBySub={};
-  SUBJECTS.forEach(function(s){
-    var acc=per[s].t>0?(per[s].c/per[s].t):0; accBySub[s]=acc; est+=acc*100;
-  });
-  est=Math.round(est);
+  document.getElementById("r_again").classList.remove("hidden");
+  document.getElementById("r_pct").textContent=score+"%";
+  document.getElementById("r_ring").style.border="8px solid "+ringColor(score);
+  var est=0, accBy={}; SUBJECTS.forEach(function(s){ var a=per[s].t>0?(per[s].c/per[s].t):0; accBy[s]=a; est+=a*100; }); est=Math.round(est);
   document.getElementById("r_est").textContent=est;
-
-  // subject bars
-  var colors={ Physics:"#fbbf24", Chemistry:"#34d399", Mathematics:"#a78bfa" };
   var sc=document.getElementById("r_subjects"); sc.innerHTML="";
-  SUBJECTS.forEach(function(s){
-    var acc=Math.round(accBySub[s]*100);
-    var row=document.createElement("div"); row.className="subj-row";
-    row.innerHTML='<div class="top"><span>'+s+'</span><span class="sc">'+per[s].c+'/'+per[s].t+' ('+acc+'%)</span></div>'+
-      '<div class="bar"><div class="fill" style="width:'+acc+'%;background:'+colors[s]+'"></div></div>';
-    sc.appendChild(row);
-  });
-
-  // weakest
-  var weakest=SUBJECTS[0];
-  SUBJECTS.forEach(function(s){ if(accBySub[s]<accBySub[weakest]) weakest=s; });
-  var weakMarks=Math.round((1-accBySub[weakest])*100);
-  document.getElementById("r_weak").innerHTML=
-    '<div class="weak-card"><h3>🎯 Focus first: '+weakest+'</h3>'+
-    '<p>This is your weakest area right now. There are about <b style="color:var(--orange-l)">'+weakMarks+' marks</b> on the table here — fixing '+weakest+' will move your rank the fastest.</p></div>';
-
-  // college path
+  SUBJECTS.forEach(function(s){ var a=Math.round(accBy[s]*100); sc.innerHTML+='<div class="subj-row"><div class="top"><span>'+s+'</span><span class="sc">'+per[s].c+'/'+per[s].t+' ('+a+'%)</span></div><div class="bar"><div class="f" style="width:'+a+'%;background:'+subColor(s)+'"></div></div></div>'; });
+  var weakest=SUBJECTS[0]; SUBJECTS.forEach(function(s){ if(accBy[s]<accBy[weakest]) weakest=s; });
+  var weakMarks=Math.round((1-accBy[weakest])*100);
+  document.getElementById("r_weak").innerHTML='<div class="weak-card"><h3>🎯 Focus first: '+weakest+'</h3><p>This is your weakest area. About <b style="color:var(--orange-l)">'+weakMarks+' marks</b> are on the table here — fixing '+weakest+' moves your rank the fastest.</p></div>';
   var tier=tierFor(est), next=nextMilestone(est);
-  var pathHtml='<div class="path-card"><h3>🏛️ Your college path</h3>'+
-    '<p>At an estimated <b>~'+est+'/300</b>, you are around the <span class="tier">'+tier+'</span>.';
-  if(next){ pathHtml+=' To reach the next level (~'+next+'/300), gain about <b>'+(next-est)+' more marks</b> — start with '+weakest+'.'; }
-  else { pathHtml+=' You are in a strong position — keep it steady and aim for the top ranks.'; }
-  pathHtml+='</p><p style="font-size:12px;color:var(--dim);margin-top:8px">Estimate based on this diagnostic and past-year trends; real cutoffs vary by category, branch and year.</p></div>';
-  document.getElementById("r_path").innerHTML=pathHtml;
-
-  // save last
-  if(currentProfile){ currentProfile.last={ readiness:readiness, weakest:weakest, est:est }; }
-
+  var ph='<div class="path-card"><h3>🏛️ Your college path</h3><p>At an estimated <b>~'+est+'/300</b>, you are around the <span class="tier">'+tier+'</span>.';
+  if(next) ph+=' To reach the next level (~'+next+'/300), gain about <b>'+(next-est)+' more marks</b> — start with '+weakest+'.';
+  else ph+=' Strong position — keep it steady and aim for top ranks.';
+  ph+='</p><p style="font-size:12px;color:var(--dim);margin-top:8px">Estimate based on this test and past-year trends; real cutoffs vary.</p></div>';
+  document.getElementById("r_path").innerHTML=ph;
+  currentProfile.last={ readiness:score, weakest:weakest, est:est, per:per };
   renderReview(qs, ans);
 }
-
-function renderPracticeResult(correct, total, readiness, qs, ans){
-  document.getElementById("r_title").textContent="Practice Complete 🎉";
+function renderPracticeResult(correct, total, score, qs, ans){
+  document.getElementById("r_title").textContent=modeLabel(testState.mode)+" Complete 🎉";
   document.getElementById("r_estwrap").classList.add("hidden");
-  document.getElementById("r_retake").classList.add("hidden");
-  document.getElementById("r_pct").textContent=readiness+"%";
-  document.getElementById("r_ring").style.border="8px solid "+ringColor(readiness);
+  document.getElementById("r_again").classList.add("hidden");
+  document.getElementById("r_pct").textContent=score+"%";
+  document.getElementById("r_ring").style.border="8px solid "+ringColor(score);
   document.getElementById("r_subjects").innerHTML="";
-  document.getElementById("r_weak").innerHTML='<p style="text-align:center;color:var(--muted);margin-bottom:16px">You answered <b style="color:var(--text)">'+correct+'</b> out of <b style="color:var(--text)">'+total+'</b> correctly.</p>';
+  document.getElementById("r_weak").innerHTML='<p style="text-align:center;color:var(--muted);margin-bottom:16px">You answered <b style="color:var(--text)">'+correct+'</b> of <b style="color:var(--text)">'+total+'</b> correctly.</p>';
   document.getElementById("r_path").innerHTML="";
   renderReview(qs, ans);
 }
-
+function ringColor(p){ return p>=70?"var(--green)":(p>=40?"var(--amber)":"var(--orange)"); }
 function renderReview(qs, ans){
-  var review=document.getElementById("r_review"); review.innerHTML="";
-  qs.forEach(function(q,i){
-    var ua=ans[i], ok=ua===q.correct;
+  var rv=document.getElementById("r_review"); rv.innerHTML="";
+  qs.forEach(function(q,i){ var ua=ans[i], ok=ua===q.correct; var ut=(ua===null)?"Not answered":("Option "+(ua+1));
     var item=document.createElement("div"); item.className="review-item";
-    var ut=(ua===null)?"Not answered":("Option "+(ua+1));
-    item.innerHTML='<div class="rhead"><span>Q'+(i+1)+' · '+q.subject+'</span>'+
-      '<span class="badge2 '+(ok?'correct">Correct':'wrong">Wrong')+'</span></div>'+
-      '<img src="'+q.img+'" alt="question" loading="lazy">'+
-      '<div class="ans-line">Your answer: <span class="'+(ok?'g':'r')+'">'+ut+'</span> &nbsp;·&nbsp; Correct: <span class="g">Option '+(q.correct+1)+'</span></div>';
-    review.appendChild(item);
-  });
+    item.innerHTML='<div class="rhead"><span>Q'+(i+1)+' · '+q.subject+'</span><span class="badge2 '+(ok?'correct">Correct':'wrong">Wrong')+'</span></div><img src="'+q.img+'" alt="q" loading="lazy"><div class="ans-line">Your answer: <span class="'+(ok?'g':'r')+'">'+ut+'</span> &nbsp;·&nbsp; Correct: <span class="g">Option '+(q.correct+1)+'</span></div>';
+    rv.appendChild(item); });
 }
-function backToDashboard(){ openDashboard(); }
+function backToDash(){ view("shell"); go("overview"); }
 
-/* ---- init ---- */
+/* ---------- my tests ---------- */
+function renderMyTests(){
+  var h=(currentProfile.history||[]).slice().reverse();
+  var list=document.getElementById("mt_list"), empty=document.getElementById("mt_empty");
+  if(!h.length){ list.innerHTML=""; empty.classList.remove("hidden"); return; }
+  empty.classList.add("hidden");
+  list.innerHTML=h.map(function(e){
+    var tags=Object.keys(e.subjects||{}).map(function(k){ return '<span class="t">'+k+' ('+e.subjects[k]+')</span>'; }).join("");
+    return '<div class="htcard"><div class="hh"><span class="type">'+e.type+'</span><span>'+fmtDate(e.date)+'</span></div><div class="score">'+e.score+'% <span>'+e.correct+'/'+e.total+' correct</span></div><div class="tags">'+tags+'</div></div>';
+  }).join("");
+}
+function fmtDate(ts){ try{ var d=new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){ return ""; } }
+
+/* ---------- weak ---------- */
+function renderWeak(){
+  var p=currentProfile, b=document.getElementById("weak_body");
+  if(p.last && p.last.per){
+    var html="";
+    var arr=SUBJECTS.map(function(s){ var d=p.last.per[s]; var a=d&&d.t>0?(d.c/d.t):0; return {s:s,a:a}; }).sort(function(x,y){ return x.a-y.a; });
+    arr.forEach(function(o){ var a=Math.round(o.a*100); html+='<div class="subj-row"><div class="top"><span>'+o.s+'</span><span class="sc">'+a+'% accuracy</span></div><div class="bar"><div class="f" style="width:'+a+'%;background:'+subColor(o.s)+'"></div></div></div>'; });
+    html+='<div style="margin-top:16px"><button class="btn" onclick="practiceWeakest()">Practice '+arr[0].s+' →</button></div>';
+    b.innerHTML=html;
+  } else { b.innerHTML='<div class="coming"><div class="ic">🎯</div><b>No diagnostic yet</b><p style="margin-top:6px">Take the diagnostic to see your weak subjects.</p><div style="margin-top:14px"><button class="btn" onclick="startDiagnostic()">Start diagnostic</button></div></div>'; }
+}
+function practiceWeakest(){ var arr=SUBJECTS.map(function(s){ var d=currentProfile.last.per[s]; var a=d&&d.t>0?(d.c/d.t):0; return {s:s,a:a}; }).sort(function(x,y){ return x.a-y.a; }); subjTestPick=arr[0].s; startSubjectTest(); }
+
+/* ---------- progress ---------- */
+function renderProgress(){
+  var p=currentProfile, s=p.stats;
+  var acc=s.questionsSolved>0?Math.round(100*s.correctAnswers/s.questionsSolved):0;
+  var latest=(p.history&&p.history.length)?p.history[p.history.length-1].score:0;
+  document.getElementById("pr_tiles").innerHTML=
+    tile("Tests Taken", s.testsTaken, "All tests", Math.min(100,s.testsTaken*10))+
+    tile("Questions Solved", s.questionsSolved, "Total", Math.min(100,s.questionsSolved/12))+
+    tile("Accuracy", acc+"%", "Overall", acc)+
+    tile("Latest Score", latest+"%", "Most recent", latest);
+  var bars=document.getElementById("pr_bars");
+  var h=(p.history||[]).slice(-8);
+  if(!h.length){ bars.innerHTML='<div style="color:var(--muted);margin:auto">No tests yet — take one to see your history.</div>'; return; }
+  bars.innerHTML=h.map(function(e,i){ return '<div class="col"><div class="v">'+e.score+'%</div><div class="bar" style="height:'+Math.max(4,e.score)+'%"></div><div class="x">#'+(i+1)+'</div></div>'; }).join("");
+}
+
+/* ---------- AI planner (rule-based) ---------- */
+var aiStarted=false;
+function aiInit(){
+  if(aiStarted) return; aiStarted=true;
+  var p=currentProfile; var greet;
+  if(p.last){ greet="Hi "+p.name+"! Your last diagnostic shows <b>"+p.last.readiness+"% readiness</b> and your weakest area is <b>"+p.last.weakest+"</b>. Want a study plan to fix it?"; }
+  else { greet="Hi "+p.name+"! I'm your study buddy. Take the diagnostic first, then I'll build a personalised plan. Meanwhile, ask me anything about your prep."; }
+  aiBot(greet);
+}
+function aiBot(html){ var c=document.getElementById("ai_chat"); var d=document.createElement("div"); d.className="bubble bot"; d.innerHTML=html; c.appendChild(d); c.scrollTop=c.scrollHeight; }
+function aiMe(txt){ var c=document.getElementById("ai_chat"); var d=document.createElement("div"); d.className="bubble me"; d.textContent=txt; c.appendChild(d); c.scrollTop=c.scrollHeight; }
+function aiQuick(kind){ if(kind==="plan"){ aiMe("Get my study plan"); aiBot(planText()); } else if(kind==="weak"){ aiMe("Solve my weak topics"); aiBot(weakText()); } else { aiMe("Motivate me"); aiBot(motivate()); } }
+function aiSend(){ var el=document.getElementById("ai_in"); var t=el.value.trim(); if(!t) return; aiMe(t); el.value=""; aiBot(aiReply(t.toLowerCase())); }
+function planText(){
+  var p=currentProfile;
+  if(!p.last) return "Take the 15-question diagnostic first (Overview → Start diagnostic). Then I'll build a day-by-day plan around your weakest subject.";
+  var w=p.last.weakest, others=SUBJECTS.filter(function(s){ return s!==w; });
+  return "Here's a simple 6-day plan based on your diagnostic:<br><br>"+
+    "<b>Day 1–3 — "+w+" (your weak area):</b> 30 mins theory revision + a 25-question "+w+" subject test each day.<br>"+
+    "<b>Day 4 — "+others[0]+":</b> 20 targeted questions + review mistakes.<br>"+
+    "<b>Day 5 — "+others[1]+":</b> 20 targeted questions + review mistakes.<br>"+
+    "<b>Day 6 — Full mock:</b> take the 75-question mock and re-check your weak area.<br><br>"+
+    "Tip: always review the wrong ones — that's where the marks are.";
+}
+function weakText(){
+  var p=currentProfile;
+  if(!p.last) return "I don't know your weak area yet. Take the diagnostic (Overview → Start diagnostic) and I'll point you to the exact subject to fix first.";
+  return "Your weakest subject is <b>"+p.last.weakest+"</b>. Go to <b>Mock / Chapter Tests → Subject Test → "+p.last.weakest+"</b>, do 25 questions, and review every wrong answer. Repeat for 3 days and re-take the diagnostic to see the jump.";
+}
+function motivate(){ var m=[
+  "Every topper was once a beginner who refused to quit. One focused session today beats ten distracted ones. 💪",
+  "You don't need to be perfect — just 1% better each day. Small consistent effort compounds into rank. 🚀",
+  "Your weak topic today is your strong topic next month. Show up, practice, review. That's the whole secret. 🎯",
+  "Rank is built on the boring days — the ones where you practice anyway. Proud of you for being here. 🔥"
+]; return m[Math.floor(Math.random()*m.length)]; }
+function aiReply(t){
+  if(t.indexOf("plan")>=0||t.indexOf("study")>=0||t.indexOf("schedule")>=0) return planText();
+  if(t.indexOf("weak")>=0||t.indexOf("topic")>=0||t.indexOf("improve")>=0) return weakText();
+  if(t.indexOf("motiv")>=0||t.indexOf("give up")>=0||t.indexOf("tired")>=0||t.indexOf("stress")>=0) return motivate();
+  if(t.indexOf("college")>=0||t.indexOf("nit")>=0||t.indexOf("iit")>=0||t.indexOf("cutoff")>=0) return "Head to the <b>College Predictor</b> — enter your score and pick any IIT or NIT to see the gap. Not sure of your score? Take the diagnostic first for an estimate.";
+  if(t.indexOf("mock")>=0||t.indexOf("test")>=0) return "Go to <b>Mock / Chapter Tests → Start Mock Test</b> for a full 75-question, timed JEE Main pattern paper. You'll get a weak-area report at the end.";
+  var p=currentProfile;
+  if(p.last) return "Based on your diagnostic, your best next step is fixing <b>"+p.last.weakest+"</b>. Ask me for a 'study plan' or tap 'Solve my weak topics'.";
+  return "Take the diagnostic first (Overview → Start diagnostic) and I'll give you a personalised plan. You can also ask for a 'study plan' or say 'motivate me'.";
+}
+
+/* ---------- college predictor ---------- */
+var IIT_NOTE="IITs admit through JEE Advanced. Clear the JEE Main cutoff first, then rank well in Advanced. The marks shown indicate the calibre needed.";
+var COLLEGES=[
+  {g:"IIT",name:"IIT Bombay",need:280,note:IIT_NOTE},{g:"IIT",name:"IIT Delhi",need:275,note:IIT_NOTE},{g:"IIT",name:"IIT Madras",need:275,note:IIT_NOTE},
+  {g:"IIT",name:"IIT Kanpur",need:270,note:IIT_NOTE},{g:"IIT",name:"IIT Kharagpur",need:265,note:IIT_NOTE},{g:"IIT",name:"IIT Roorkee",need:260,note:IIT_NOTE},
+  {g:"IIT",name:"IIT Guwahati",need:258,note:IIT_NOTE},{g:"IIT",name:"IIT Hyderabad",need:255,note:IIT_NOTE},{g:"IIT",name:"IIT (BHU) Varanasi",need:250,note:IIT_NOTE},
+  {g:"IIT",name:"IIT Indore",need:245,note:IIT_NOTE},{g:"IIT",name:"IIT (ISM) Dhanbad",need:240,note:IIT_NOTE},{g:"IIT",name:"IIT Gandhinagar",need:238,note:IIT_NOTE},
+  {g:"IIT",name:"IIT Ropar",need:235,note:IIT_NOTE},{g:"IIT",name:"IIT Patna",need:232,note:IIT_NOTE},{g:"IIT",name:"IIT Bhubaneswar",need:230,note:IIT_NOTE},
+  {g:"IIT",name:"IIT Jodhpur",need:228,note:IIT_NOTE},{g:"IIT",name:"IIT Mandi",need:225,note:IIT_NOTE},{g:"IIT",name:"IIT Tirupati",need:222,note:IIT_NOTE},
+  {g:"IIT",name:"IIT Palakkad",need:220,note:IIT_NOTE},{g:"IIT",name:"IIT Bhilai",need:218,note:IIT_NOTE},{g:"IIT",name:"IIT Goa",need:218,note:IIT_NOTE},
+  {g:"IIT",name:"IIT Jammu",need:215,note:IIT_NOTE},{g:"IIT",name:"IIT Dharwad",need:215,note:IIT_NOTE},
+  {g:"NIT",name:"NIT Trichy",need:250},{g:"NIT",name:"NIT Warangal",need:245},{g:"NIT",name:"NIT Surathkal (Karnataka)",need:240},{g:"NIT",name:"NIT Rourkela",need:225},
+  {g:"NIT",name:"MNNIT Allahabad",need:222},{g:"NIT",name:"NIT Calicut",need:220},{g:"NIT",name:"MNIT Jaipur",need:220},{g:"NIT",name:"VNIT Nagpur",need:218},
+  {g:"NIT",name:"NIT Kurukshetra",need:215},{g:"NIT",name:"NIT Delhi",need:210},{g:"NIT",name:"SVNIT Surat",need:210},{g:"NIT",name:"MANIT Bhopal",need:205},
+  {g:"NIT",name:"NIT Durgapur",need:200},{g:"NIT",name:"NIT Jamshedpur",need:200},{g:"NIT",name:"NIT Jalandhar",need:195},{g:"NIT",name:"NIT Patna",need:190},
+  {g:"NIT",name:"NIT Goa",need:190},{g:"NIT",name:"NIT Andhra Pradesh",need:185},{g:"NIT",name:"NIT Raipur",need:185},{g:"NIT",name:"NIT Hamirpur",need:180},
+  {g:"NIT",name:"NIT Puducherry",need:180},{g:"NIT",name:"NIT Silchar",need:175},{g:"NIT",name:"NIT Uttarakhand",need:175},{g:"NIT",name:"NIT Srinagar",need:165},
+  {g:"NIT",name:"NIT Meghalaya",need:165},{g:"NIT",name:"NIT Agartala",need:160},{g:"NIT",name:"NIT Sikkim",need:158},{g:"NIT",name:"NIT Manipur",need:155},
+  {g:"NIT",name:"NIT Mizoram",need:150},{g:"NIT",name:"NIT Nagaland",need:150},{g:"NIT",name:"NIT Arunachal Pradesh",need:150}
+];
+function initPredictor(){
+  var sel=document.getElementById("targetCollege"); if(!sel || sel.dataset.done) return; sel.dataset.done="1";
+  var groups={IIT:"IITs (via JEE Advanced)",NIT:"NITs (via JEE Main)"}, made={};
+  COLLEGES.forEach(function(c,i){ if(!made[c.g]){ var og=document.createElement("optgroup"); og.label=groups[c.g]; sel.appendChild(og); made[c.g]=og; } var o=document.createElement("option"); o.value=i; o.textContent=c.name; made[c.g].appendChild(o); });
+}
+function checkCutoff(){
+  var score=parseInt(document.getElementById("curScore").value,10), idx=document.getElementById("targetCollege").value;
+  var box=document.getElementById("predResult"); box.style.display="block";
+  if(isNaN(score)||score<0||score>300){ box.innerHTML='<span class="status-far">Please enter a valid score between 0 and 300.</span>'; return; }
+  if(idx===""){ box.innerHTML='<span class="status-far">Please select a target college.</span>'; return; }
+  var c=COLLEGES[parseInt(idx,10)], gap=c.need-score, html="";
+  if(gap<=0){ html='<div><span class="status-in">Within reach! ✅</span></div><div style="color:var(--muted);margin-top:4px">Your score ('+score+') is at/above the approx cutoff (~'+c.need+'/300) for <b>'+c.name+'</b>.</div>'; }
+  else if(gap<=25){ html='<div><span class="status-close">So close! 🎯</span></div><div style="color:var(--muted);margin-top:4px">About <b>'+gap+' more marks</b> to reach the approx cutoff (~'+c.need+'/300) for <b>'+c.name+'</b>.</div>'; }
+  else { html='<div><span class="status-far">Gap to close 🚀</span></div><div style="color:var(--muted);margin-top:4px">About <b>'+gap+' marks</b> away from the approx cutoff (~'+c.need+'/300) for <b>'+c.name+'</b>. Fix your weakest topics first.</div>'; }
+  if(c.note) html+='<div class="pred-note">ℹ️ '+c.note+'</div>';
+  html+='<div class="pred-note">Approximate estimates from past-year trends; real cutoffs vary by category, branch, home state and year.</div>';
+  box.innerHTML=html;
+}
+
+/* ---------- rate us ---------- */
+var rateVal=0;
+function openRate(){ document.getElementById("rateModal").classList.add("show"); }
+function closeRate(){ document.getElementById("rateModal").classList.remove("show"); }
+(function(){ var stars=document.querySelectorAll("#rateStars span"); for(var i=0;i<stars.length;i++){ (function(el){ el.onclick=function(){ rateVal=parseInt(el.getAttribute("data-v"),10); for(var j=0;j<stars.length;j++){ stars[j].classList.toggle("on", j<rateVal); } }; })(stars[i]); } })();
+function submitRate(){
+  var msg=document.getElementById("rateMsg"); msg.className="msg";
+  if(!rateVal){ msg.className="msg err"; msg.textContent="Please pick a star rating."; return; }
+  var fb={ rating:rateVal, text:document.getElementById("rateText").value.trim(), name:(currentProfile?currentProfile.name:""), email:(currentProfile?currentProfile.email:""), date:Date.now() };
+  if(USE_FIREBASE && fbDB){ fbDB.collection("feedback").add(fb).catch(function(e){ console.error(e); }); }
+  msg.style.color="var(--green)"; msg.textContent="Thank you for your feedback! 🙌";
+  setTimeout(function(){ closeRate(); msg.textContent=""; rateVal=0; document.getElementById("rateText").value=""; var st=document.querySelectorAll("#rateStars span"); for(var i=0;i<st.length;i++) st[i].classList.remove("on"); }, 1200);
+}
+
+/* ---------- init ---------- */
 function initApp(){
-  loadDB();
+  loadDB(); initPredictor();
   fetch("questions.json").then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); })
     .then(function(data){
       allQuestions=data;
       if(USE_FIREBASE){ initFirebaseAuth(); }
-      else {
-        var saved=readCurrent();
-        if(saved && usersDB[saved]){ currentUser=saved; currentProfile=usersDB[saved]; openDashboard(); }
-        else { show("authScreen"); showSignup(); }
-      }
-    }).catch(function(){
-      allQuestions=[];
-      var el=document.getElementById("su_msg"); if(el){ el.className="msg err"; el.textContent="Could not load question bank. Please refresh."; }
-      show("authScreen"); showSignup();
-    });
+      else { var saved=readCurrent(); if(saved && usersDB[saved]){ currentUser=saved; currentEmail=saved; currentProfile=usersDB[saved]; enterApp(); } else { view("authScreen"); showSignup(); } }
+    }).catch(function(){ allQuestions=[]; var el=document.getElementById("su_msg"); if(el){ el.className="msg err"; el.textContent="Could not load question bank. Please refresh."; } view("authScreen"); showSignup(); });
 }
 initApp();
 </script>
