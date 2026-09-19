@@ -60,13 +60,13 @@
   .sb-user .up{ font-size:11px; color:var(--muted); margin-bottom:8px; }
 
   .main{ flex:1; margin-left:240px; min-width:0; }
-  .topbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 24px; flex-wrap:wrap; }
+  .topbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 24px; flex-wrap:wrap; max-width:1280px; margin:0 auto; }
   .topbar .hb{ display:none; background:none; border:none; color:var(--text); font-size:24px; cursor:pointer; }
   .topbar h1{ font-size:24px; font-weight:800; }
   .topbar .sub{ color:var(--muted); font-size:14px; }
   .topbar .tb-actions{ display:flex; gap:10px; }
   .topbar .tb-actions .btn{ padding:9px 14px; font-size:13px; }
-  .content{ padding:0 24px 40px; max-width:1000px; }
+  .content{ padding:0 24px 40px; max-width:1280px; margin:0 auto; }
   .backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:55; display:none; }
 
   @media(max-width:900px){
@@ -132,6 +132,11 @@
   /* Mock cards */
   .mockrow{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:24px; }
   @media(max-width:700px){ .mockrow{ grid-template-columns:1fr; } }
+  .mock-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; margin-bottom:26px; }
+  .mk{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; }
+  .mk .pat{ display:inline-block; background:rgba(45,212,191,.14); color:var(--teal); font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; margin-bottom:8px; }
+  .mk h4{ font-size:16px; margin-bottom:6px; }
+  .mk .meta{ color:var(--muted); font-size:12px; margin-bottom:12px; }
   .mock{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; }
   .mock .pat{ display:inline-block; background:rgba(45,212,191,.14); color:var(--teal); font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; margin-bottom:8px; }
   .mock h4{ font-size:17px; margin-bottom:8px; }
@@ -219,7 +224,41 @@
   .palette{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; justify-content:center; }
   .palette .pq{ width:34px; height:34px; border-radius:8px; background:var(--card); border:1px solid var(--border); color:var(--muted); font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
   .palette .pq.done{ background:rgba(34,197,94,.14); color:var(--green); border-color:rgba(34,197,94,.3); }
-  .palette .pq.cur{ border-color:var(--orange); color:var(--orange-l); }
+  .palette .pq.cur{ outline:2px solid var(--orange); outline-offset:1px; }
+  .palette .pq.ans{ background:rgba(34,197,94,.18); color:var(--green); border-color:rgba(34,197,94,.4); }
+  .palette .pq.na{ background:rgba(239,68,68,.16); color:#fca5a5; border-color:rgba(239,68,68,.4); }
+  .palette .pq.mr{ background:rgba(168,85,247,.20); color:#c4b5fd; border-color:rgba(168,85,247,.45); }
+  .palette .pq.ma{ background:rgba(168,85,247,.20); color:#c4b5fd; border-color:rgba(168,85,247,.45); position:relative; }
+  .palette .pq.ma::after{ content:""; position:absolute; right:-3px; bottom:-3px; width:9px; height:9px; border-radius:50%; background:var(--green); border:1px solid var(--bg); }
+
+  /* exam (NTA-style) */
+  .exam{ max-width:1080px; margin:0 auto; padding:18px 16px; }
+  .exam-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+  .exam-top .et-title{ font-weight:800; font-size:16px; }
+  .exam-top .timer{ color:var(--teal); font-weight:800; font-size:16px; background:var(--card); border:1px solid var(--border-2); padding:6px 12px; border-radius:8px; }
+  .sections{ display:flex; gap:6px; margin-bottom:14px; border-bottom:1px solid var(--border); overflow-x:auto; }
+  .sections .stab{ padding:9px 16px; font-size:14px; font-weight:700; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; }
+  .sections .stab.active{ color:var(--orange-l); border-bottom-color:var(--orange); }
+  .exam-body{ display:grid; grid-template-columns:1fr 250px; gap:20px; align-items:start; }
+  @media(max-width:860px){ .exam-body{ grid-template-columns:1fr; } .exam-side{ order:2; } }
+  .qmeta{ font-size:13px; color:var(--dim); margin-bottom:10px; }
+  .qmeta b{ color:var(--text); }
+  .exam-btns{ display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+  .exam-btns .b{ padding:11px 16px; border-radius:10px; font-size:14px; font-weight:700; border:1px solid var(--border-2); background:var(--card); color:var(--text); cursor:pointer; }
+  .exam-btns .b:hover{ background:var(--card-2); }
+  .exam-btns .b.primary{ background:var(--orange); border-color:var(--orange); color:#fff; }
+  .exam-btns .b.primary:hover{ background:var(--orange-d); }
+  .exam-btns .b.warn{ color:var(--amber); }
+  .exam-side{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; }
+  .legend{ display:grid; grid-template-columns:1fr 1fr; gap:8px 10px; font-size:12px; color:var(--muted); margin-bottom:14px; }
+  .legend .lg{ display:flex; align-items:center; gap:7px; }
+  .legend .dot{ width:15px; height:15px; border-radius:4px; flex-shrink:0; border:1px solid var(--border-2); position:relative; }
+  .legend .dot.ans{ background:rgba(34,197,94,.5); } .legend .dot.na{ background:rgba(239,68,68,.5); }
+  .legend .dot.nv{ background:var(--card-2); } .legend .dot.mr{ background:rgba(168,85,247,.6); }
+  .legend .dot.ma{ background:rgba(168,85,247,.6); } .legend .dot.ma::after{ content:""; position:absolute; right:-2px; bottom:-2px; width:7px; height:7px; border-radius:50%; background:var(--green); }
+  .pal-sec{ font-size:12px; font-weight:700; color:var(--muted); margin:10px 0 6px; }
+  .palette.exam-pal{ justify-content:flex-start; margin-top:0; }
+  .modal .big-timer{ color:var(--teal); font-weight:800; }
 
   .report-ring{ width:150px; height:150px; border-radius:50%; margin:6px auto 16px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--card); }
   .report-ring .pct{ font-size:36px; font-weight:900; } .report-ring .subx{ font-size:12px; color:var(--muted); }
@@ -369,29 +408,23 @@
       <!-- TESTS -->
       <section id="sec-tests" class="hidden">
         <h3 class="sec-h">Full Mock Tests</h3>
-        <div class="sec-sub">Full-length JEE Main pattern — 75 questions, +4 / −1 marking.</div>
-        <div class="mockrow">
-          <div class="mock">
-            <span class="pat">JEE Main Pattern</span>
-            <h4>Full Mock Test</h4>
-            <ul><li>75 questions (25 each subject)</li><li>Timed, exam-style</li><li>Weak-area report at the end</li></ul>
-            <button class="btn btn-block" onclick="startMock()">Start Mock Test</button>
+        <div class="sec-sub">JEE Main pattern — 75 questions (25 each subject), 3 hours, +4 / −1 marking. Real exam-style interface.</div>
+        <div class="mock-grid" id="mockGrid"></div>
+
+        <h3 class="sec-h" style="font-size:18px">Subject Test</h3>
+        <div class="sec-sub">25 questions from one subject, instant scoring.</div>
+        <div class="mock" style="max-width:480px;margin-bottom:26px">
+          <div class="chips" style="margin-bottom:12px">
+            <div class="chip active" data-st="Physics" onclick="subjPick(this)">Physics</div>
+            <div class="chip" data-st="Chemistry" onclick="subjPick(this)">Chemistry</div>
+            <div class="chip" data-st="Mathematics" onclick="subjPick(this)">Maths</div>
           </div>
-          <div class="mock">
-            <span class="pat">By Subject</span>
-            <h4>Subject Test</h4>
-            <ul><li>25 questions from one subject</li><li>Focus on a single area</li><li>Instant scoring</li></ul>
-            <div class="chips" style="margin-bottom:12px">
-              <div class="chip active" data-st="Physics" onclick="subjPick(this)">Physics</div>
-              <div class="chip" data-st="Chemistry" onclick="subjPick(this)">Chemistry</div>
-              <div class="chip" data-st="Mathematics" onclick="subjPick(this)">Maths</div>
-            </div>
-            <button class="btn btn-block btn-outline" onclick="startSubjectTest()">Start Subject Test</button>
-          </div>
+          <button class="btn btn-block" onclick="startSubjectTest()">Start Subject Test</button>
         </div>
+
         <h3 class="sec-h" style="font-size:18px">Chapter-wise Tests</h3>
         <div class="sec-sub">Practice one chapter at a time.</div>
-        <div class="coming"><div class="ic">🧩</div><b>Chapter-wise tests coming soon</b><p style="margin-top:6px">We're tagging every question by chapter (Kinematics, Thermodynamics, Calculus…). Until then, use subject tests above.</p></div>
+        <div class="coming"><div class="ic">🧩</div><b>Chapter-wise tests coming soon</b><p style="margin-top:6px">We're tagging every question by chapter (Kinematics, Thermodynamics, Calculus…). Until then, use the subject test above.</p></div>
       </section>
 
       <!-- MY TESTS -->
@@ -490,25 +523,46 @@
 </div>
 
 <!-- TEST SCREEN -->
-<div id="testScreen" class="hidden"><div class="fullpage">
-  <div class="test-head">
+<div id="testScreen" class="hidden"><div class="exam">
+  <div class="exam-top">
     <button class="exit" onclick="exitTest()">← Exit</button>
-    <span class="mid"><span id="q_mode">Test</span> · <span id="q_now">1</span> of <span id="q_total">15</span></span>
-    <span class="timer" id="q_timer"></span>
+    <div class="et-title" id="exam_title">Test</div>
+    <div class="timer hidden" id="q_timer"></div>
   </div>
-  <div class="progress-bar"><div class="fill" id="q_fill"></div></div>
-  <div class="q-image-wrap" id="q_imgwrap"><div class="q-loading">Loading question…</div></div>
-  <div class="options">
-    <button class="opt" data-opt="0" onclick="selectAnswer(0)"><span class="circle">1</span> Option 1</button>
-    <button class="opt" data-opt="1" onclick="selectAnswer(1)"><span class="circle">2</span> Option 2</button>
-    <button class="opt" data-opt="2" onclick="selectAnswer(2)"><span class="circle">3</span> Option 3</button>
-    <button class="opt" data-opt="3" onclick="selectAnswer(3)"><span class="circle">4</span> Option 4</button>
+  <div class="sections hidden" id="exam_sections"></div>
+  <div class="progress-bar" id="q_progwrap"><div class="fill" id="q_fill"></div></div>
+  <div class="exam-body">
+    <div class="exam-main">
+      <div class="qmeta">Question <b id="q_now">1</b> of <span id="q_total">75</span> <span id="q_secname" style="color:var(--dim)"></span></div>
+      <div class="q-image-wrap" id="q_imgwrap"><div class="q-loading">Loading question…</div></div>
+      <div class="options">
+        <button class="opt" data-opt="0" onclick="selectAnswer(0)"><span class="circle">1</span> Option 1</button>
+        <button class="opt" data-opt="1" onclick="selectAnswer(1)"><span class="circle">2</span> Option 2</button>
+        <button class="opt" data-opt="2" onclick="selectAnswer(2)"><span class="circle">3</span> Option 3</button>
+        <button class="opt" data-opt="3" onclick="selectAnswer(3)"><span class="circle">4</span> Option 4</button>
+      </div>
+      <div class="exam-btns hidden" id="exam_btns">
+        <button class="b warn" onclick="clearResp()">Clear Response</button>
+        <button class="b" onclick="markNext()">Mark for Review &amp; Next</button>
+        <button class="b primary" onclick="saveNext()">Save &amp; Next →</button>
+      </div>
+      <div class="nav-row" id="simple_btns">
+        <button class="btn btn-outline" id="prevBtn" onclick="prevQuestion()">Previous</button>
+        <button class="btn" id="nextBtn" onclick="nextQuestion()">Next</button>
+      </div>
+    </div>
+    <div class="exam-side">
+      <div class="legend hidden" id="legend">
+        <div class="lg"><span class="dot ans"></span> Answered</div>
+        <div class="lg"><span class="dot na"></span> Not Answered</div>
+        <div class="lg"><span class="dot nv"></span> Not Visited</div>
+        <div class="lg"><span class="dot mr"></span> Marked</div>
+        <div class="lg"><span class="dot ma"></span> Ans + Marked</div>
+      </div>
+      <div id="palette_wrap"></div>
+      <button class="btn btn-block" style="margin-top:14px" onclick="confirmSubmit()">Submit Test</button>
+    </div>
   </div>
-  <div class="nav-row">
-    <button class="btn btn-outline" id="prevBtn" onclick="prevQuestion()">Previous</button>
-    <button class="btn" id="nextBtn" onclick="nextQuestion()">Next</button>
-  </div>
-  <div class="palette" id="palette"></div>
 </div></div>
 
 <!-- RESULTS -->
@@ -516,8 +570,8 @@
   <h2 style="text-align:center;margin-bottom:4px" id="r_title">Your Report</h2>
   <div class="report-ring" id="r_ring"><div class="pct" id="r_pct">0%</div><div class="subx">Score</div></div>
   <div id="r_estwrap">
-    <div class="est-line">Estimated JEE Main score: <b id="r_est">0</b> / 300</div>
-    <div class="est-note">An indicator based on this test — not an official score.</div>
+    <div class="est-line"><span id="r_estlabel">Estimated JEE Main score</span>: <b id="r_est">0</b> / 300</div>
+    <div class="est-note" id="r_estnote">An indicator based on this test — not an official score.</div>
   </div>
   <div id="r_subjects"></div>
   <div id="r_weak"></div>
@@ -665,6 +719,7 @@ function go(sec){
   closeSidebar();
   if(sec==="overview") renderOverview();
   if(sec==="qbank") qbLoad();
+  if(sec==="tests") renderMocks();
   if(sec==="mytests") renderMyTests();
   if(sec==="weak") renderWeak();
   if(sec==="progress") renderProgress();
@@ -735,101 +790,180 @@ function qbAnswer(i){
 }
 function qbNext(){ qb.idx=(qb.idx+1)%qb.pool.length; qbRender(); }
 
+/* ---------- mocks ---------- */
+var MOCKS=[];
+function buildMocks(){
+  MOCKS=[]; var bySub={}; SUBJECTS.forEach(function(s){ bySub[s]=allQuestions.filter(function(q){ return q.subject===s; }); });
+  var per=25; var count=Math.min.apply(null, SUBJECTS.map(function(s){ return Math.floor(bySub[s].length/per); }));
+  for(var n=0;n<count;n++){ var qs=[]; SUBJECTS.forEach(function(s){ qs=qs.concat(bySub[s].slice(n*per,(n+1)*per)); }); MOCKS.push({ name:"Mock Test "+(n+1), questions:qs }); }
+}
+function renderMocks(){
+  var g=document.getElementById("mockGrid"); if(!g) return;
+  if(!MOCKS.length){ g.innerHTML='<div class="coming" style="grid-column:1/-1"><b>Mock tests unavailable</b><p style="margin-top:6px">Please refresh.</p></div>'; return; }
+  g.innerHTML=MOCKS.map(function(m,i){ return '<div class="mk"><span class="pat">JEE Main Pattern</span><h4>'+m.name+'</h4><div class="meta">75 Questions · 180 min · +4 / −1</div><button class="btn btn-block" onclick="startMock('+i+')">Start Test</button></div>'; }).join("");
+}
+
 /* ---------- tests ---------- */
 function subjPick(el){ var c=el.parentElement.querySelectorAll(".chip"); for(var i=0;i<c.length;i++) c[i].classList.remove("active"); el.classList.add("active"); subjTestPick=el.getAttribute("data-st"); }
 function pickBalanced(perSubject){ var out=[]; SUBJECTS.forEach(function(su){ var pool=allQuestions.filter(function(q){ return q.subject===su; }); out=out.concat(shuffle(pool.slice()).slice(0,perSubject)); }); return shuffle(out); }
 function startDiagnostic(){ beginTest(pickBalanced(5), "diagnostic", false); }
-function startMock(){ beginTest(pickBalanced(25), "mock", true, 180); }
+function startMock(i){ var m=MOCKS[i]; if(!m) return; beginTest(m.questions.slice(), "mock", true, 180, m.name); }
 function startDaily(){ var pool=shuffle(allQuestions.slice()).slice(0,10); beginTest(pool, "daily", false); }
 function startSubjectTest(){ var pool=allQuestions.filter(function(q){ return q.subject===subjTestPick; }); beginTest(shuffle(pool.slice()).slice(0,25), "subject", false); }
-function beginTest(qs, mode, timed, minutes){
+function modeLabel(m){ return m==="diagnostic"?"Diagnostic":(m==="mock"?"Mock Test":(m==="subject"?"Subject Test":(m==="daily"?"Daily Practice":"Test"))); }
+function computeSections(qs){ var secs=[], cur=null; qs.forEach(function(q,i){ if(!cur||cur.name!==q.subject){ cur={name:q.subject,start:i,end:i}; secs.push(cur); } else cur.end=i; }); return secs; }
+function sectionOf(i){ for(var k=0;k<testState.sections.length;k++){ var s=testState.sections[k]; if(i>=s.start&&i<=s.end) return s; } return testState.sections[0]; }
+function beginTest(qs, mode, timed, minutes, name){
   if(qs.length<1){ alert("Questions unavailable, please refresh."); return; }
-  testState={ questions:qs, answers:new Array(qs.length).fill(null), current:0, active:true, mode:mode, timed:!!timed, endAt:0, timerId:null };
-  document.getElementById("q_mode").textContent=modeLabel(mode);
+  testState={ questions:qs, answers:new Array(qs.length).fill(null), marked:new Array(qs.length).fill(false), visited:new Array(qs.length).fill(false), current:0, active:true, mode:mode, timed:!!timed, endAt:0, timerId:null, sections:computeSections(qs), mockName:name||"" };
+  document.getElementById("exam_title").textContent=(mode==="mock"?(name||"Mock Test"):modeLabel(mode));
   document.getElementById("q_total").textContent=qs.length;
+  renderMode(mode);
+  if(mode==="mock") renderSections();
   var tEl=document.getElementById("q_timer");
-  if(timed){ testState.endAt=Date.now()+minutes*60000; tEl.classList.remove("hidden"); tick(); testState.timerId=setInterval(tick,1000); } else { tEl.textContent=""; }
+  if(timed){ testState.endAt=Date.now()+minutes*60000; tEl.classList.remove("hidden"); tick(); testState.timerId=setInterval(tick,1000); } else { tEl.classList.add("hidden"); tEl.textContent=""; }
   buildPalette();
   view("testScreen"); displayQuestion();
 }
-function modeLabel(m){ return m==="diagnostic"?"Diagnostic":(m==="mock"?"Mock Test":(m==="subject"?"Subject Test":(m==="daily"?"Daily Practice":"Test"))); }
+function renderMode(mode){
+  var isMock=(mode==="mock");
+  document.getElementById("exam_sections").classList.toggle("hidden", !isMock);
+  document.getElementById("exam_btns").classList.toggle("hidden", !isMock);
+  document.getElementById("legend").classList.toggle("hidden", !isMock);
+  document.getElementById("simple_btns").classList.toggle("hidden", isMock);
+  document.getElementById("q_progwrap").classList.toggle("hidden", isMock);
+}
+function renderSections(){
+  document.getElementById("exam_sections").innerHTML=testState.sections.map(function(s,i){ return '<div class="stab" data-si="'+i+'" onclick="gotoSection('+i+')">'+s.name+'</div>'; }).join("");
+}
+function gotoSection(i){ testState.current=testState.sections[i].start; displayQuestion(); }
+function markSectionActive(){ var cur=sectionOf(testState.current); var tabs=document.querySelectorAll("#exam_sections .stab"); for(var i=0;i<tabs.length;i++){ tabs[i].classList.toggle("active", testState.sections[parseInt(tabs[i].dataset.si,10)]===cur); } }
 function tick(){
-  var ms=testState.endAt-Date.now();
-  if(ms<=0){ ms=0; clearInterval(testState.timerId); submitTest(); }
+  var ms=testState.endAt-Date.now(); if(ms<=0){ ms=0; clearInterval(testState.timerId); submitTest(); return; }
   var m=Math.floor(ms/60000), s=Math.floor((ms%60000)/1000);
-  document.getElementById("q_timer").textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+  var el=document.getElementById("q_timer"); el.textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+  el.style.color=(ms<300000)?"#fca5a5":"var(--teal)";
 }
+function qStatus(i){ if(!testState.visited[i]) return "nv"; var a=testState.answers[i]!==null, mk=testState.marked[i]; if(mk&&a) return "ma"; if(mk) return "mr"; if(a) return "ans"; return "na"; }
+function paletteCell(i,label){ var d=document.createElement("div"); d.className="pq"; d.setAttribute("data-i",i); d.textContent=label; d.onclick=(function(k){ return function(){ testState.current=k; displayQuestion(); }; })(i); return d; }
 function buildPalette(){
-  var p=document.getElementById("palette"); p.innerHTML="";
-  for(var i=0;i<testState.questions.length;i++){ var d=document.createElement("div"); d.className="pq"; d.textContent=(i+1); d.onclick=(function(k){ return function(){ testState.current=k; displayQuestion(); }; })(i); p.appendChild(d); }
+  var wrap=document.getElementById("palette_wrap"); wrap.innerHTML="";
+  if(testState.mode==="mock"){
+    testState.sections.forEach(function(sec){
+      var h=document.createElement("div"); h.className="pal-sec"; h.textContent=sec.name; wrap.appendChild(h);
+      var pal=document.createElement("div"); pal.className="palette exam-pal";
+      for(var i=sec.start;i<=sec.end;i++){ pal.appendChild(paletteCell(i,(i-sec.start+1))); }
+      wrap.appendChild(pal);
+    });
+  } else {
+    var pal=document.createElement("div"); pal.className="palette";
+    for(var i=0;i<testState.questions.length;i++){ pal.appendChild(paletteCell(i,(i+1))); }
+    wrap.appendChild(pal);
+  }
+  refreshPalette();
 }
-function refreshPalette(){ var els=document.querySelectorAll("#palette .pq"); for(var i=0;i<els.length;i++){ els[i].classList.toggle("done", testState.answers[i]!==null); els[i].classList.toggle("cur", i===testState.current); } }
+function refreshPalette(){
+  var els=document.querySelectorAll("#palette_wrap .pq");
+  for(var j=0;j<els.length;j++){ var i=parseInt(els[j].getAttribute("data-i"),10); els[j].className="pq";
+    if(testState.mode==="mock"){ els[j].classList.add(qStatus(i)); } else if(testState.answers[i]!==null){ els[j].classList.add("done"); }
+    if(i===testState.current) els[j].classList.add("cur");
+  }
+}
 function displayQuestion(){
-  var idx=testState.current, q=testState.questions[idx];
-  document.getElementById("q_now").textContent=(idx+1);
-  document.getElementById("q_fill").style.width=((idx+1)/testState.questions.length*100)+"%";
+  var idx=testState.current, q=testState.questions[idx]; testState.visited[idx]=true;
+  if(testState.mode==="mock"){
+    var sec=sectionOf(idx);
+    document.getElementById("q_now").textContent=(idx-sec.start+1);
+    document.getElementById("q_total").textContent=(sec.end-sec.start+1);
+    document.getElementById("q_secname").textContent=" · "+sec.name;
+    markSectionActive();
+  } else {
+    document.getElementById("q_now").textContent=(idx+1);
+    document.getElementById("q_total").textContent=testState.questions.length;
+    document.getElementById("q_secname").textContent="";
+    document.getElementById("q_fill").style.width=((idx+1)/testState.questions.length*100)+"%";
+    document.getElementById("prevBtn").disabled=(idx===0);
+    document.getElementById("nextBtn").textContent=(idx===testState.questions.length-1)?"Submit":"Next";
+  }
   var wrap=document.getElementById("q_imgwrap"); wrap.innerHTML='<div class="q-loading">Loading question…</div>';
   var img=new Image(); img.onload=function(){ wrap.innerHTML=""; wrap.appendChild(img); }; img.onerror=function(){ wrap.innerHTML='<div class="q-loading">Image could not load.</div>'; }; img.alt="JEE question"; img.src=q.img;
   var opts=document.querySelectorAll("#testScreen .opt"); for(var i=0;i<opts.length;i++) opts[i].classList.toggle("selected", testState.answers[idx]===i);
-  document.getElementById("prevBtn").disabled=(idx===0);
-  document.getElementById("nextBtn").textContent=(idx===testState.questions.length-1)?"Submit":"Next";
   refreshPalette();
 }
 function selectAnswer(i){ testState.answers[testState.current]=i; var opts=document.querySelectorAll("#testScreen .opt"); for(var k=0;k<opts.length;k++) opts[k].classList.toggle("selected",k===i); refreshPalette(); }
+/* exam buttons */
+function saveNext(){ testState.marked[testState.current]=false; advance(); }
+function markNext(){ testState.marked[testState.current]=true; advance(); }
+function clearResp(){ testState.answers[testState.current]=null; testState.marked[testState.current]=false; displayQuestion(); }
+function advance(){ if(testState.current<testState.questions.length-1){ testState.current++; } displayQuestion(); }
+/* simple buttons */
 function nextQuestion(){ if(testState.current===testState.questions.length-1){ submitTest(); return; } testState.current++; displayQuestion(); }
 function prevQuestion(){ if(testState.current>0){ testState.current--; displayQuestion(); } }
 function exitTest(){ if(confirm("Exit this test? Progress will not be saved.")){ testState.active=false; if(testState.timerId) clearInterval(testState.timerId); view("shell"); go("overview"); } }
+function confirmSubmit(){
+  var ansCount=0; for(var i=0;i<testState.answers.length;i++){ if(testState.answers[i]!==null) ansCount++; }
+  if(confirm("You answered "+ansCount+" of "+testState.questions.length+" questions.\n\nSubmit the test now?")) submitTest();
+}
 
 /* ---------- submit + report ---------- */
 function tierFor(sc){ if(sc>=250)return "Top NITs / IIIT-Hyderabad range"; if(sc>=200)return "Top NITs — core branches"; if(sc>=150)return "NITs (home-state) / IIITs / GFTIs"; if(sc>=100)return "State Government Engineering Colleges"; return "Foundation-building stage"; }
 function nextMilestone(sc){ var t=[100,150,200,250,280]; for(var i=0;i<t.length;i++){ if(sc<t[i]) return t[i]; } return null; }
 function bumpStats(qCount, correctCount, isTest){
   if(!currentProfile) return;
-  currentProfile.stats.questionsSolved+=qCount;
-  currentProfile.stats.correctAnswers+=correctCount;
-  if(isTest) currentProfile.stats.testsTaken+=1;
-  if(USE_FIREBASE && fbDB && currentUser){
-    var upd={ questionsSolved:firebase.firestore.FieldValue.increment(qCount), correctAnswers:firebase.firestore.FieldValue.increment(correctCount) };
-    if(isTest) upd.testsTaken=firebase.firestore.FieldValue.increment(1);
-    fbDB.collection("users").doc(currentUser).set(upd,{merge:true}).catch(function(e){ console.error(e); });
-  } else { persistDB(); }
+  currentProfile.stats.questionsSolved+=qCount; currentProfile.stats.correctAnswers+=correctCount; if(isTest) currentProfile.stats.testsTaken+=1;
+  if(USE_FIREBASE && fbDB && currentUser){ var upd={ questionsSolved:firebase.firestore.FieldValue.increment(qCount), correctAnswers:firebase.firestore.FieldValue.increment(correctCount) }; if(isTest) upd.testsTaken=firebase.firestore.FieldValue.increment(1); fbDB.collection("users").doc(currentUser).set(upd,{merge:true}).catch(function(e){ console.error(e); }); } else { persistDB(); }
 }
 function submitTest(){
   if(testState.timerId) clearInterval(testState.timerId);
-  var qs=testState.questions, ans=testState.answers, total=qs.length, correct=0;
-  var per={}; SUBJECTS.forEach(function(s){ per[s]={c:0,t:0}; });
-  qs.forEach(function(q,i){ if(per[q.subject]){ per[q.subject].t++; if(ans[i]===q.correct) per[q.subject].c++; } if(ans[i]===q.correct) correct++; });
-  var score=Math.round(100*correct/total);
-  var diag=(testState.mode==="diagnostic"||testState.mode==="mock");
-
-  // subjects present (for history tags)
+  var qs=testState.questions, ans=testState.answers, total=qs.length, correct=0, wrong=0;
+  var per={}; SUBJECTS.forEach(function(s){ per[s]={c:0,t:0,w:0}; });
+  qs.forEach(function(q,i){ if(per[q.subject]){ per[q.subject].t++; if(ans[i]===q.correct) per[q.subject].c++; else if(ans[i]!==null) per[q.subject].w++; } if(ans[i]===q.correct) correct++; else if(ans[i]!==null) wrong++; });
+  var scorePct=Math.round(100*correct/total);
+  var isMock=(testState.mode==="mock");
+  var marks=isMock?(4*correct-1*wrong):0;
+  var diag=(testState.mode==="diagnostic"||isMock);
   var subjTags={}; qs.forEach(function(q){ subjTags[q.subject]=(subjTags[q.subject]||0)+1; });
-
-  // stats + history
-  currentProfile.stats.testsTaken+=1;
-  currentProfile.stats.questionsSolved+=total;
-  currentProfile.stats.correctAnswers+=correct;
-  var histEntry={ type:modeLabel(testState.mode), score:score, correct:correct, total:total, subjects:subjTags, date:Date.now() };
-  currentProfile.history=(currentProfile.history||[]).concat([histEntry]);
-  if(currentProfile.history.length>30) currentProfile.history=currentProfile.history.slice(-30);
-
-  if(diag){ renderDiagnosticReport(per, correct, total, score, qs, ans); if(currentProfile.last) {} }
-  else { renderPracticeResult(correct, total, score, qs, ans); }
-
-  // persist
+  currentProfile.stats.testsTaken+=1; currentProfile.stats.questionsSolved+=total; currentProfile.stats.correctAnswers+=correct;
+  var histEntry={ type:(isMock?(testState.mockName||"Mock Test"):modeLabel(testState.mode)), score:scorePct, marks:(isMock?marks:null), correct:correct, total:total, subjects:subjTags, date:Date.now() };
+  currentProfile.history=(currentProfile.history||[]).concat([histEntry]); if(currentProfile.history.length>30) currentProfile.history=currentProfile.history.slice(-30);
+  if(isMock) renderMockReport(per, correct, wrong, total, marks, scorePct, qs, ans);
+  else if(diag) renderDiagnosticReport(per, correct, total, scorePct, qs, ans);
+  else renderPracticeResult(correct, total, scorePct, qs, ans);
   if(USE_FIREBASE && fbDB && currentUser){
     var upd={ testsTaken:firebase.firestore.FieldValue.increment(1), questionsSolved:firebase.firestore.FieldValue.increment(total), correctAnswers:firebase.firestore.FieldValue.increment(correct), history:currentProfile.history };
     if(diag && currentProfile.last){ upd.lastReadiness=currentProfile.last.readiness; upd.weakestSubject=currentProfile.last.weakest; upd.lastEst=currentProfile.last.est; upd.lastPer=currentProfile.last.per; }
     fbDB.collection("users").doc(currentUser).set(upd,{merge:true}).catch(function(e){ console.error(e); });
   } else { persistDB(); }
-
-  testState.active=false;
-  view("resultsScreen");
+  testState.active=false; view("resultsScreen");
+}
+function renderMockReport(per, correct, wrong, total, marks, scorePct, qs, ans){
+  document.getElementById("r_title").textContent="Your Mock Test Report";
+  document.getElementById("r_again").classList.add("hidden");
+  document.getElementById("r_pct").textContent=scorePct+"%";
+  document.getElementById("r_ring").style.border="8px solid "+ringColor(scorePct);
+  document.getElementById("r_estwrap").classList.remove("hidden");
+  document.getElementById("r_estlabel").textContent="Score";
+  document.getElementById("r_est").textContent=marks;
+  document.getElementById("r_estnote").textContent="+4 correct, −1 wrong · "+correct+" correct · "+wrong+" wrong · "+(total-correct-wrong)+" unattempted.";
+  var accBy={}, sc=document.getElementById("r_subjects"); sc.innerHTML="";
+  SUBJECTS.forEach(function(s){ var d=per[s]; var m=4*d.c-1*d.w; var a=d.t>0?Math.round(100*d.c/d.t):0; accBy[s]=d.t>0?(d.c/d.t):0; sc.innerHTML+='<div class="subj-row"><div class="top"><span>'+s+'</span><span class="sc">'+m+'/100 · '+a+'%</span></div><div class="bar"><div class="f" style="width:'+a+'%;background:'+subColor(s)+'"></div></div></div>'; });
+  var weakest=SUBJECTS[0]; SUBJECTS.forEach(function(s){ if(accBy[s]<accBy[weakest]) weakest=s; });
+  document.getElementById("r_weak").innerHTML='<div class="weak-card"><h3>🎯 Focus first: '+weakest+'</h3><p>Your weakest section in this mock. Fixing '+weakest+' will add the most marks to your score.</p></div>';
+  var tier=tierFor(marks), next=nextMilestone(marks);
+  var ph='<div class="path-card"><h3>🏛️ Your college path</h3><p>With <b>'+marks+'/300</b>, you are around the <span class="tier">'+tier+'</span>.';
+  if(next) ph+=' To reach ~'+next+'/300, gain about <b>'+(next-marks)+' more marks</b> — start with '+weakest+'.';
+  else ph+=' Excellent — aim for the very top ranks.';
+  ph+='</p><p style="font-size:12px;color:var(--dim);margin-top:8px">Cutoff ranges are approximate; real cutoffs vary by category, branch and year.</p></div>';
+  document.getElementById("r_path").innerHTML=ph;
+  currentProfile.last={ readiness:scorePct, weakest:weakest, est:marks, per:{Physics:{c:per.Physics.c,t:per.Physics.t},Chemistry:{c:per.Chemistry.c,t:per.Chemistry.t},Mathematics:{c:per.Mathematics.c,t:per.Mathematics.t}} };
+  renderReview(qs, ans);
 }
 function renderDiagnosticReport(per, correct, total, score, qs, ans){
-  document.getElementById("r_title").textContent=(testState.mode==="mock")?"Your Mock Test Report":"Your Diagnostic Report";
+  document.getElementById("r_title").textContent="Your Diagnostic Report";
   document.getElementById("r_estwrap").classList.remove("hidden");
   document.getElementById("r_again").classList.remove("hidden");
+  document.getElementById("r_estlabel").textContent="Estimated JEE Main score";
+  document.getElementById("r_estnote").textContent="An indicator based on this test — not an official score.";
   document.getElementById("r_pct").textContent=score+"%";
   document.getElementById("r_ring").style.border="8px solid "+ringColor(score);
   var est=0, accBy={}; SUBJECTS.forEach(function(s){ var a=per[s].t>0?(per[s].c/per[s].t):0; accBy[s]=a; est+=a*100; }); est=Math.round(est);
@@ -868,6 +1002,7 @@ function renderReview(qs, ans){
     rv.appendChild(item); });
 }
 function backToDash(){ view("shell"); go("overview"); }
+
 
 /* ---------- my tests ---------- */
 function renderMyTests(){
@@ -1015,7 +1150,7 @@ function initApp(){
   loadDB(); initPredictor();
   fetch("questions.json").then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); })
     .then(function(data){
-      allQuestions=data;
+      allQuestions=data; buildMocks();
       if(USE_FIREBASE){ initFirebaseAuth(); }
       else { var saved=readCurrent(); if(saved && usersDB[saved]){ currentUser=saved; currentEmail=saved; currentProfile=usersDB[saved]; enterApp(); } else { view("authScreen"); showSignup(); } }
     }).catch(function(){ allQuestions=[]; var el=document.getElementById("su_msg"); if(el){ el.className="msg err"; el.textContent="Could not load question bank. Please refresh."; } view("authScreen"); showSignup(); });
