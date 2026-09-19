@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dakhilaa — JEE Main PYQ Practice</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%236366f1'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='white' font-family='Arial'%3ED%3C/text%3E%3C/svg%3E">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root{
+    --primary:#6366f1; --primary-dark:#4f46e5;
+    --bg:#0f172a; --bg-light:#1e293b; --bg-card:#1e293b;
+    --border:#334155; --text:#f1f5f9; --muted:#94a3b8;
+    --green:#22c55e; --red:#ef4444; --amber:#f59e0b;
+  }
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.6; min-height:100vh;
+  }
+  .container{ max-width:820px; margin:0 auto; padding:20px 16px; }
+  .hidden{ display:none !important; }
+  h1,h2,h3{ line-height:1.25; }
+  button{ font-family:inherit; cursor:pointer; border:none; }
+  .btn{
+    background:var(--primary); color:#fff; padding:13px 22px; border-radius:10px;
+    font-size:16px; font-weight:600; transition:background .15s; width:100%;
+  }
+  .btn:hover{ background:var(--primary-dark); }
+  .btn-outline{
+    background:transparent; color:var(--text); border:1px solid var(--border);
+  }
+  .btn-outline:hover{ background:var(--bg-light); }
+  .btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+  .brand{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:22px; }
+  .brand .logo{
+    width:34px; height:34px; border-radius:9px;
+    background:linear-gradient(135deg,var(--primary),#a855f7);
+    display:flex; align-items:center; justify-content:center; font-size:18px;
+  }
+  .brand .accent{ color:var(--primary); }
+
+  .auth-wrap{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .card{ background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:28px; width:100%; }
+  .auth-card{ max-width:400px; }
+  .auth-card .brand{ justify-content:center; margin-bottom:6px; }
+  .tagline{ text-align:center; color:var(--muted); font-size:14px; margin-bottom:22px; }
+  .field{ margin-bottom:15px; }
+  .field label{ display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
+  .field input{
+    width:100%; padding:12px 14px; background:var(--bg); border:1px solid var(--border);
+    border-radius:9px; color:var(--text); font-size:15px;
+  }
+  .field input:focus{ outline:none; border-color:var(--primary); }
+  .switch{ text-align:center; margin-top:16px; font-size:14px; color:var(--muted); }
+  .switch a{ color:var(--primary); font-weight:600; cursor:pointer; text-decoration:none; }
+  .msg{ font-size:13px; margin-top:10px; text-align:center; min-height:18px; }
+  .msg.err{ color:var(--red); } .msg.ok{ color:var(--green); }
+  .spinner{ width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+  @keyframes spin{ to{ transform:rotate(360deg);} }
+
+  .topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+  .topbar .btn{ width:auto; padding:8px 14px; font-size:14px; }
+  .welcome{ font-size:15px; color:var(--muted); margin-bottom:4px; }
+  .welcome b{ color:var(--text); }
+  .stats-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:20px 0; }
+  .stat{ background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px; text-align:center; }
+  .stat .num{ font-size:26px; font-weight:800; color:var(--primary); }
+  .stat .lbl{ font-size:12px; color:var(--muted); margin-top:2px; }
+  .section-title{ font-size:14px; color:var(--muted); margin:22px 0 10px; text-transform:uppercase; letter-spacing:.5px; }
+  .subject-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:8px; }
+  .subject-btn{
+    background:var(--bg-card); border:1px solid var(--border); color:var(--text);
+    padding:14px; border-radius:11px; font-size:15px; font-weight:600; text-align:left; transition:all .15s;
+  }
+  .subject-btn .cnt{ display:block; font-size:12px; color:var(--muted); font-weight:400; margin-top:2px; }
+  .subject-btn.active{ border-color:var(--primary); background:rgba(99,102,241,.12); }
+  .subject-btn:hover{ border-color:var(--primary); }
+
+  .test-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .qcount{ font-size:14px; color:var(--muted); font-weight:600; }
+  .paper-tag{ font-size:12px; color:var(--muted); background:var(--bg-light); padding:4px 10px; border-radius:20px; }
+  .progress-bar{ height:6px; background:var(--bg-light); border-radius:10px; overflow:hidden; margin-bottom:20px; }
+  .progress-bar .fill{ height:100%; background:var(--primary); width:0; transition:width .25s; }
+  .q-image-wrap{
+    background:#fff; border-radius:12px; padding:10px; margin-bottom:20px;
+    overflow-x:auto; text-align:center;
+  }
+  .q-image-wrap img{ width:100%; max-width:100%; height:auto; display:block; margin:0 auto; }
+  .q-loading{ color:#64748b; padding:40px; font-size:14px; }
+  .options{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:22px; }
+  .opt{
+    background:var(--bg-card); border:2px solid var(--border); color:var(--text);
+    padding:16px; border-radius:12px; font-size:17px; font-weight:700; transition:all .12s;
+    display:flex; align-items:center; gap:10px;
+  }
+  .opt .circle{
+    width:28px; height:28px; border-radius:50%; border:2px solid var(--muted);
+    display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;
+  }
+  .opt.selected{ border-color:var(--primary); background:rgba(99,102,241,.14); }
+  .opt.selected .circle{ border-color:var(--primary); background:var(--primary); color:#fff; }
+  .opt:hover{ border-color:var(--primary); }
+  .nav-row{ display:flex; gap:12px; }
+  .nav-row .btn{ flex:1; }
+
+  .score-circle{
+    width:150px; height:150px; border-radius:50%; margin:10px auto 20px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    border:8px solid var(--primary); background:var(--bg-card);
+  }
+  .score-circle .pct{ font-size:38px; font-weight:800; }
+  .score-circle .sub{ font-size:13px; color:var(--muted); }
+  .result-summary{ text-align:center; margin-bottom:22px; }
+  .review-item{ background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:12px; }
+  .review-item .rhead{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:13px; }
+  .badge{ padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700; }
+  .badge.correct{ background:rgba(34,197,94,.15); color:var(--green); }
+  .badge.wrong{ background:rgba(239,68,68,.15); color:var(--red); }
+  .review-item img{ max-width:100%; border-radius:8px; background:#fff; padding:6px; }
+  .ans-line{ font-size:13px; color:var(--muted); margin-top:8px; }
+  .ans-line .g{ color:var(--green); font-weight:700; } .ans-line .r{ color:var(--red); font-weight:700; }
+
+  @media (max-width:520px){
+    .stats-grid{ gap:8px; } .stat{ padding:12px 8px; } .stat .num{ font-size:22px; }
+    .subject-grid{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loadingScreen" class="auth-wrap">
+  <div style="text-align:center">
+    <div class="spinner"></div>
+    <div style="color:var(--muted);font-size:14px">Loading Dakhilaa…</div>
+  </div>
+</div>
+
+<div id="authScreen" class="auth-wrap hidden">
+  <div class="card auth-card">
+    <div class="brand"><span class="logo">📘</span><span>Dakh<span class="accent">ilaa</span></span></div>
+    <div class="tagline">JEE Main Previous Year Questions · Real Papers</div>
+
+    <div id="signupForm">
+      <div class="field"><label>Name</label><input id="su_name" type="text" placeholder="Your name"></div>
+      <div class="field"><label>Email</label><input id="su_email" type="email" placeholder="you@example.com"></div>
+      <div class="field"><label>Password</label><input id="su_pass" type="password" placeholder="At least 6 characters"></div>
+      <button class="btn" id="su_btn" onclick="handleSignup()">Create Account</button>
+      <div class="msg" id="su_msg"></div>
+      <div class="switch">Already have an account? <a onclick="showSignin()">Sign in</a></div>
+    </div>
+
+    <div id="signinForm" class="hidden">
+      <div class="field"><label>Email</label><input id="si_email" type="email" placeholder="you@example.com"></div>
+      <div class="field"><label>Password</label><input id="si_pass" type="password" placeholder="Your password"></div>
+      <button class="btn" id="si_btn" onclick="handleSignin()">Sign In</button>
+      <div class="msg" id="si_msg"></div>
+      <div class="switch">New here? <a onclick="showSignup()">Create an account</a></div>
+    </div>
+  </div>
+</div>
+
+<div id="dashboard" class="container hidden">
+  <div class="topbar">
+    <div class="brand"><span class="logo">📘</span><span>Dakh<span class="accent">ilaa</span></span></div>
+    <button class="btn btn-outline" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="welcome">Welcome back, <b id="dash_name">Student</b> 👋</div>
+
+  <div class="stats-grid">
+    <div class="stat"><div class="num" id="st_tests">0</div><div class="lbl">Tests Taken</div></div>
+    <div class="stat"><div class="num" id="st_solved">0</div><div class="lbl">Questions Solved</div></div>
+    <div class="stat"><div class="num" id="st_acc">0%</div><div class="lbl">Accuracy</div></div>
+  </div>
+
+  <div class="section-title">Choose Subject</div>
+  <div class="subject-grid">
+    <button class="subject-btn active" data-subject="Mixed" onclick="selectSubject(this)">Mixed <span class="cnt" id="cnt_Mixed">All subjects</span></button>
+    <button class="subject-btn" data-subject="Physics" onclick="selectSubject(this)">Physics <span class="cnt" id="cnt_Physics"></span></button>
+    <button class="subject-btn" data-subject="Chemistry" onclick="selectSubject(this)">Chemistry <span class="cnt" id="cnt_Chemistry"></span></button>
+    <button class="subject-btn" data-subject="Mathematics" onclick="selectSubject(this)">Mathematics <span class="cnt" id="cnt_Mathematics"></span></button>
+  </div>
+
+  <div style="margin-top:18px">
+    <button class="btn" id="startBtn" onclick="startTest()">Start 10-Question Test</button>
+  </div>
+  <div class="msg" id="dash_msg"></div>
+</div>
+
+<div id="testScreen" class="container hidden">
+  <div class="test-head">
+    <span class="qcount">Question <span id="q_now">1</span> / 10</span>
+    <span class="paper-tag" id="q_paper">JEE Main 2024</span>
+  </div>
+  <div class="progress-bar"><div class="fill" id="q_fill"></div></div>
+
+  <div class="q-image-wrap" id="q_imgwrap">
+    <div class="q-loading">Loading question…</div>
+  </div>
+
+  <div class="options">
+    <button class="opt" data-opt="0" onclick="selectAnswer(0)"><span class="circle">1</span> Option 1</button>
+    <button class="opt" data-opt="1" onclick="selectAnswer(1)"><span class="circle">2</span> Option 2</button>
+    <button class="opt" data-opt="2" onclick="selectAnswer(2)"><span class="circle">3</span> Option 3</button>
+    <button class="opt" data-opt="3" onclick="selectAnswer(3)"><span class="circle">4</span> Option 4</button>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-outline" id="prevBtn" onclick="prevQuestion()">Previous</button>
+    <button class="btn" id="nextBtn" onclick="nextQuestion()">Next</button>
+  </div>
+  <div style="margin-top:12px">
+    <button class="btn btn-outline" onclick="exitTest()">Exit Test</button>
+  </div>
+</div>
+
+<div id="resultsScreen" class="container hidden">
+  <h2 style="text-align:center;margin-bottom:6px">Test Complete 🎉</h2>
+  <div class="score-circle">
+    <div class="pct" id="r_pct">0%</div>
+    <div class="sub" id="r_sub">0 / 10</div>
+  </div>
+  <div class="result-summary" id="r_summary"></div>
+  <div class="section-title">Review</div>
+  <div id="r_review"></div>
+  <div style="margin-top:8px">
+    <button class="btn" onclick="backToDashboard()">Back to Dashboard</button>
+  </div>
+</div>
+
+<!-- Firebase SDK (loaded from Google CDN). Harmless until you add your config below. -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
+<script>
+"use strict";
+
+/* ============================================================
+   FIREBASE CONFIG
+   Paste your Firebase project's config below to turn ON
+   real cross-device login. Until you do, the app keeps working
+   with simple per-device (local) accounts — nothing breaks.
+   Steps to get this config are in the setup guide.
+   ============================================================ */
+var firebaseConfig = {
+  apiKey: "AIzaSyA-W_3VSzsTujSYWV0HtwUkWc7OBLqpQxc",
+  authDomain: "dakhilaa-cb41a.firebaseapp.com",
+  projectId: "dakhilaa-cb41a",
+  storageBucket: "dakhilaa-cb41a.firebasestorage.app",
+  messagingSenderId: "1055517618428",
+  appId: "1:1055517618428:web:b6dcd8d696ccb94b7a6779"
+};
+
+var USE_FIREBASE = firebaseConfig.apiKey.indexOf("PASTE") === -1 && typeof firebase !== "undefined";
+var fbAuth = null, fbDB = null;
+if (USE_FIREBASE) {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    fbAuth = firebase.auth();
+    fbDB = firebase.firestore();
+  } catch (e) {
+    console.error("Firebase init failed, falling back to local accounts:", e);
+    USE_FIREBASE = false;
+  }
+}
+
+/* ---------------- State ---------------- */
+var allQuestions = [];
+var currentUser = null;      // email (local) or uid (firebase)
+var currentProfile = null;   // { name, stats:{testsTaken,questionsSolved,correctAnswers} }
+var selectedSubject = "Mixed";
+var testState = { questions: [], answers: [], current: 0, active: false };
+var MIN_PASS = 6;
+
+/* ---------------- Local store (fallback when Firebase is off) ---------------- */
+var usersDB = {};
+var storageOK = true;
+function loadDB(){
+  try { var raw = localStorage.getItem("dakhilaaUsers"); usersDB = raw ? JSON.parse(raw) : {}; }
+  catch(e){ usersDB = {}; storageOK = false; }
+}
+function persistDB(){
+  try { localStorage.setItem("dakhilaaUsers", JSON.stringify(usersDB)); }
+  catch(e){ storageOK = false; }
+}
+function persistCurrent(email){ try { localStorage.setItem("dakhilaaCurrent", email); } catch(e){ storageOK = false; } }
+function readCurrent(){ try { return localStorage.getItem("dakhilaaCurrent"); } catch(e){ return null; } }
+function clearCurrentStore(){ try { localStorage.removeItem("dakhilaaCurrent"); } catch(e){} }
+
+/* ---------------- Screens ---------------- */
+function show(id){
+  ["loadingScreen","authScreen","dashboard","testScreen","resultsScreen"].forEach(function(s){
+    document.getElementById(s).classList.add("hidden");
+  });
+  document.getElementById(id).classList.remove("hidden");
+  window.scrollTo(0,0);
+}
+function showSignup(){ document.getElementById("signupForm").classList.remove("hidden"); document.getElementById("signinForm").classList.add("hidden"); }
+function showSignin(){ document.getElementById("signinForm").classList.remove("hidden"); document.getElementById("signupForm").classList.add("hidden"); }
+function setBtnBusy(id, busy, busyText){
+  var b = document.getElementById(id);
+  if(!b) return;
+  b.disabled = busy;
+  if(busy){ b.dataset.label = b.textContent; b.textContent = busyText || "Please wait…"; }
+  else if(b.dataset.label){ b.textContent = b.dataset.label; }
+}
+function fbError(err){
+  var c = (err && err.code) ? err.code : "";
+  if(c.indexOf("email-already-in-use")>=0) return "This email is already registered. Please sign in.";
+  if(c.indexOf("invalid-email")>=0) return "Please enter a valid email address.";
+  if(c.indexOf("weak-password")>=0) return "Password must be at least 6 characters.";
+  if(c.indexOf("user-not-found")>=0) return "No account found for this email.";
+  if(c.indexOf("wrong-password")>=0 || c.indexOf("invalid-credential")>=0 || c.indexOf("invalid-login")>=0) return "Incorrect email or password.";
+  if(c.indexOf("network")>=0) return "Network error. Please check your internet connection.";
+  if(c.indexOf("too-many-requests")>=0) return "Too many attempts. Please wait a moment and try again.";
+  return "Something went wrong. Please try again.";
+}
+
+/* ---------------- Sign up ---------------- */
+function handleSignup(){
+  var name = document.getElementById("su_name").value.trim();
+  var email = document.getElementById("su_email").value.trim().toLowerCase();
+  var pass = document.getElementById("su_pass").value;
+  var msg = document.getElementById("su_msg");
+  msg.className = "msg err";
+  if(!name || !email || !pass){ msg.textContent = "Please fill all fields."; return; }
+  if(pass.length < MIN_PASS){ msg.textContent = "Password must be at least " + MIN_PASS + " characters."; return; }
+
+  if(USE_FIREBASE){
+    setBtnBusy("su_btn", true, "Creating account…");
+    fbAuth.createUserWithEmailAndPassword(email, pass)
+      .then(function(cred){
+        return cred.user.updateProfile({ displayName: name }).then(function(){
+          return fbDB.collection("users").doc(cred.user.uid).set({
+            name: name, email: email, testsTaken: 0, questionsSolved: 0, correctAnswers: 0
+          });
+        });
+      })
+      .then(function(){ /* onAuthStateChanged opens the dashboard */ })
+      .catch(function(err){ msg.textContent = fbError(err); setBtnBusy("su_btn", false); });
+  } else {
+    if(usersDB[email]){ msg.textContent = "This email is already registered. Please sign in."; return; }
+    usersDB[email] = { name:name, password:pass, stats:{ testsTaken:0, questionsSolved:0, correctAnswers:0 } };
+    persistDB();
+    currentUser = email; currentProfile = usersDB[email];
+    persistCurrent(email);
+    openDashboard();
+  }
+}
+
+/* ---------------- Sign in ---------------- */
+function handleSignin(){
+  var email = document.getElementById("si_email").value.trim().toLowerCase();
+  var pass = document.getElementById("si_pass").value;
+  var msg = document.getElementById("si_msg");
+  msg.className = "msg err";
+  if(!email || !pass){ msg.textContent = "Please enter your email and password."; return; }
+
+  if(USE_FIREBASE){
+    setBtnBusy("si_btn", true, "Signing in…");
+    fbAuth.signInWithEmailAndPassword(email, pass)
+      .then(function(){ /* onAuthStateChanged opens the dashboard */ })
+      .catch(function(err){ msg.textContent = fbError(err); setBtnBusy("si_btn", false); });
+  } else {
+    if(!usersDB[email]){ msg.textContent = "No account found for this email."; return; }
+    if(usersDB[email].password !== pass){ msg.textContent = "Incorrect password."; return; }
+    currentUser = email; currentProfile = usersDB[email];
+    persistCurrent(email);
+    openDashboard();
+  }
+}
+
+function logout(){
+  if(USE_FIREBASE){
+    fbAuth.signOut();  // onAuthStateChanged shows the auth screen
+  } else {
+    clearCurrentStore(); currentUser = null; currentProfile = null;
+    show("authScreen"); showSignin();
+  }
+}
+
+/* ---------------- Firebase auth listener ---------------- */
+function initFirebaseAuth(){
+  fbAuth.onAuthStateChanged(function(user){
+    setBtnBusy("su_btn", false); setBtnBusy("si_btn", false);
+    if(user){
+      fbDB.collection("users").doc(user.uid).get()
+        .then(function(doc){
+          var d = doc.exists ? doc.data() : {};
+          currentUser = user.uid;
+          currentProfile = {
+            name: d.name || user.displayName || "Student",
+            stats: {
+              testsTaken: d.testsTaken || 0,
+              questionsSolved: d.questionsSolved || 0,
+              correctAnswers: d.correctAnswers || 0
+            }
+          };
+          openDashboard();
+        })
+        .catch(function(){
+          currentUser = user.uid;
+          currentProfile = { name: user.displayName || "Student", stats:{ testsTaken:0, questionsSolved:0, correctAnswers:0 } };
+          openDashboard();
+        });
+    } else {
+      currentUser = null; currentProfile = null;
+      show("authScreen"); showSignin();
+    }
+  });
+}
+
+/* ---------------- Dashboard ---------------- */
+function openDashboard(){
+  var p = currentProfile;
+  if(!p){ show("authScreen"); showSignup(); return; }
+  document.getElementById("dash_name").textContent = p.name;
+  document.getElementById("st_tests").textContent = p.stats.testsTaken;
+  document.getElementById("st_solved").textContent = p.stats.questionsSolved;
+  var acc = p.stats.questionsSolved > 0 ? Math.round(100 * p.stats.correctAnswers / p.stats.questionsSolved) : 0;
+  document.getElementById("st_acc").textContent = acc + "%";
+  var dm = document.getElementById("dash_msg");
+  if(!USE_FIREBASE && !storageOK){
+    dm.className = "msg"; dm.style.color = "var(--amber)";
+    dm.textContent = "Note: your browser is blocking saved logins, so this account is only for this session. Open the site in Chrome (not a private/in-app browser) for a saved account.";
+  } else { dm.textContent = ""; }
+  updateSubjectCounts();
+  show("dashboard");
+}
+function updateSubjectCounts(){
+  var counts = { Physics:0, Chemistry:0, Mathematics:0 };
+  allQuestions.forEach(function(q){ if(counts[q.subject] !== undefined) counts[q.subject]++; });
+  document.getElementById("cnt_Mixed").textContent = allQuestions.length + " questions";
+  document.getElementById("cnt_Physics").textContent = counts.Physics + " questions";
+  document.getElementById("cnt_Chemistry").textContent = counts.Chemistry + " questions";
+  document.getElementById("cnt_Mathematics").textContent = counts.Mathematics + " questions";
+}
+function selectSubject(btn){
+  selectedSubject = btn.getAttribute("data-subject");
+  var btns = document.querySelectorAll(".subject-btn");
+  for(var i=0;i<btns.length;i++){ btns[i].classList.remove("active"); }
+  btn.classList.add("active");
+}
+
+/* ---------------- Test flow ---------------- */
+function shuffle(arr){
+  for(var i=arr.length-1;i>0;i--){ var j = Math.floor(Math.random()*(i+1)); var t = arr[i]; arr[i]=arr[j]; arr[j]=t; }
+  return arr;
+}
+function startTest(){
+  var msg = document.getElementById("dash_msg");
+  msg.className = "msg err"; msg.textContent = "";
+  var pool = allQuestions.filter(function(q){ return selectedSubject === "Mixed" ? true : q.subject === selectedSubject; });
+  if(pool.length < 1){ msg.textContent = "No questions available. Please try again."; return; }
+  var picked = shuffle(pool.slice()).slice(0, Math.min(10, pool.length));
+  testState = { questions: picked, answers: new Array(picked.length).fill(null), current: 0, active: true };
+  show("testScreen");
+  displayQuestion();
+}
+function displayQuestion(){
+  var idx = testState.current;
+  var q = testState.questions[idx];
+  document.getElementById("q_now").textContent = (idx+1);
+  document.getElementById("q_paper").textContent = q.paper || "JEE Main 2024";
+  document.getElementById("q_fill").style.width = ((idx+1)/testState.questions.length*100) + "%";
+  var wrap = document.getElementById("q_imgwrap");
+  wrap.innerHTML = '<div class="q-loading">Loading question…</div>';
+  var img = new Image();
+  img.onload = function(){ wrap.innerHTML = ""; wrap.appendChild(img); };
+  img.onerror = function(){ wrap.innerHTML = '<div class="q-loading">Image could not load.</div>'; };
+  img.alt = "JEE question";
+  img.src = q.img;
+  var opts = document.querySelectorAll(".opt");
+  for(var i=0;i<opts.length;i++){ opts[i].classList.toggle("selected", testState.answers[idx] === i); }
+  document.getElementById("prevBtn").disabled = (idx === 0);
+  document.getElementById("nextBtn").textContent = (idx === testState.questions.length-1) ? "Submit Test" : "Next";
+}
+function selectAnswer(i){
+  testState.answers[testState.current] = i;
+  var opts = document.querySelectorAll(".opt");
+  for(var k=0;k<opts.length;k++){ opts[k].classList.toggle("selected", k === i); }
+}
+function nextQuestion(){
+  if(testState.current === testState.questions.length - 1){ submitTest(); return; }
+  testState.current++; displayQuestion();
+}
+function prevQuestion(){ if(testState.current > 0){ testState.current--; displayQuestion(); } }
+function exitTest(){
+  if(confirm("Exit this test? Your progress will not be saved.")){ testState.active = false; openDashboard(); }
+}
+function submitTest(){
+  var correct = 0;
+  testState.questions.forEach(function(q, i){ if(testState.answers[i] === q.correct) correct++; });
+  var total = testState.questions.length;
+  var pct = Math.round(100 * correct / total);
+
+  if(currentProfile){
+    currentProfile.stats.testsTaken += 1;
+    currentProfile.stats.questionsSolved += total;
+    currentProfile.stats.correctAnswers += correct;
+    if(USE_FIREBASE && fbDB && currentUser){
+      fbDB.collection("users").doc(currentUser).set({
+        testsTaken: firebase.firestore.FieldValue.increment(1),
+        questionsSolved: firebase.firestore.FieldValue.increment(total),
+        correctAnswers: firebase.firestore.FieldValue.increment(correct)
+      }, { merge: true }).catch(function(e){ console.error("Stat save failed:", e); });
+    } else {
+      persistDB();
+    }
+  }
+
+  document.getElementById("r_pct").textContent = pct + "%";
+  document.getElementById("r_sub").textContent = correct + " / " + total;
+  var circle = document.querySelector(".score-circle");
+  circle.style.borderColor = pct >= 70 ? "var(--green)" : (pct >= 40 ? "var(--amber)" : "var(--red)");
+  document.getElementById("r_summary").innerHTML = "You answered <b>" + correct + "</b> out of <b>" + total + "</b> correctly.";
+
+  var review = document.getElementById("r_review");
+  review.innerHTML = "";
+  testState.questions.forEach(function(q, i){
+    var userAns = testState.answers[i];
+    var isCorrect = userAns === q.correct;
+    var item = document.createElement("div");
+    item.className = "review-item";
+    var userTxt = (userAns === null) ? "Not answered" : ("Option " + (userAns+1));
+    item.innerHTML =
+      '<div class="rhead"><span>Q' + (i+1) + ' · ' + q.subject + '</span>' +
+      '<span class="badge ' + (isCorrect ? 'correct">Correct' : 'wrong">Wrong') + '</span></div>' +
+      '<img src="' + q.img + '" alt="question" loading="lazy">' +
+      '<div class="ans-line">Your answer: <span class="' + (isCorrect ? 'g' : 'r') + '">' + userTxt + '</span>' +
+      ' &nbsp;·&nbsp; Correct: <span class="g">Option ' + (q.correct+1) + '</span></div>';
+    review.appendChild(item);
+  });
+
+  testState.active = false;
+  show("resultsScreen");
+}
+function backToDashboard(){ openDashboard(); }
+
+/* ---------------- Init ---------------- */
+function initApp(){
+  loadDB();
+  fetch("questions.json")
+    .then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); })
+    .then(function(data){
+      allQuestions = data;
+      if(USE_FIREBASE){
+        initFirebaseAuth();   // decides dashboard vs auth once Firebase responds
+      } else {
+        var saved = readCurrent();
+        if(saved && usersDB[saved]){ currentUser = saved; currentProfile = usersDB[saved]; openDashboard(); }
+        else { show("authScreen"); showSignup(); }
+      }
+    })
+    .catch(function(){
+      allQuestions = [];
+      var el = document.getElementById("su_msg");
+      if(el){ el.className = "msg err"; el.textContent = "Could not load question bank. Please refresh."; }
+      show("authScreen"); showSignup();
+    });
+}
+initApp();
+</script>
+</body>
+</html>
