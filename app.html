@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dakhilaa — JEE Diagnostic</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230a0e17'/%3E%3Cpath d='M50 22 L74 50 L50 78 L26 50 Z' fill='%23f97316'/%3E%3C/svg%3E">
+<link rel="icon" href="logo.png">
 <style>
   *{ margin:0; padding:0; box-sizing:border-box; }
   :root{
@@ -28,6 +28,7 @@
 
   .brand{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:20px; }
   .brand .dia{ width:18px; height:18px; background:var(--orange); transform:rotate(45deg); border-radius:4px; }
+  .brand .logo-img{ height:32px; width:auto; display:block; }
 
   .auth-wrap{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
   .card{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:28px; width:100%; }
@@ -128,7 +129,7 @@
 
 <div id="authScreen" class="auth-wrap hidden">
   <div class="card auth-card">
-    <div class="brand"><span class="dia"></span> Dakhilaa</div>
+    <div class="brand"><img class="logo-img" src="logo.png" alt="Dakhilaa"> Dakhilaa</div>
     <div class="tagline">Find your weakest JEE topics · Free diagnostic</div>
     <div id="signupForm">
       <div class="field"><label>Name</label><input id="su_name" type="text" placeholder="Your name"></div>
@@ -150,7 +151,7 @@
 
 <div id="dashboard" class="container hidden">
   <div class="topbar">
-    <a class="brand" href="index.html"><span class="dia"></span> Dakhilaa</a>
+    <a class="brand" href="index.html"><img class="logo-img" src="logo.png" alt="Dakhilaa"> Dakhilaa</a>
     <button class="btn btn-outline" onclick="logout()">Logout</button>
   </div>
   <div class="welcome">Welcome, <b id="dash_name">Student</b> 👋</div>

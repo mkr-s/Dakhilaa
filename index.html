@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dakhilaa — Find Your Weakest JEE Topics in 15 Minutes</title>
 <meta name="description" content="The only platform that tells you exactly which JEE topics to study next — based on your specific performance gaps. Free 15-minute diagnostic.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230a0e17'/%3E%3Cpath d='M50 22 L74 50 L50 78 L26 50 Z' fill='%23f97316'/%3E%3C/svg%3E">
+<link rel="icon" href="logo.png">
 <style>
   *{ margin:0; padding:0; box-sizing:border-box; }
   :root{
@@ -39,6 +39,7 @@
   .nav{ display:flex; align-items:center; justify-content:space-between; height:64px; }
   .brand{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:20px; }
   .brand .dia{ width:20px; height:20px; background:var(--orange); transform:rotate(45deg); border-radius:4px; }
+  .brand .logo-img{ height:34px; width:auto; display:block; }
   .nav-links{ display:flex; align-items:center; gap:28px; }
   .nav-links a{ color:var(--muted); font-size:15px; font-weight:600; transition:.15s; }
   .nav-links a:hover{ color:var(--text); }
@@ -171,7 +172,7 @@
 <!-- NAV -->
 <header>
   <div class="wrap nav">
-    <a class="brand" href="#top"><span class="dia"></span> Dakhilaa</a>
+    <a class="brand" href="#top"><img class="logo-img" src="logo.png" alt="Dakhilaa"> Dakhilaa</a>
     <nav class="nav-links">
       <a href="#how">How it works</a>
       <a href="#features">Features</a>
@@ -365,7 +366,7 @@
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a class="brand" href="#top"><span class="dia"></span> Dakhilaa</a>
+        <a class="brand" href="#top"><img class="logo-img" src="logo.png" alt="Dakhilaa"> Dakhilaa</a>
         <p class="foot-about">The precision diagnostic platform for JEE prep. Find your weak topics and fix them.</p>
       </div>
       <div>
@@ -404,22 +405,72 @@ function toggleFaq(btn){
 
 // College predictor — approximate JEE Main cutoff marks (out of 300), general category,
 // based on past-year closing-rank trends. Clearly framed as an estimate.
+var IIT_NOTE = "IITs admit through JEE Advanced. Clear the JEE Main cutoff first, then rank well in Advanced. The marks shown indicate the calibre needed.";
 var COLLEGES = [
-  { name: "IITs (via JEE Advanced) — CSE", need: 250, note: "IITs admit through JEE Advanced. You first need to clear the JEE Main cutoff, then rank well in Advanced." },
-  { name: "NIT Trichy — CSE", need: 250 },
-  { name: "NIT Warangal — CSE", need: 245 },
-  { name: "NIT Surathkal — CSE", need: 240 },
-  { name: "IIIT Hyderabad", need: 245 },
-  { name: "Top NITs — Core branches (Mech/Elec/Civil)", need: 210 },
-  { name: "Mid NITs — CSE", need: 195 },
-  { name: "IIITs / GFTIs", need: 155 },
-  { name: "NIT (Home-state quota)", need: 160 },
-  { name: "State Govt. Engineering Colleges", need: 120 }
+  // ---- IITs (via JEE Advanced) — approximate calibre in JEE Main marks, CSE/general ----
+  { g:"IIT", name:"IIT Bombay", need:280, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Delhi", need:275, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Madras", need:275, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Kanpur", need:270, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Kharagpur", need:265, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Roorkee", need:260, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Guwahati", need:258, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Hyderabad", need:255, note:IIT_NOTE },
+  { g:"IIT", name:"IIT (BHU) Varanasi", need:250, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Indore", need:245, note:IIT_NOTE },
+  { g:"IIT", name:"IIT (ISM) Dhanbad", need:240, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Gandhinagar", need:238, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Ropar", need:235, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Patna", need:232, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Bhubaneswar", need:230, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Jodhpur", need:228, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Mandi", need:225, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Tirupati", need:222, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Palakkad", need:220, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Bhilai", need:218, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Goa", need:218, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Jammu", need:215, note:IIT_NOTE },
+  { g:"IIT", name:"IIT Dharwad", need:215, note:IIT_NOTE },
+  // ---- NITs (via JEE Main) — approximate CSE/general marks ----
+  { g:"NIT", name:"NIT Trichy", need:250 },
+  { g:"NIT", name:"NIT Warangal", need:245 },
+  { g:"NIT", name:"NIT Surathkal (Karnataka)", need:240 },
+  { g:"NIT", name:"NIT Rourkela", need:225 },
+  { g:"NIT", name:"MNNIT Allahabad", need:222 },
+  { g:"NIT", name:"NIT Calicut", need:220 },
+  { g:"NIT", name:"MNIT Jaipur", need:220 },
+  { g:"NIT", name:"VNIT Nagpur", need:218 },
+  { g:"NIT", name:"NIT Kurukshetra", need:215 },
+  { g:"NIT", name:"NIT Delhi", need:210 },
+  { g:"NIT", name:"SVNIT Surat", need:210 },
+  { g:"NIT", name:"MANIT Bhopal", need:205 },
+  { g:"NIT", name:"NIT Durgapur", need:200 },
+  { g:"NIT", name:"NIT Jamshedpur", need:200 },
+  { g:"NIT", name:"NIT Jalandhar", need:195 },
+  { g:"NIT", name:"NIT Patna", need:190 },
+  { g:"NIT", name:"NIT Goa", need:190 },
+  { g:"NIT", name:"NIT Andhra Pradesh", need:185 },
+  { g:"NIT", name:"NIT Raipur", need:185 },
+  { g:"NIT", name:"NIT Hamirpur", need:180 },
+  { g:"NIT", name:"NIT Puducherry", need:180 },
+  { g:"NIT", name:"NIT Silchar", need:175 },
+  { g:"NIT", name:"NIT Uttarakhand", need:175 },
+  { g:"NIT", name:"NIT Srinagar", need:165 },
+  { g:"NIT", name:"NIT Meghalaya", need:165 },
+  { g:"NIT", name:"NIT Agartala", need:160 },
+  { g:"NIT", name:"NIT Sikkim", need:158 },
+  { g:"NIT", name:"NIT Manipur", need:155 },
+  { g:"NIT", name:"NIT Mizoram", need:150 },
+  { g:"NIT", name:"NIT Nagaland", need:150 },
+  { g:"NIT", name:"NIT Arunachal Pradesh", need:150 }
 ];
 (function(){
   var sel = document.getElementById('targetCollege');
+  var groups = { IIT:"IITs (via JEE Advanced)", NIT:"NITs (via JEE Main)" };
+  var made = {};
   COLLEGES.forEach(function(c, i){
-    var o = document.createElement('option'); o.value = i; o.textContent = c.name; sel.appendChild(o);
+    if(!made[c.g]){ var og=document.createElement('optgroup'); og.label=groups[c.g]||c.g; og.id="og_"+c.g; sel.appendChild(og); made[c.g]=og; }
+    var o = document.createElement('option'); o.value = i; o.textContent = c.name; made[c.g].appendChild(o);
   });
 })();
 function checkCutoff(){
