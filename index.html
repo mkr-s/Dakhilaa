@@ -228,14 +228,31 @@ var currentUser = null;
 var selectedSubject = "Mixed";
 var testState = { questions: [], answers: [], current: 0, active: false };
 
-function getUsers(){
-  try { return JSON.parse(localStorage.getItem("dakhilaaUsers") || "{}"); }
-  catch(e){ return {}; }
+// In-memory user store, mirrored to localStorage on a best-effort basis.
+// This keeps the app fully working even when the browser blocks storage
+// (private mode, some in-app browsers), so signup -> dashboard never fails.
+var usersDB = {};
+var storageOK = true;
+
+function loadDB(){
+  try {
+    var raw = localStorage.getItem("dakhilaaUsers");
+    usersDB = raw ? JSON.parse(raw) : {};
+  } catch(e){ usersDB = {}; storageOK = false; }
 }
-function saveUsers(u){ localStorage.setItem("dakhilaaUsers", JSON.stringify(u)); }
-function setCurrent(email){ localStorage.setItem("dakhilaaCurrent", email); }
-function getCurrent(){ return localStorage.getItem("dakhilaaCurrent"); }
-function clearCurrent(){ localStorage.removeItem("dakhilaaCurrent"); }
+function persistDB(){
+  try { localStorage.setItem("dakhilaaUsers", JSON.stringify(usersDB)); }
+  catch(e){ storageOK = false; }
+}
+function persistCurrent(email){
+  try { localStorage.setItem("dakhilaaCurrent", email); } catch(e){ storageOK = false; }
+}
+function readCurrent(){
+  try { return localStorage.getItem("dakhilaaCurrent"); } catch(e){ return null; }
+}
+function clearCurrentStore(){
+  try { localStorage.removeItem("dakhilaaCurrent"); } catch(e){}
+}
 
 function show(id){
   ["authScreen","dashboard","testScreen","resultsScreen"].forEach(function(s){
@@ -255,12 +272,11 @@ function handleSignup(){
   msg.className = "msg err";
   if(!name || !email || !pass){ msg.textContent = "Please fill all fields."; return; }
   if(pass.length < 4){ msg.textContent = "Password must be at least 4 characters."; return; }
-  var users = getUsers();
-  if(users[email]){ msg.textContent = "This email is already registered. Please sign in."; return; }
-  users[email] = { name:name, password:pass, stats:{ testsTaken:0, questionsSolved:0, correctAnswers:0 } };
-  saveUsers(users);
-  setCurrent(email);
+  if(usersDB[email]){ msg.textContent = "This email is already registered. Please sign in."; return; }
+  usersDB[email] = { name:name, password:pass, stats:{ testsTaken:0, questionsSolved:0, correctAnswers:0 } };
+  persistDB();
   currentUser = email;
+  persistCurrent(email);
   openDashboard();
 }
 function handleSignin(){
@@ -268,20 +284,23 @@ function handleSignin(){
   var pass = document.getElementById("si_pass").value;
   var msg = document.getElementById("si_msg");
   msg.className = "msg err";
-  var users = getUsers();
-  if(!users[email]){ msg.textContent = "No account found for this email."; return; }
-  if(users[email].password !== pass){ msg.textContent = "Incorrect password."; return; }
-  setCurrent(email);
+  if(!usersDB[email]){ msg.textContent = "No account found for this email."; return; }
+  if(usersDB[email].password !== pass){ msg.textContent = "Incorrect password."; return; }
   currentUser = email;
+  persistCurrent(email);
   openDashboard();
 }
-function logout(){ clearCurrent(); currentUser = null; show("authScreen"); showSignin(); }
+function logout(){ clearCurrentStore(); currentUser = null; show("authScreen"); showSignin(); }
 
 function openDashboard(){
-  var users = getUsers();
-  var u = users[currentUser];
-  if(!u){ logout(); return; }
+  var u = usersDB[currentUser];
+  if(!u){ show("authScreen"); showSignup(); return; }
   document.getElementById("dash_name").textContent = u.name;
+  if(!storageOK){
+    document.getElementById("dash_msg").className = "msg";
+    document.getElementById("dash_msg").style.color = "#f59e0b";
+    document.getElementById("dash_msg").textContent = "Note: your browser is blocking saved logins, so this account is only for this session. For a permanent account, open the site in Chrome (not a private window or an in-app browser).";
+  }
   var s = u.stats;
   document.getElementById("st_tests").textContent = s.testsTaken;
   document.getElementById("st_solved").textContent = s.questionsSolved;
@@ -373,12 +392,13 @@ function submitTest(){
   var total = testState.questions.length;
   var pct = Math.round(100 * correct / total);
 
-  var users = getUsers();
-  var u = users[currentUser];
-  u.stats.testsTaken += 1;
-  u.stats.questionsSolved += total;
-  u.stats.correctAnswers += correct;
-  saveUsers(users);
+  var u = usersDB[currentUser];
+  if(u){
+    u.stats.testsTaken += 1;
+    u.stats.questionsSolved += total;
+    u.stats.correctAnswers += correct;
+    persistDB();
+  }
 
   document.getElementById("r_pct").textContent = pct + "%";
   document.getElementById("r_sub").textContent = correct + " / " + total;
@@ -410,12 +430,13 @@ function submitTest(){
 function backToDashboard(){ openDashboard(); }
 
 function initApp(){
+  loadDB();
   fetch("questions.json")
     .then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); })
     .then(function(data){
       allQuestions = data;
-      var saved = getCurrent();
-      if(saved && getUsers()[saved]){ currentUser = saved; openDashboard(); }
+      var saved = readCurrent();
+      if(saved && usersDB[saved]){ currentUser = saved; openDashboard(); }
       else { show("authScreen"); showSignup(); }
     })
     .catch(function(){
