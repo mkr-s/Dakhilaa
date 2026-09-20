@@ -317,6 +317,31 @@
   .plan-opt .po-price small{ font-size:12px; color:var(--muted); font-weight:600; }
   .plan-opt .po-cta{ margin-top:4px; font-size:12px; font-weight:700; color:var(--orange); }
   .pm-opts{ display:grid; gap:10px; text-align:left; }
+  /* JEE Advanced engine */
+  .adv-hint{ font-size:12.5px; font-weight:700; color:var(--orange-l); background:rgba(249,115,22,.1); border:1px solid rgba(249,115,22,.25); border-radius:8px; padding:7px 12px; margin-bottom:12px; display:inline-block; }
+  .opt.multi .circle{ border-radius:6px; }
+  .adv-numwrap{ max-width:340px; }
+  .adv-numbox{ width:100%; background:var(--card); border:2px solid var(--border-2); border-radius:10px; padding:14px; font-size:22px; font-weight:800; color:var(--text); text-align:center; letter-spacing:2px; min-height:54px; margin-bottom:10px; }
+  .adv-numbox.empty{ color:var(--dim); }
+  .adv-keypad{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .adv-keypad button{ padding:14px; font-size:18px; font-weight:800; border-radius:10px; border:1px solid var(--border-2); background:var(--card); color:var(--text); cursor:pointer; font-family:inherit; }
+  .adv-keypad button:hover{ background:var(--card-2); border-color:var(--orange); }
+  .adv-keypad button.wide{ grid-column:span 1; }
+  .adv-keypad button.act{ color:var(--amber); }
+  .adv-mockcard .pat{ background:rgba(168,85,247,.16); color:var(--purple); }
+  .adv-review{ display:flex; flex-direction:column; gap:14px; }
+  .adv-rq{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; }
+  .adv-rq .rqtop{ display:flex; justify-content:space-between; font-size:12px; color:var(--dim); margin-bottom:8px; }
+  .adv-rq img{ width:100%; border-radius:8px; background:#fff; margin-bottom:8px; }
+  .adv-rq .rqans{ font-size:13.5px; }
+  .adv-rq .rqans .yr{ color:var(--text); font-weight:700; }
+  .adv-rq .rqans .ok{ color:var(--green); font-weight:800; }
+  .adv-rq .rqans .bad{ color:#f87171; font-weight:800; }
+  .adv-rq .mk{ float:right; font-weight:800; }
+  .adv-rq .mk.pos{ color:var(--green); } .adv-rq .mk.neg{ color:#f87171; } .adv-rq .mk.zero{ color:var(--dim); }
+  .adv-sol{ margin-top:10px; border-top:1px solid var(--border); padding-top:8px; }
+  .adv-sol summary{ cursor:pointer; color:var(--orange-l); font-weight:700; font-size:13px; }
+  .adv-sol img{ width:100%; border-radius:8px; background:#fff; margin-top:8px; }
 </style>
 </head>
 <body>
@@ -443,6 +468,10 @@
         <h3 class="sec-h">Full Mock Tests</h3>
         <div class="sec-sub">JEE Main pattern — 75 questions (25 each subject), 3 hours, +4 / −1 marking. Real exam-style interface.</div>
         <div class="mock-grid" id="mockGrid"></div>
+
+        <h3 class="sec-h" style="font-size:18px;margin-top:26px">JEE Advanced Mocks</h3>
+        <div class="sec-sub">Real JEE Advanced 2025 papers — full pattern: single-correct, multiple-correct (partial marks), numerical, and matching. 3 hours each.</div>
+        <div class="mock-grid" id="advGrid"></div>
 
         <h3 class="sec-h" style="font-size:18px">Subject Test</h3>
         <div class="sec-sub">25 questions from one subject, instant scoring.</div>
@@ -603,6 +632,54 @@
   </div>
 </div></div>
 
+<!-- JEE ADVANCED EXAM -->
+<div id="advScreen" class="hidden"><div class="exam">
+  <div class="exam-top">
+    <button class="exit" onclick="advExit()">← Exit</button>
+    <div class="et-title" id="adv_title">JEE Advanced</div>
+    <div class="timer" id="adv_timer">3:00:00</div>
+  </div>
+  <div class="sections" id="adv_sections"></div>
+  <div class="exam-body">
+    <div class="exam-main">
+      <div class="qmeta">Question <b id="adv_now">1</b> of <span id="adv_total">48</span> <span id="adv_secname" style="color:var(--dim)"></span></div>
+      <div id="adv_hint" class="adv-hint"></div>
+      <div class="q-image-wrap" id="adv_imgwrap"><div class="q-loading">Loading…</div></div>
+      <div id="adv_ans"></div>
+      <div class="exam-btns" id="adv_btns">
+        <button class="b warn" onclick="advClear()">Clear Response</button>
+        <button class="b" onclick="advMarkNext()">Mark for Review &amp; Next</button>
+        <button class="b primary" onclick="advSaveNext()">Save &amp; Next →</button>
+      </div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="advPrev()">← Previous</button></div>
+    </div>
+    <div class="exam-side">
+      <div class="legend" id="adv_legend">
+        <div class="lg"><span class="dot ans"></span> Answered</div>
+        <div class="lg"><span class="dot na"></span> Not Answered</div>
+        <div class="lg"><span class="dot nv"></span> Not Visited</div>
+        <div class="lg"><span class="dot mr"></span> Marked</div>
+        <div class="lg"><span class="dot ma"></span> Ans + Marked</div>
+      </div>
+      <div id="adv_palette"></div>
+      <button class="btn btn-block" style="margin-top:14px" onclick="advConfirmSubmit()">Submit Test</button>
+    </div>
+  </div>
+</div></div>
+
+<!-- JEE ADVANCED RESULTS -->
+<div id="advResults" class="hidden"><div class="fullpage">
+  <h2 style="text-align:center;margin-bottom:4px" id="ar_title">JEE Advanced — Result</h2>
+  <div style="text-align:center;color:var(--muted);font-size:14px;margin-bottom:20px" id="ar_sub"></div>
+  <div class="ring-wrap" style="text-align:center;margin-bottom:8px"><div class="big-score" id="ar_marks" style="font-size:44px;font-weight:900;color:var(--orange)">0</div><div style="color:var(--muted);font-size:14px">out of <span id="ar_max">180</span> marks</div></div>
+  <div id="ar_stats" style="display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin:16px 0 22px"></div>
+  <h3 class="sec-h" style="font-size:16px;margin-bottom:10px">Subject-wise</h3>
+  <div id="ar_subjects" style="margin-bottom:22px"></div>
+  <h3 class="sec-h" style="font-size:16px;margin-bottom:10px">Review — your answers vs correct</h3>
+  <div class="adv-review" id="ar_review"></div>
+  <div class="nav-row" style="margin-top:20px"><button class="btn btn-outline" onclick="advBackDash()">Dashboard</button></div>
+</div></div>
+
 <!-- RESULTS -->
 <div id="resultsScreen" class="hidden"><div class="fullpage">
   <h2 style="text-align:center;margin-bottom:4px" id="r_title">Your Report</h2>
@@ -683,7 +760,7 @@ function readCurrent(){ try{ return localStorage.getItem("dakhilaaCurrent"); }ca
 function clearCurrentStore(){ try{ localStorage.removeItem("dakhilaaCurrent"); }catch(e){} }
 
 /* ---------- top-level views ---------- */
-function view(id){ ["loadingScreen","authScreen","shell","testScreen","resultsScreen"].forEach(function(s){ document.getElementById(s).classList.add("hidden"); }); document.getElementById(id).classList.remove("hidden"); window.scrollTo(0,0); }
+function view(id){ ["loadingScreen","authScreen","shell","testScreen","resultsScreen","advScreen","advResults"].forEach(function(s){ var el=document.getElementById(s); if(el) el.classList.add("hidden"); }); document.getElementById(id).classList.remove("hidden"); window.scrollTo(0,0); }
 function showAuthStep1(){ document.getElementById("authStep1").classList.remove("hidden"); document.getElementById("authStep2").classList.add("hidden"); }
 function showAuthStep2(){ document.getElementById("authStep2").classList.remove("hidden"); document.getElementById("authStep1").classList.add("hidden"); }
 function showSignup(){ showAuthStep1(); }
@@ -883,7 +960,7 @@ function go(sec){
   closeSidebar();
   if(sec==="overview") renderOverview();
   if(sec==="qbank") qbLoad();
-  if(sec==="tests") renderMocks();
+  if(sec==="tests"){ renderMocks(); renderAdvGrid(); }
   if(sec==="mytests") renderMyTests();
   if(sec==="weak") renderWeak();
   if(sec==="progress") renderProgress();
@@ -1017,6 +1094,151 @@ function upsertGrowth(){
   } else { persistDB(); }
 }
 function startMock(i){ var m=MOCKS[i]; if(!m) return; if(!hasPaid() && i>=FREE_MOCKS){ go("settings"); payToast("This mock is part of a plan. Choose a plan to unlock all mock tests.", true); return; } beginTest(m.questions.slice(), "mock", true, 180, m.name); }
+
+/* ================= JEE ADVANCED ENGINE ================= */
+var ADV_PAPERS={ p1:{name:"JEE Advanced 2025 — Paper 1", file:"adv_2025_p1.json", max:180}, p2:{name:"JEE Advanced 2025 — Paper 2", file:"adv_2025_p2.json", max:180} };
+var ADV_TOPIC_COUNT=18;
+var advCache={}, advTopicData=null, advS=null;
+function renderAdvGrid(){
+  var g=document.getElementById("advGrid"); if(!g) return; var paid=hasPaid();
+  var html="";
+  var off=[{k:"p1",name:"JEE Advanced 2025 — Paper 1",meta:"48 Q · 180 marks · 3 hrs · Official Paper 1"},{k:"p2",name:"JEE Advanced 2025 — Paper 2",meta:"48 Q · 180 marks · 3 hrs · Official Paper 2"}];
+  off.forEach(function(c){
+    if(!paid) html+='<div class="mk adv-mockcard locked"><span class="pat">Official PYQ</span><h4>'+c.name+' 🔒</h4><div class="meta">'+c.meta+'</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
+    else html+='<div class="mk adv-mockcard"><span class="pat">Official PYQ</span><h4>'+c.name+'</h4><div class="meta">'+c.meta+'</div><button class="btn btn-block" onclick="startAdvanced(\''+c.k+'\')">Start Test</button></div>';
+  });
+  for(var i=0;i<ADV_TOPIC_COUNT;i++){ var nm="Advanced Mock "+(i+1);
+    if(!paid) html+='<div class="mk adv-mockcard locked"><span class="pat">JEE Advanced</span><h4>'+nm+' 🔒</h4><div class="meta">48 Q · 180 marks · 3 hrs · PYQ mix + solutions</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
+    else html+='<div class="mk adv-mockcard"><span class="pat">JEE Advanced</span><h4>'+nm+'</h4><div class="meta">48 Q · 180 marks · 3 hrs · PYQ mix + solutions</div><button class="btn btn-block" onclick="startAdvTopic('+i+')">Start Test</button></div>';
+  }
+  g.innerHTML=html;
+}
+function advBegin(name, data, max){
+  advS={ name:name, max:max||180, qs:data, ans:data.map(function(){ return {val:null,marked:false,visited:false}; }), cur:0, endAt:Date.now()+10800000, timerId:null, active:true };
+  advBuildSections();
+  document.getElementById("adv_title").textContent=name;
+  document.getElementById("adv_total").textContent=data.length;
+  advBuildPalette(); view("advScreen"); advGoto(0);
+  advTick(); advS.timerId=setInterval(advTick,1000);
+}
+function startAdvanced(key){
+  if(!hasPaid()){ go("settings"); payToast("JEE Advanced mocks are part of a plan. Choose a plan to unlock.", true); return; }
+  var p=ADV_PAPERS[key]; if(!p) return;
+  if(advCache[key]){ advBegin(p.name, advCache[key], p.max); return; }
+  fetch(p.file).then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); }).then(function(d){ advCache[key]=d; advBegin(p.name, d, p.max); }).catch(function(){ payToast("Couldn't load the Advanced paper. Please refresh.", true); });
+}
+function startAdvTopic(i){
+  if(!hasPaid()){ go("settings"); payToast("JEE Advanced mocks are part of a plan. Choose a plan to unlock.", true); return; }
+  function run(){ var mk=advTopicData[i]; if(!mk){ payToast("Mock unavailable.", true); return; } advBegin("Advanced Mock "+(i+1), mk, 180); }
+  if(advTopicData){ run(); return; }
+  fetch("adv_mocks.json").then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); }).then(function(d){ advTopicData=d; run(); }).catch(function(){ payToast("Couldn't load the mock. Please refresh.", true); });
+}
+function advSubjects(){ var seen=[]; advS.qs.forEach(function(q){ if(seen.indexOf(q.subject)<0) seen.push(q.subject); }); return seen; }
+function advBuildSections(){ var el=document.getElementById("adv_sections"); el.innerHTML=advSubjects().map(function(s){ return '<div class="stab" data-sub="'+s+'" onclick="advJumpSubject(\''+s+'\')">'+s+'</div>'; }).join(""); }
+function advJumpSubject(sub){ for(var i=0;i<advS.qs.length;i++){ if(advS.qs[i].subject===sub){ advGoto(i); return; } } }
+function advBuildPalette(){ var el=document.getElementById("adv_palette"); var html="";
+  advSubjects().forEach(function(sub){ html+='<div style="font-size:12px;color:var(--muted);font-weight:700;margin:8px 0 6px">'+sub+'</div><div class="palette exam-pal">';
+    advS.qs.forEach(function(q,i){ if(q.subject!==sub) return; html+='<div class="pq" id="apq'+i+'" onclick="advGoto('+i+')">'+q.qno+'</div>'; }); html+='</div>'; });
+  el.innerHTML=html;
+}
+function advTypeLabel(q){
+  if(q.type==="single") return "Single correct — choose one option (A–D).  +3 correct · −1 wrong";
+  if(q.type==="multiple") return "One OR MORE correct — select all that apply.  +4 full · partial marks · −2 if any wrong";
+  if(q.type==="numerical") return "Numerical value — type your answer.  +4 correct · no negative";
+  if(q.type==="matching") return "Matching list — choose the correct combination (A–D).  +4 correct · −1 wrong";
+  return "";
+}
+function advGoto(i){ if(i<0||i>=advS.qs.length) return; advS.cur=i; var q=advS.qs[i], a=advS.ans[i]; a.visited=true;
+  document.getElementById("adv_now").textContent=i+1;
+  document.getElementById("adv_secname").textContent="· "+q.subject+(q.qno?(" · Q"+q.qno):(q.topic?(" · "+String(q.topic).replace(/-/g," ")):""));
+  document.getElementById("adv_hint").textContent=advTypeLabel(q);
+  var tabs=document.querySelectorAll("#adv_sections .stab"); for(var t=0;t<tabs.length;t++) tabs[t].classList.toggle("active", tabs[t].getAttribute("data-sub")===q.subject);
+  document.getElementById("adv_imgwrap").innerHTML='<img src="'+q.img+'" alt="Question '+q.qno+'">';
+  advRenderAnswer(q,a); advPaintPalette(); window.scrollTo(0,0);
+}
+function advRenderAnswer(q,a){ var el=document.getElementById("adv_ans");
+  if(q.type==="numerical"){ var v=a.val||"";
+    el.innerHTML='<div class="adv-numwrap"><div class="adv-numbox'+(v?"":" empty")+'" id="adv_num">'+(v||"Type your answer")+'</div><div class="adv-keypad">'+
+      ["7","8","9","4","5","6","1","2","3"].map(function(d){return '<button onclick="advNum(\''+d+'\')">'+d+'</button>';}).join("")+
+      '<button onclick="advNum(\'.\')">.</button><button onclick="advNum(\'0\')">0</button><button onclick="advNum(\'-\')">−</button>'+
+      '<button class="act" onclick="advNumBack()">⌫ Back</button><button class="act" style="grid-column:span 2" onclick="advNumClear()">Clear</button></div></div>';
+    return; }
+  var multi=(q.type==="multiple"); var chosen=multi?(a.val||[]):a.val; var html="";
+  ["A","B","C","D"].forEach(function(L){ var sel=multi?(chosen.indexOf(L)>=0):(chosen===L);
+    html+='<button class="opt'+(multi?" multi":"")+(sel?" selected":"")+'" onclick="advPick(\''+L+'\')"><span class="circle">'+L+'</span> Option '+L+'</button>'; });
+  el.innerHTML='<div class="options">'+html+'</div>';
+}
+function advPick(L){ var q=advS.qs[advS.cur], a=advS.ans[advS.cur];
+  if(q.type==="multiple"){ var arr=a.val||[]; var k=arr.indexOf(L); if(k>=0) arr.splice(k,1); else arr.push(L); a.val=arr.slice().sort(); }
+  else { a.val=L; }
+  advRenderAnswer(q,a); advPaintPalette();
+}
+function advNum(d){ var a=advS.ans[advS.cur]; var v=a.val||"";
+  if(d==="-"){ v=(v.indexOf("-")>=0)?v.replace("-",""):("-"+v); } else if(d==="."){ if(v.indexOf(".")<0) v=v+"."; } else { v=v+d; }
+  a.val=v; var b=document.getElementById("adv_num"); b.textContent=v; b.classList.remove("empty"); advPaintPalette();
+}
+function advNumBack(){ var a=advS.ans[advS.cur]; a.val=(a.val||"").slice(0,-1); var b=document.getElementById("adv_num"); b.textContent=a.val||"Type your answer"; b.classList.toggle("empty", !a.val); advPaintPalette(); }
+function advNumClear(){ var a=advS.ans[advS.cur]; a.val=""; var b=document.getElementById("adv_num"); b.textContent="Type your answer"; b.classList.add("empty"); advPaintPalette(); }
+function advHasAns(i){ var q=advS.qs[i], a=advS.ans[i]; if(q.type==="multiple") return !!(a.val&&a.val.length); if(q.type==="numerical") return !!(a.val&&a.val!==""&&a.val!=="-"&&a.val!=="."); return !!a.val; }
+function advPaintPalette(){ advS.qs.forEach(function(q,i){ var el=document.getElementById("apq"+i); if(!el) return; var a=advS.ans[i], has=advHasAns(i);
+  el.className="pq"+(i===advS.cur?" cur":"")+(a.marked?(has?" ma":" mr"):(has?" ans":(a.visited?" na":""))); }); }
+function advClear(){ var q=advS.qs[advS.cur], a=advS.ans[advS.cur]; a.val=(q.type==="multiple"?[]:(q.type==="numerical"?"":null)); advRenderAnswer(q,a); advPaintPalette(); }
+function advSaveNext(){ if(advS.cur<advS.qs.length-1) advGoto(advS.cur+1); }
+function advMarkNext(){ advS.ans[advS.cur].marked=true; if(advS.cur<advS.qs.length-1) advGoto(advS.cur+1); else advPaintPalette(); }
+function advPrev(){ if(advS.cur>0) advGoto(advS.cur-1); }
+function advTick(){ var rem=Math.max(0,Math.round((advS.endAt-Date.now())/1000)); var h=Math.floor(rem/3600), m=Math.floor((rem%3600)/60), s=rem%60;
+  document.getElementById("adv_timer").textContent=h+":"+(m<10?"0":"")+m+":"+(s<10?"0":"")+s; if(rem<=0){ clearInterval(advS.timerId); advSubmit(); } }
+function advExit(){ if(confirm("Exit the test? Your progress will be lost.")){ clearInterval(advS.timerId); advS.active=false; view("shell"); go("tests"); } }
+function advConfirmSubmit(){ var un=0; for(var i=0;i<advS.qs.length;i++) if(!advHasAns(i)) un++; if(confirm("Submit the test?"+(un?(" "+un+" question(s) unanswered."):""))) advSubmit(); }
+function advScoreQ(q,a){ var mk=q.marks, ans=q.answer;
+  if(ans.marksall) return mk.full;
+  if(q.type==="single"||q.type==="matching"){ if(!a.val) return 0; return a.val===ans.opt?mk.full:mk.neg; }
+  if(q.type==="multiple"){ var S=a.val||[]; if(!S.length) return 0; var C=ans.opts||[];
+    var wrong=S.some(function(x){ return C.indexOf(x)<0; }); if(wrong) return mk.neg; if(S.length===C.length) return mk.full; return S.length; }
+  if(q.type==="numerical"){ var v=a.val; if(v===null||v===""||v==="-"||v===".") return 0; var num=parseFloat(v); if(isNaN(num)) return 0;
+    var ok=(ans.ranges||[]).some(function(r){ return num>=r[0]-1e-9 && num<=r[1]+1e-9; }); return ok?mk.full:0; }
+  return 0;
+}
+function advSubmit(){ clearInterval(advS.timerId); advS.active=false;
+  var total=0,correct=0,attempted=0,wrong=0,perSub={},rows=[];
+  advS.qs.forEach(function(q,i){ var a=advS.ans[i]; var m=advScoreQ(q,a); total+=m;
+    if(!perSub[q.subject]) perSub[q.subject]={marks:0,correct:0,total:0};
+    perSub[q.subject].marks+=m; perSub[q.subject].total+=1;
+    var has=advHasAns(i); if(has) attempted++;
+    if(m>0){ correct++; perSub[q.subject].correct++; } else if(has&&m<0){ wrong++; }
+    rows.push({q:q,a:a,m:m}); });
+  advRenderResults(total,correct,attempted,wrong,perSub,rows);
+  if(currentProfile){ var subjTags={}; Object.keys(perSub).forEach(function(s){ subjTags[s]=perSub[s].marks; });
+    var pct=Math.max(0,Math.round(total/advS.max*100));
+    var he={ type:advS.name, score:pct, marks:total, correct:correct, total:advS.qs.length, subjects:subjTags, date:Date.now() };
+    currentProfile.history=(currentProfile.history||[]).concat([he]); if(currentProfile.history.length>30) currentProfile.history=currentProfile.history.slice(-30);
+    currentProfile.stats.testsTaken+=1;
+    if(USE_FIREBASE && fbDB && currentUser){ fbDB.collection("users").doc(currentUser).set({ testsTaken:firebase.firestore.FieldValue.increment(1), history:currentProfile.history },{merge:true}).catch(function(e){ console.error(e); }); }
+    else { persistDB(); }
+  }
+}
+function advAnsText(q){ var ans=q.answer; if(ans.marksall) return "Awarded to all"; if(q.type==="multiple") return (ans.opts||[]).join(", "); if(q.type==="numerical") return q.raw.replace("Answer:","").trim(); return ans.opt||""; }
+function advYourText(q,a){ if(q.type==="multiple") return (a.val&&a.val.length)?a.val.join(", "):"—"; if(q.type==="numerical") return (a.val&&a.val!=="")?a.val:"—"; return a.val||"—"; }
+function escapeHtmlA(s){ return String(s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function advRenderResults(total,correct,attempted,wrong,perSub,rows){
+  document.getElementById("ar_title").textContent=advS.name+" — Result";
+  document.getElementById("ar_sub").textContent="Official JEE Advanced pattern & marking. Score out of "+advS.max+".";
+  document.getElementById("ar_marks").textContent=total; document.getElementById("ar_max").textContent=advS.max;
+  document.getElementById("ar_stats").innerHTML=
+    '<div style="text-align:center"><div style="font-size:24px;font-weight:900;color:var(--green)">'+correct+'</div><div style="font-size:12px;color:var(--muted)">Correct / partial</div></div>'+
+    '<div style="text-align:center"><div style="font-size:24px;font-weight:900;color:#f87171">'+wrong+'</div><div style="font-size:12px;color:var(--muted)">Negative</div></div>'+
+    '<div style="text-align:center"><div style="font-size:24px;font-weight:900;color:var(--text)">'+attempted+'/'+advS.qs.length+'</div><div style="font-size:12px;color:var(--muted)">Attempted</div></div>';
+  var subs=Object.keys(perSub);
+  document.getElementById("ar_subjects").innerHTML=subs.map(function(s){ var d=perSub[s]; var maxper=advS.max/subs.length; var pct=Math.round(d.marks/maxper*100);
+    return '<div class="subj-row"><div class="top"><span>'+s+'</span><span class="sc">'+d.marks+' / '+Math.round(maxper)+' marks</span></div><div class="bar"><div class="f" style="width:'+Math.max(0,Math.min(100,pct))+'%;background:'+(subColor(s)||"var(--orange)")+'"></div></div></div>'; }).join("");
+  document.getElementById("ar_review").innerHTML=rows.map(function(r){ var q=r.q,a=r.a,m=r.m; var cls=m>0?"pos":(m<0?"neg":"zero");
+    var head=q.subject+" · "+(q.qno?("Q"+q.qno):(q.topic||"").replace(/-/g," "))+" · "+q.type;
+    var sol=q.sol?('<details class="adv-sol"><summary>Show detailed solution</summary><img src="'+q.sol+'" alt="solution" loading="lazy"></details>'):'';
+    return '<div class="adv-rq"><div class="rqtop"><span>'+head+'</span><span class="mk '+cls+'">'+(m>0?"+":"")+m+'</span></div><img src="'+q.img+'" alt="" loading="lazy">'+
+      '<div class="rqans">Your answer: <span class="'+(m>0?"ok":(m<0?"bad":""))+'">'+escapeHtmlA(advYourText(q,a))+'</span> &nbsp;·&nbsp; Correct: <span class="yr">'+escapeHtmlA(advAnsText(q))+'</span></div>'+sol+'</div>'; }).join("");
+  view("advResults");
+}
+function advBackDash(){ view("shell"); go("mytests"); }
 function startDaily(){ var pool=shuffle(allQuestions.slice()).slice(0,10); beginTest(pool, "daily", false); }
 function startSubjectTest(){ var pool=allQuestions.filter(function(q){ return q.subject===subjTestPick; }); beginTest(shuffle(pool.slice()).slice(0,25), "subject", false); }
 function modeLabel(m){ return m==="diagnostic"?"Diagnostic":(m==="mock"?"Mock Test":(m==="subject"?"Subject Test":(m==="daily"?"Daily Practice":"Test"))); }
