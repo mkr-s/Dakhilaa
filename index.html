@@ -140,7 +140,9 @@
   .grid-blog{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; max-width:1040px; margin:0 auto; }
   @media(max-width:760px){ .grid-blog{ grid-auto-flow:column; grid-template-columns:none; grid-auto-columns:78%; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:8px; -webkit-overflow-scrolling:touch; }
     .grid-blog .bcard{ scroll-snap-align:center; } }
-  .bcard{ background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+  .bcard{ display:block; background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; cursor:pointer; transition:.18s; }
+  .bcard:hover{ transform:translateY(-4px); border-color:var(--orange); box-shadow:0 14px 40px rgba(249,115,22,.14); }
+  .bcard .read-more{ display:inline-block; margin-top:12px; color:var(--orange); font-weight:800; font-size:14px; }
   .bcard .banner{ height:190px; display:flex; align-items:center; justify-content:center; font-size:40px; position:relative; overflow:hidden; }
   .bcard .banner img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .9s ease; }
   .bcard .banner img.on{ opacity:1; }
@@ -482,30 +484,33 @@
     <h2 class="section-title">JEE Prep Insights</h2>
     <p class="section-sub">Strategy, topic breakdowns, and score tips.</p>
     <div class="grid-blog">
-      <article class="bcard">
+      <a class="bcard" href="blog-1.html">
         <div class="banner b1"><img class="on" src="blog1a.jpg" alt="Working hard vs smart" onerror="this.style.display='none'"><img src="blog1b.jpg" alt="More hours vs better rank" onerror="this.style.display='none'"><span class="dots"><i class="on"></i><i></i></span>📚</div>
         <div class="body">
           <h3>The Biggest Lie About 12-Hour Study Schedules</h3>
           <p>Everyone talks about studying 12–16 hours a day for JEE. I analyzed what actually improves rank — and why most students fail when they blindly follow extreme study schedules.</p>
           <div class="meta"><span>Mukesh Singh</span><span>20 Aug 2026</span></div>
+          <span class="read-more">Read article →</span>
         </div>
-      </article>
-      <article class="bcard">
+      </a>
+      <a class="bcard" href="blog-2.html">
         <div class="banner b2"><img class="on" src="blog2a.jpg" alt="Talent to discipline" onerror="this.style.display='none'"><img src="blog2b.jpg" alt="Intelligence is not enough" onerror="this.style.display='none'"><span class="dots"><i class="on"></i><i></i></span>🎓</div>
         <div class="body">
           <h3>Why Smart Students Fail JEE (And Average Students Sometimes Beat Them)</h3>
           <p>I have seen brilliant students fail JEE despite strong academic records. Discover the hidden reasons why smart students struggle — and how to avoid the same mistakes.</p>
           <div class="meta"><span>Mukesh Singh</span><span>20 Aug 2026</span></div>
+          <span class="read-more">Read article →</span>
         </div>
-      </article>
-      <article class="bcard">
+      </a>
+      <a class="bcard" href="blog-3.html">
         <div class="banner b3"><img class="on" src="blog3a.jpg" alt="Following the crowd vs owning" onerror="this.style.display='none'"><img src="blog3b.jpg" alt="Distraction vs discipline" onerror="this.style.display='none'"><span class="dots"><i class="on"></i><i></i></span>🏛️</div>
         <div class="body">
           <h3>The Coaching Industry Secret Nobody Talks About</h3>
           <p>I analyzed why some JEE aspirants succeed while thousands struggle despite joining expensive coaching programs. Here's the coaching industry secret nobody talks about.</p>
           <div class="meta"><span>Mukesh Singh</span><span>20 Aug 2026</span></div>
+          <span class="read-more">Read article →</span>
         </div>
-      </article>
+      </a>
     </div>
   </div>
 </section>
@@ -521,18 +526,6 @@
       <div class="qa"><button onclick="toggleFaq(this)">How accurate is the college predictor?<span class="plus">+</span></button><div class="ans"><p>It compares your current performance against previous-year JEE Main cutoff trends for IITs, NITs and IIITs. Treat it as a strong, data-driven estimate to guide your target — not an official guarantee, since real cutoffs shift each year with difficulty, category and seat availability.</p></div></div>
       <div class="qa"><button onclick="toggleFaq(this)">Can I use Dakhilaa alongside my coaching?<span class="plus">+</span></button><div class="ans"><p>Absolutely. Dakhilaa complements any coaching. Use the diagnostic to find your weak areas, then focus your coaching classes and self-study exactly where they will move your rank the most.</p></div></div>
       <div class="qa"><button onclick="toggleFaq(this)">What if I'm preparing for both Mains and Advanced?<span class="plus">+</span></button><div class="ans"><p>The diagnostic covers the core Physics, Chemistry and Maths concepts that both exams build on. Fixing your weak fundamentals strengthens you for JEE Main and Advanced alike.</p></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section id="cta">
-  <div class="wrap">
-    <div class="cta">
-      <h2>Stop Guessing. Start Knowing.</h2>
-      <p>Find your exact weak JEE topics in 15 minutes. Then fix them.</p>
-      <a class="btn btn-primary" href="app.html" style="font-size:18px;padding:16px 34px;">Get Started Now →</a>
-      <div class="fine">Free diagnostic &nbsp;·&nbsp; Instant results &nbsp;·&nbsp; No card needed</div>
     </div>
   </div>
 </section>
