@@ -352,6 +352,10 @@
   .mn-opt.selected{ border-color:var(--orange); background:rgba(249,115,22,.14); color:var(--orange-l); }
   .mn-chapcard .meta{ min-height:auto; }
   #mn_btns .b:disabled{ opacity:.5; cursor:default; }
+  .mnr-band{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .mnr-band > div{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 20px; text-align:center; min-width:160px; }
+  .mnr-band .k{ font-size:12px; color:var(--muted); }
+  .mnr-band .v{ font-size:22px; font-weight:900; color:var(--orange-l); margin-top:2px; }
 </style>
 </head>
 <body>
@@ -483,8 +487,8 @@
         <div class="sec-sub">Real JEE Advanced papers — full pattern: single-correct, multiple-correct (partial marks), numerical, and matching. 3 hours each.</div>
         <div class="mock-grid" id="advGrid"></div>
 
-        <h3 class="sec-h" style="font-size:18px;margin-top:26px">JEE Main PYQ Mocks — with detailed solutions</h3>
-        <div class="sec-sub">Full 75-question papers from past JEE Main questions. Attempt each question, then reveal the complete step-by-step solution. Self-check practice.</div>
+        <h3 class="sec-h" style="font-size:18px;margin-top:26px">JEE Main PYQ Mocks — scored, with solutions</h3>
+        <div class="sec-sub">Full 75-question papers from past JEE Main questions. Attempt, submit, and get your score, estimated percentile &amp; rank — plus the complete step-by-step solution for every question.</div>
         <div class="mock-grid" id="mnMockGrid"></div>
 
         <h3 class="sec-h" style="font-size:18px">Chapter-wise Tests</h3>
@@ -718,9 +722,23 @@
         <div class="lg"><span class="dot nv"></span> Not visited</div>
       </div>
       <div id="mn_palette"></div>
-      <button class="btn btn-block" style="margin-top:14px" onclick="mnFinish()">Finish</button>
+      <button class="btn btn-block" id="mn_finishBtn" style="margin-top:14px" onclick="mnFinish()">Finish</button>
     </div>
   </div>
+</div></div>
+
+<!-- MAINS MOCK RESULTS -->
+<div id="mnResults" class="hidden"><div class="fullpage">
+  <h2 style="text-align:center;margin-bottom:4px" id="mnr_title">Result</h2>
+  <div style="text-align:center;color:var(--muted);font-size:14px;margin-bottom:18px">JEE Main marking · +4 correct, −1 wrong</div>
+  <div class="ring-wrap" style="text-align:center;margin-bottom:8px"><div id="mnr_marks" style="font-size:44px;font-weight:900;color:var(--orange)">0</div><div style="color:var(--muted);font-size:14px">out of <span id="mnr_max">300</span> marks</div></div>
+  <div id="mnr_stats" style="display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin:16px 0 18px"></div>
+  <div id="mnr_rank" style="margin-bottom:22px"></div>
+  <h3 class="sec-h" style="font-size:16px;margin-bottom:10px">Subject-wise</h3>
+  <div id="mnr_subjects" style="margin-bottom:22px"></div>
+  <h3 class="sec-h" style="font-size:16px;margin-bottom:10px">Review — your answers &amp; solutions</h3>
+  <div class="adv-review" id="mnr_review"></div>
+  <div class="nav-row" style="margin-top:20px"><button class="btn btn-outline" onclick="mnResultsBack()">Back to Tests</button></div>
 </div></div>
 
 <!-- RESULTS -->
@@ -803,7 +821,7 @@ function readCurrent(){ try{ return localStorage.getItem("dakhilaaCurrent"); }ca
 function clearCurrentStore(){ try{ localStorage.removeItem("dakhilaaCurrent"); }catch(e){} }
 
 /* ---------- top-level views ---------- */
-function view(id){ ["loadingScreen","authScreen","shell","testScreen","resultsScreen","advScreen","advResults","mainsScreen"].forEach(function(s){ var el=document.getElementById(s); if(el) el.classList.add("hidden"); }); document.getElementById(id).classList.remove("hidden"); window.scrollTo(0,0); }
+function view(id){ ["loadingScreen","authScreen","shell","testScreen","resultsScreen","advScreen","advResults","mainsScreen","mnResults"].forEach(function(s){ var el=document.getElementById(s); if(el) el.classList.add("hidden"); }); document.getElementById(id).classList.remove("hidden"); window.scrollTo(0,0); }
 function showAuthStep1(){ document.getElementById("authStep1").classList.remove("hidden"); document.getElementById("authStep2").classList.add("hidden"); }
 function showAuthStep2(){ document.getElementById("authStep2").classList.remove("hidden"); document.getElementById("authStep1").classList.add("hidden"); }
 function showSignup(){ showAuthStep1(); }
@@ -1307,8 +1325,8 @@ function mnRenderMocks(){
   var g=document.getElementById("mnMockGrid"); if(!g||!mnMocks) return; var paid=hasPaid();
   g.innerHTML=mnMocks.map(function(m,i){
     var locked=(!paid && i>=MN_FREE_MOCK);
-    if(locked) return '<div class="mk locked"><span class="pat">PYQ + Solutions</span><h4>'+m.title+' 🔒</h4><div class="meta">75 Questions · Physics + Chemistry + Maths · full solutions</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
-    return '<div class="mk"><span class="pat">PYQ + Solutions</span><h4>'+m.title+'</h4><div class="meta">75 Questions · Physics + Chemistry + Maths · full solutions</div><button class="btn btn-block" onclick="mnStartMock('+i+')">Start Practice</button></div>';
+    if(locked) return '<div class="mk locked"><span class="pat">Scored + Solutions</span><h4>'+m.title+' 🔒</h4><div class="meta">75 Questions · +4/−1 · score, rank &amp; full solutions</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
+    return '<div class="mk"><span class="pat">Scored + Solutions</span><h4>'+m.title+'</h4><div class="meta">75 Questions · +4/−1 · score, rank &amp; full solutions</div><button class="btn btn-block" onclick="mnStartMock('+i+')">Start Test</button></div>';
   }).join("");
 }
 function mnChap(el){ var c=el.parentElement.querySelectorAll(".chip"); for(var i=0;i<c.length;i++) c[i].classList.remove("active"); el.classList.add("active"); mnCurSub=el.getAttribute("data-s"); mnRenderChap(); }
@@ -1330,13 +1348,16 @@ function mnStartChap(sub,i){
 function mnStartMock(i){
   if(!hasPaid() && i>=MN_FREE_MOCK){ go("settings"); payToast("This mock is part of a plan. Choose a plan to unlock all mocks.", true); return; }
   var m=mnMocks[i]; if(!m) return;
-  var qs=m.qs.map(function(q){ return {img:MN_DIR+q.img, sol:MN_DIR+q.sol, subject:q.subject}; });
+  var qs=m.qs.map(function(q){ return {img:MN_DIR+q.img, sol:MN_DIR+q.sol, subject:q.subject, answer:q.answer}; });
   mnBegin(m.title, qs, true);
 }
 function mnBegin(name, qs, isMock){
-  mnS={ name:name, qs:qs, isMock:isMock, cur:0, picks:qs.map(function(){return null;}), seen:qs.map(function(){return false;}), visited:qs.map(function(){return false;}) };
+  var scored = !!isMock && qs.length>0 && qs.every(function(q){ return q.answer; });
+  mnS={ name:name, qs:qs, isMock:isMock, scored:scored, cur:0, picks:qs.map(function(){return null;}), seen:qs.map(function(){return false;}), visited:qs.map(function(){return false;}) };
   document.getElementById("mn_title").textContent=name;
   document.getElementById("mn_total").textContent=qs.length;
+  var fb=document.getElementById("mn_finishBtn"); if(fb) fb.textContent=scored?"Submit Test":"Finish";
+  var hint=document.getElementById("mn_hint"); if(hint) hint.textContent=scored?"Choose your answer (1–4). You can view the solution anytime. Submit at the end for your score & estimated rank.":"Choose the option you think is correct, then reveal the full solution.";
   mnBuildPalette(); view("mainsScreen"); mnGoto(0);
 }
 function mnBuildPalette(){
@@ -1374,10 +1395,59 @@ function mnReveal(){ var i=mnS.cur, q=mnS.qs[i]; mnS.seen[i]=true;
   mnPaint(); document.getElementById("mn_solbox").scrollIntoView({behavior:"smooth",block:"nearest"}); }
 function mnNext(){ if(mnS.cur<mnS.qs.length-1) mnGoto(mnS.cur+1); else mnFinish(); }
 function mnPrev(){ if(mnS.cur>0) mnGoto(mnS.cur-1); }
-function mnFinish(){ var seen=mnS.seen.filter(Boolean).length, pk=mnS.picks.filter(function(x){return x!=null;}).length; var tot=mnS.qs.length;
+function mnFinish(){
+  if(mnS.scored){ if(confirm("Submit this mock and see your score?")) mnSubmit(); return; }
+  var seen=mnS.seen.filter(Boolean).length, pk=mnS.picks.filter(function(x){return x!=null;}).length; var tot=mnS.qs.length;
   view("shell"); go("tests");
   payToast("Practice saved. You attempted "+pk+" and viewed "+seen+" solutions out of "+tot+".", false); }
 function mnExit(){ if(confirm("Exit this practice? Your progress in this session will be lost.")){ view("shell"); go("tests"); } }
+/* ----- Mains mock scoring (JEE Main: +4 correct, -1 wrong, 0 blank) ----- */
+function mnEstPercentile(pct){ // pct = marks/300*100 ; approximate JEE Main percentile curve
+  var pts=[[0,0],[7,8],[13,20],[20,35],[27,50],[33,62],[40,72],[50,83],[60,90],[70,95],[80,98],[90,99.4],[100,100]];
+  for(var i=0;i<pts.length-1;i++){ if(pct<=pts[i+1][0]){ var a=pts[i],b=pts[i+1]; var t=(pct-a[0])/(b[0]-a[0]); return a[1]+t*(b[1]-a[1]); } }
+  return 100;
+}
+function mnScore(){ var correct=0,wrong=0,blank=0,marks=0,perSub={};
+  mnS.qs.forEach(function(q,i){ var p=mnS.picks[i]; var s=perSub[q.subject]||(perSub[q.subject]={c:0,w:0,b:0,m:0});
+    if(p==null){ blank++; s.b++; }
+    else if(p===String(q.answer)){ correct++; marks+=4; s.c++; s.m+=4; }
+    else { wrong++; marks-=1; s.w++; s.m-=1; } });
+  if(marks<0) marks=marks; // allow negative display but floor rank at 0
+  return {correct:correct,wrong:wrong,blank:blank,marks:marks,perSub:perSub};
+}
+function mnSubmit(){
+  var r=mnScore(); var maxM=mnS.qs.length*4; var pct=Math.max(0, r.marks)/maxM*100;
+  var pctile=mnEstPercentile(pct); var estRank=Math.max(1, Math.round((100-pctile)/100*1100000));
+  document.getElementById("mnr_title").textContent=mnS.name+" — Result";
+  document.getElementById("mnr_marks").textContent=r.marks; document.getElementById("mnr_max").textContent=maxM;
+  document.getElementById("mnr_stats").innerHTML=
+    '<div style="text-align:center"><div style="font-size:24px;font-weight:900;color:var(--green)">'+r.correct+'</div><div style="font-size:12px;color:var(--muted)">Correct (+4)</div></div>'+
+    '<div style="text-align:center"><div style="font-size:24px;font-weight:900;color:#f87171">'+r.wrong+'</div><div style="font-size:12px;color:var(--muted)">Wrong (−1)</div></div>'+
+    '<div style="text-align:center"><div style="font-size:24px;font-weight:900;color:var(--muted)">'+r.blank+'</div><div style="font-size:12px;color:var(--muted)">Unattempted</div></div>';
+  document.getElementById("mnr_rank").innerHTML=
+    '<div class="mnr-band"><div><div class="k">Estimated percentile</div><div class="v">'+pctile.toFixed(2)+'</div></div>'+
+    '<div><div class="k">Estimated All-India Rank</div><div class="v">~'+estRank.toLocaleString('en-IN')+'</div></div></div>'+
+    '<div style="font-size:11px;color:var(--dim);margin-top:6px;text-align:center">Approximate indicator based on this mock — not an official NTA score/rank.</div>';
+  var subs=Object.keys(r.perSub);
+  document.getElementById("mnr_subjects").innerHTML=subs.map(function(s){ var d=r.perSub[s]; var mx=(d.c+d.w+d.b)*4;
+    return '<div class="subj-row"><div class="top"><span>'+s+'</span><span class="sc">'+d.m+' / '+mx+' marks · '+d.c+'✓ '+d.w+'✗</span></div><div class="bar"><div class="f" style="width:'+Math.max(0,Math.min(100,d.m/mx*100))+'%;background:'+(subColor(s)||"var(--orange)")+'"></div></div></div>'; }).join("");
+  document.getElementById("mnr_review").innerHTML=mnS.qs.map(function(q,i){ var p=mnS.picks[i]; var ok=(p===String(q.answer));
+    var cls=(p==null)?"zero":(ok?"pos":"neg"); var mk=(p==null)?"0":(ok?"+4":"−1");
+    var yr=(p==null)?"—":p;
+    return '<div class="adv-rq"><div class="rqtop"><span>'+q.subject+' · Q'+(i+1)+'</span><span class="mk '+cls+'">'+mk+'</span></div><img src="'+q.img+'" alt="" loading="lazy">'+
+      '<div class="rqans">Your answer: <span class="'+(ok?"ok":(p==null?"":"bad"))+'">'+yr+'</span> &nbsp;·&nbsp; Correct: <span class="yr">'+q.answer+'</span></div>'+
+      '<details class="adv-sol"><summary>Show detailed solution</summary><img src="'+q.sol+'" alt="solution" loading="lazy"></details></div>'; }).join("");
+  // save to history
+  if(currentProfile){ var pctInt=Math.round(pct);
+    var he={ type:mnS.name, score:pctInt, marks:r.marks, correct:r.correct, total:mnS.qs.length, subjects:{}, date:Date.now() };
+    Object.keys(r.perSub).forEach(function(s){ he.subjects[s]=r.perSub[s].m; });
+    currentProfile.history=(currentProfile.history||[]).concat([he]); if(currentProfile.history.length>30) currentProfile.history=currentProfile.history.slice(-30);
+    if(currentProfile.stats) currentProfile.stats.testsTaken=(currentProfile.stats.testsTaken||0)+1;
+    if(USE_FIREBASE && fbDB && currentUser){ fbDB.collection("users").doc(currentUser).set({ testsTaken:firebase.firestore.FieldValue.increment(1), history:currentProfile.history },{merge:true}).catch(function(){}); }
+    else { persistDB(); } }
+  view("mnResults");
+}
+function mnResultsBack(){ view("shell"); go("tests"); }
 
 function startDaily(){ var pool=shuffle(allQuestions.slice()).slice(0,10); beginTest(pool, "daily", false); }
 function startSubjectTest(){ var pool=allQuestions.filter(function(q){ return q.subject===subjTestPick; }); beginTest(shuffle(pool.slice()).slice(0,25), "subject", false); }
