@@ -342,6 +342,16 @@
   .adv-sol{ margin-top:10px; border-top:1px solid var(--border); padding-top:8px; }
   .adv-sol summary{ cursor:pointer; color:var(--orange-l); font-weight:700; font-size:13px; }
   .adv-sol img{ width:100%; border-radius:8px; background:#fff; margin-top:8px; }
+  .mn-hint{ font-size:13px; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:10px; padding:9px 12px; margin-bottom:14px; }
+  .mn-solbox{ margin:6px 0 16px; border:1px solid rgba(34,197,94,.35); border-radius:12px; padding:12px; background:rgba(34,197,94,.06); }
+  .mn-soltag{ font-size:12.5px; font-weight:700; color:var(--green); margin-bottom:10px; }
+  .mn-opts{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px; }
+  @media(max-width:560px){ .mn-opts{ grid-template-columns:repeat(2,1fr); } }
+  .mn-opt{ background:var(--card); border:2px solid var(--border); color:var(--text); padding:14px 0; border-radius:12px; font-size:17px; font-weight:800; cursor:pointer; text-align:center; }
+  .mn-opt:hover{ border-color:var(--border-2); }
+  .mn-opt.selected{ border-color:var(--orange); background:rgba(249,115,22,.14); color:var(--orange-l); }
+  .mn-chapcard .meta{ min-height:auto; }
+  #mn_btns .b:disabled{ opacity:.5; cursor:default; }
 </style>
 </head>
 <body>
@@ -473,9 +483,18 @@
         <div class="sec-sub">Real JEE Advanced papers — full pattern: single-correct, multiple-correct (partial marks), numerical, and matching. 3 hours each.</div>
         <div class="mock-grid" id="advGrid"></div>
 
+        <h3 class="sec-h" style="font-size:18px;margin-top:26px">JEE Main PYQ Mocks — with detailed solutions</h3>
+        <div class="sec-sub">Full 75-question papers from past JEE Main questions. Attempt each question, then reveal the complete step-by-step solution. Self-check practice.</div>
+        <div class="mock-grid" id="mnMockGrid"></div>
+
         <h3 class="sec-h" style="font-size:18px">Chapter-wise Tests</h3>
-        <div class="sec-sub">Practice one chapter at a time.</div>
-        <div class="coming"><div class="ic">🧩</div><b>Chapter-wise tests coming soon</b><p style="margin-top:6px">We're tagging every question by chapter (Kinematics, Thermodynamics, Calculus…). Until then, use the full mock tests above.</p></div>
+        <div class="sec-sub">Practice one chapter at a time — every question comes with a full worked solution.</div>
+        <div class="chips" id="mn_chips">
+          <div class="chip active" data-s="Physics" onclick="mnChap(this)">Physics</div>
+          <div class="chip" data-s="Chemistry" onclick="mnChap(this)">Chemistry</div>
+          <div class="chip" data-s="Mathematics" onclick="mnChap(this)">Maths</div>
+        </div>
+        <div class="mock-grid" id="mnChapGrid"></div>
       </section>
 
       <!-- MY TESTS -->
@@ -669,6 +688,41 @@
   <div class="nav-row" style="margin-top:20px"><button class="btn btn-outline" onclick="advBackDash()">Dashboard</button></div>
 </div></div>
 
+<!-- MAINS REVEAL-SOLUTION PRACTICE -->
+<div id="mainsScreen" class="hidden"><div class="exam">
+  <div class="exam-top">
+    <button class="exit" onclick="mnExit()">← Exit</button>
+    <div class="et-title" id="mn_title">Practice</div>
+    <div class="timer" id="mn_prog" style="color:var(--orange)">1 / 1</div>
+  </div>
+  <div class="exam-body">
+    <div class="exam-main">
+      <div class="qmeta">Question <b id="mn_now">1</b> of <span id="mn_total">1</span> <span id="mn_secname" style="color:var(--dim)"></span></div>
+      <div class="mn-hint" id="mn_hint">Choose the option you think is correct, then reveal the full solution.</div>
+      <div class="q-image-wrap" id="mn_imgwrap"><div class="q-loading">Loading…</div></div>
+      <div id="mn_ans"></div>
+      <div id="mn_solbox" class="mn-solbox hidden">
+        <div class="mn-soltag">Detailed Solution — the correct option is shown at the start of the solution</div>
+        <div class="q-image-wrap" id="mn_solwrap"></div>
+      </div>
+      <div class="exam-btns" id="mn_btns">
+        <button class="b primary" id="mn_revealBtn" onclick="mnReveal()">Check Answer &amp; View Solution</button>
+        <button class="b" onclick="mnNext()">Next →</button>
+      </div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="mnPrev()">← Previous</button></div>
+    </div>
+    <div class="exam-side">
+      <div class="legend">
+        <div class="lg"><span class="dot ans"></span> Solution viewed</div>
+        <div class="lg"><span class="dot na"></span> Option chosen</div>
+        <div class="lg"><span class="dot nv"></span> Not visited</div>
+      </div>
+      <div id="mn_palette"></div>
+      <button class="btn btn-block" style="margin-top:14px" onclick="mnFinish()">Finish</button>
+    </div>
+  </div>
+</div></div>
+
 <!-- RESULTS -->
 <div id="resultsScreen" class="hidden"><div class="fullpage">
   <h2 style="text-align:center;margin-bottom:4px" id="r_title">Your Report</h2>
@@ -749,7 +803,7 @@ function readCurrent(){ try{ return localStorage.getItem("dakhilaaCurrent"); }ca
 function clearCurrentStore(){ try{ localStorage.removeItem("dakhilaaCurrent"); }catch(e){} }
 
 /* ---------- top-level views ---------- */
-function view(id){ ["loadingScreen","authScreen","shell","testScreen","resultsScreen","advScreen","advResults"].forEach(function(s){ var el=document.getElementById(s); if(el) el.classList.add("hidden"); }); document.getElementById(id).classList.remove("hidden"); window.scrollTo(0,0); }
+function view(id){ ["loadingScreen","authScreen","shell","testScreen","resultsScreen","advScreen","advResults","mainsScreen"].forEach(function(s){ var el=document.getElementById(s); if(el) el.classList.add("hidden"); }); document.getElementById(id).classList.remove("hidden"); window.scrollTo(0,0); }
 function showAuthStep1(){ document.getElementById("authStep1").classList.remove("hidden"); document.getElementById("authStep2").classList.add("hidden"); }
 function showAuthStep2(){ document.getElementById("authStep2").classList.remove("hidden"); document.getElementById("authStep1").classList.add("hidden"); }
 function showSignup(){ showAuthStep1(); }
@@ -935,6 +989,13 @@ function enterApp(){
   document.getElementById("set_email").textContent=p.email||"—";
   var si=document.getElementById("set_insta"); if(si) si.textContent=p.instagram||"—";
   var an=document.getElementById("auth_note"); if(an) an.classList.add("hidden");
+  /* Owner test-unlock: open the app once with ?unlock=DAKHILAA-OWNER-2026 to get full access without payment. Stays unlocked on this account afterwards. */
+  try{ var _ul=new URLSearchParams(location.search).get("unlock");
+    if(_ul==="DAKHILAA-OWNER-2026" && p.plan!=="dropper"){
+      p.plan="dropper"; p.planName="Owner Access"; p.planSince=Date.now();
+      if(USE_FIREBASE && fbDB && currentUser){ fbDB.collection("users").doc(currentUser).set({plan:"dropper",planName:"Owner Access",planSince:p.planSince},{merge:true}).catch(function(){}); }
+      else { persistDB(); }
+    } }catch(e){}
   applyPlanUI();
   view("shell"); go("overview");
   if(pendingPlan){ var pk=pendingPlan; pendingPlan=null; setTimeout(function(){ beginPayment(pk); }, 500); }
@@ -949,7 +1010,7 @@ function go(sec){
   closeSidebar();
   if(sec==="overview") renderOverview();
   if(sec==="qbank") qbLoad();
-  if(sec==="tests"){ renderMocks(); renderAdvGrid(); }
+  if(sec==="tests"){ renderMocks(); renderAdvGrid(); mnRenderTests(); }
   if(sec==="mytests") renderMyTests();
   if(sec==="weak") renderWeak();
   if(sec==="progress") renderProgress();
@@ -1228,6 +1289,96 @@ function advRenderResults(total,correct,attempted,wrong,perSub,rows){
   view("advResults");
 }
 function advBackDash(){ view("shell"); go("mytests"); }
+
+/* ============ JEE MAIN — CHAPTER TESTS & PYQ MOCKS (reveal-solution) ============ */
+var MN_DIR="mains_bank/";
+var mnChapters=null, mnMocks=null, mnS=null, mnCurSub="Physics";
+var MN_FREE_CHAP=1, MN_FREE_MOCK=1; /* first chapter per subject + first mock free */
+function mnEnsure(cb){
+  if(mnChapters && mnMocks){ cb(); return; }
+  var need=0, fail=false;
+  function done(){ need--; if(need<=0){ if(fail) payToast("Couldn't load Mains tests. Please refresh.", true); else cb(); } }
+  if(!mnChapters){ need++; fetch(MN_DIR+"mains_chapters.json").then(function(r){ if(!r.ok)throw 0; return r.json(); }).then(function(d){ mnChapters=d; done(); }).catch(function(){ fail=true; done(); }); }
+  if(!mnMocks){ need++; fetch(MN_DIR+"mains_mocks.json").then(function(r){ if(!r.ok)throw 0; return r.json(); }).then(function(d){ mnMocks=d; done(); }).catch(function(){ fail=true; done(); }); }
+  if(need===0) cb();
+}
+function mnRenderTests(){ mnEnsure(function(){ mnRenderMocks(); mnRenderChap(); }); }
+function mnRenderMocks(){
+  var g=document.getElementById("mnMockGrid"); if(!g||!mnMocks) return; var paid=hasPaid();
+  g.innerHTML=mnMocks.map(function(m,i){
+    var locked=(!paid && i>=MN_FREE_MOCK);
+    if(locked) return '<div class="mk locked"><span class="pat">PYQ + Solutions</span><h4>'+m.title+' 🔒</h4><div class="meta">75 Questions · Physics + Chemistry + Maths · full solutions</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
+    return '<div class="mk"><span class="pat">PYQ + Solutions</span><h4>'+m.title+'</h4><div class="meta">75 Questions · Physics + Chemistry + Maths · full solutions</div><button class="btn btn-block" onclick="mnStartMock('+i+')">Start Practice</button></div>';
+  }).join("");
+}
+function mnChap(el){ var c=el.parentElement.querySelectorAll(".chip"); for(var i=0;i<c.length;i++) c[i].classList.remove("active"); el.classList.add("active"); mnCurSub=el.getAttribute("data-s"); mnRenderChap(); }
+function mnRenderChap(){
+  var g=document.getElementById("mnChapGrid"); if(!g||!mnChapters) return; var paid=hasPaid();
+  var list=mnChapters[mnCurSub]||[];
+  g.innerHTML=list.map(function(ch,i){
+    var locked=(!paid && i>=MN_FREE_CHAP);
+    if(locked) return '<div class="mk mn-chapcard locked"><span class="pat">'+mnCurSub+'</span><h4>'+ch.topic+' 🔒</h4><div class="meta">'+ch.count+' questions · with solutions</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
+    return '<div class="mk mn-chapcard"><span class="pat">'+mnCurSub+'</span><h4>'+ch.topic+'</h4><div class="meta">'+ch.count+' questions · with solutions</div><button class="btn btn-block" onclick="mnStartChap(\''+mnCurSub+'\','+i+')">Start Practice</button></div>';
+  }).join("");
+}
+function mnStartChap(sub,i){
+  if(!hasPaid() && i>=MN_FREE_CHAP){ go("settings"); payToast("This chapter test is part of a plan. Choose a plan to unlock all chapter-wise tests.", true); return; }
+  var ch=(mnChapters[sub]||[])[i]; if(!ch) return;
+  var qs=ch.qs.map(function(q){ return {img:MN_DIR+q.img, sol:MN_DIR+q.sol, subject:sub, topic:ch.topic, qno:q.qno}; });
+  mnBegin(sub+" · "+ch.topic, qs, false);
+}
+function mnStartMock(i){
+  if(!hasPaid() && i>=MN_FREE_MOCK){ go("settings"); payToast("This mock is part of a plan. Choose a plan to unlock all mocks.", true); return; }
+  var m=mnMocks[i]; if(!m) return;
+  var qs=m.qs.map(function(q){ return {img:MN_DIR+q.img, sol:MN_DIR+q.sol, subject:q.subject}; });
+  mnBegin(m.title, qs, true);
+}
+function mnBegin(name, qs, isMock){
+  mnS={ name:name, qs:qs, isMock:isMock, cur:0, picks:qs.map(function(){return null;}), seen:qs.map(function(){return false;}), visited:qs.map(function(){return false;}) };
+  document.getElementById("mn_title").textContent=name;
+  document.getElementById("mn_total").textContent=qs.length;
+  mnBuildPalette(); view("mainsScreen"); mnGoto(0);
+}
+function mnBuildPalette(){
+  var el=document.getElementById("mn_palette"); if(!el) return;
+  if(mnS.isMock){
+    var subs=[]; mnS.qs.forEach(function(q){ if(subs.indexOf(q.subject)<0) subs.push(q.subject); });
+    var html=""; subs.forEach(function(sub){ html+='<div style="font-size:12px;color:var(--muted);font-weight:700;margin:8px 0 6px">'+sub+'</div><div class="palette">';
+      mnS.qs.forEach(function(q,i){ if(q.subject!==sub) return; html+='<div class="pq" id="mnpq'+i+'" onclick="mnGoto('+i+')">'+(i+1)+'</div>'; }); html+='</div>'; });
+    el.innerHTML=html;
+  } else {
+    var h='<div class="palette">'; mnS.qs.forEach(function(q,i){ h+='<div class="pq" id="mnpq'+i+'" onclick="mnGoto('+i+')">'+(i+1)+'</div>'; }); el.innerHTML=h+'</div>';
+  }
+}
+function mnPaint(){ mnS.qs.forEach(function(q,i){ var c=document.getElementById("mnpq"+i); if(!c) return;
+  c.className="pq"+(i===mnS.cur?" cur":"")+(mnS.seen[i]?" ans":(mnS.picks[i]!=null?" na":"")); }); }
+function mnGoto(i){ if(!mnS||i<0||i>=mnS.qs.length) return; mnS.cur=i; var q=mnS.qs[i]; mnS.visited[i]=true;
+  document.getElementById("mn_now").textContent=i+1;
+  document.getElementById("mn_prog").textContent=(i+1)+" / "+mnS.qs.length;
+  document.getElementById("mn_secname").textContent=q.topic?("· "+q.subject+" · Q"+q.qno):("· "+q.subject);
+  document.getElementById("mn_imgwrap").innerHTML='<img src="'+q.img+'" alt="Question '+(i+1)+'">';
+  mnRenderOpts();
+  var sb=document.getElementById("mn_solbox"), rb=document.getElementById("mn_revealBtn");
+  if(mnS.seen[i]){ document.getElementById("mn_solwrap").innerHTML='<img src="'+q.sol+'" alt="solution">'; sb.classList.remove("hidden"); rb.textContent="Solution shown"; rb.disabled=true; }
+  else { sb.classList.add("hidden"); document.getElementById("mn_solwrap").innerHTML=""; rb.textContent="Check Answer & View Solution"; rb.disabled=false; }
+  mnPaint(); window.scrollTo(0,0);
+}
+function mnRenderOpts(){ var el=document.getElementById("mn_ans"); var pick=mnS.picks[mnS.cur]; var h='<div class="mn-opts">';
+  ["1","2","3","4"].forEach(function(n){ h+='<button class="mn-opt'+(pick===n?" selected":"")+'" onclick="mnPick(\''+n+'\')">'+n+'</button>'; });
+  el.innerHTML=h+'</div>'; }
+function mnPick(n){ mnS.picks[mnS.cur]=n; mnRenderOpts(); mnPaint(); }
+function mnReveal(){ var i=mnS.cur, q=mnS.qs[i]; mnS.seen[i]=true;
+  document.getElementById("mn_solwrap").innerHTML='<img src="'+q.sol+'" alt="solution">';
+  document.getElementById("mn_solbox").classList.remove("hidden");
+  var rb=document.getElementById("mn_revealBtn"); rb.textContent="Solution shown"; rb.disabled=true;
+  mnPaint(); document.getElementById("mn_solbox").scrollIntoView({behavior:"smooth",block:"nearest"}); }
+function mnNext(){ if(mnS.cur<mnS.qs.length-1) mnGoto(mnS.cur+1); else mnFinish(); }
+function mnPrev(){ if(mnS.cur>0) mnGoto(mnS.cur-1); }
+function mnFinish(){ var seen=mnS.seen.filter(Boolean).length, pk=mnS.picks.filter(function(x){return x!=null;}).length; var tot=mnS.qs.length;
+  view("shell"); go("tests");
+  payToast("Practice saved. You attempted "+pk+" and viewed "+seen+" solutions out of "+tot+".", false); }
+function mnExit(){ if(confirm("Exit this practice? Your progress in this session will be lost.")){ view("shell"); go("tests"); } }
+
 function startDaily(){ var pool=shuffle(allQuestions.slice()).slice(0,10); beginTest(pool, "daily", false); }
 function startSubjectTest(){ var pool=allQuestions.filter(function(q){ return q.subject===subjTestPick; }); beginTest(shuffle(pool.slice()).slice(0,25), "subject", false); }
 function modeLabel(m){ return m==="diagnostic"?"Diagnostic":(m==="mock"?"Mock Test":(m==="subject"?"Subject Test":(m==="daily"?"Daily Practice":"Test"))); }
