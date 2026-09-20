@@ -1165,7 +1165,7 @@ function startMock(i){ var m=MOCKS[i]; if(!m) return; if(!hasPaid() && i>=FREE_M
 
 /* ================= JEE ADVANCED ENGINE ================= */
 var ADV_PAPERS={ p1:{name:"JEE Advanced 2025 — Paper 1", file:"adv_2025_p1.json", max:180}, p2:{name:"JEE Advanced 2025 — Paper 2", file:"adv_2025_p2.json", max:180} };
-var ADV_TOPIC_COUNT=18;
+var ADV_TOPIC_COUNT=30;
 var advCache={}, advTopicData=null, advS=null;
 function renderAdvGrid(){
   var g=document.getElementById("advGrid"); if(!g) return; var paid=hasPaid();
