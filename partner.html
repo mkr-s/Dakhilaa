@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Become a Partner — Dakhilaa</title>
+<meta name="description" content="Join the Dakhilaa Partner Program. Share your referral and earn from every student you bring in.">
+<link rel="icon" href="logo.png">
+<style>
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  :root{ --bg:#0a0e17; --bg-2:#0d1220; --card:#121826; --card-2:#151c2c; --border:#1e2739; --border-2:#293349; --text:#f8fafc; --muted:#94a3b8; --dim:#64748b; --orange:#f97316; --orange-l:#fb923c; --orange-d:#ea580c; --green:#22c55e; }
+  body{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif; background:var(--bg); color:var(--text); line-height:1.6; -webkit-font-smoothing:antialiased; min-height:100vh; }
+  a{ color:inherit; text-decoration:none; }
+  header{ position:sticky; top:0; z-index:20; background:rgba(10,14,23,.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
+  .nav{ max-width:720px; margin:0 auto; padding:0 20px; height:64px; display:flex; align-items:center; justify-content:space-between; }
+  .brand{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:20px; }
+  .brand img{ height:34px; }
+  .nav a.home{ color:var(--muted); font-size:14px; font-weight:600; }
+  .nav a.home:hover{ color:var(--orange-l); }
+  .wrap{ max-width:620px; margin:0 auto; padding:40px 20px 60px; }
+  .eyebrow{ color:var(--orange); font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; text-align:center; }
+  h1{ font-size:clamp(26px,5vw,38px); font-weight:900; text-align:center; line-height:1.15; margin:10px 0 10px; }
+  .sub{ color:var(--muted); text-align:center; font-size:15px; max-width:480px; margin:0 auto 30px; }
+  .card{ background:var(--card); border:1px solid var(--border); border-radius:18px; padding:26px; }
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:13px; color:var(--muted); margin-bottom:7px; font-weight:600; }
+  .field .req{ color:var(--orange); }
+  .field .opt{ color:var(--dim); font-weight:400; font-size:12px; }
+  .field input{ width:100%; padding:13px 14px; background:var(--bg); border:1px solid var(--border-2); border-radius:10px; color:var(--text); font-size:15px; font-family:inherit; }
+  .field input:focus{ outline:none; border-color:var(--orange); }
+  .ig-wrap{ display:flex; align-items:stretch; border:1px solid var(--border-2); border-radius:10px; overflow:hidden; background:var(--bg); }
+  .ig-wrap:focus-within{ border-color:var(--orange); }
+  .ig-wrap .pfx{ display:flex; align-items:center; padding:0 12px; background:var(--card-2); color:var(--dim); font-size:13px; border-right:1px solid var(--border-2); white-space:nowrap; }
+  .ig-wrap input{ border:none !important; border-radius:0 !important; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; width:100%; font-size:16px; font-weight:800; padding:15px 26px; border-radius:12px; border:none; cursor:pointer; font-family:inherit; background:var(--orange); color:#fff; box-shadow:0 8px 26px rgba(249,115,22,.35); transition:.18s; }
+  .btn:hover{ background:var(--orange-d); }
+  .btn:disabled{ opacity:.7; cursor:default; }
+  .msg{ font-size:13.5px; margin-top:12px; text-align:center; min-height:18px; color:#ef4444; }
+  .perks{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:26px; }
+  .perk{ font-size:12.5px; font-weight:700; color:var(--orange-l); background:rgba(249,115,22,.1); border:1px solid rgba(249,115,22,.25); border-radius:20px; padding:6px 13px; }
+  /* success modal */
+  .modal-bg{ position:fixed; inset:0; background:rgba(3,6,12,.72); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; z-index:60; padding:20px; }
+  .modal-bg.show{ display:flex; }
+  .modal{ background:var(--card); border:1px solid var(--border-2); border-radius:18px; padding:34px 28px; max-width:400px; width:100%; text-align:center; animation:pop .22s ease; }
+  @keyframes pop{ from{ transform:scale(.94); opacity:0; } to{ transform:scale(1); opacity:1; } }
+  .modal .tick{ width:64px; height:64px; border-radius:50%; background:rgba(34,197,94,.14); border:1px solid rgba(34,197,94,.4); color:var(--green); font-size:34px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+  .modal h3{ font-size:22px; font-weight:900; margin-bottom:6px; }
+  .modal p{ color:var(--muted); font-size:15px; margin-bottom:20px; }
+  .modal .btn{ width:auto; padding:12px 30px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <a class="brand" href="index.html"><img src="logo.png" alt="Dakhilaa"> Dakhilaa</a>
+    <a class="home" href="index.html">← Back to site</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">Partner Program</div>
+  <h1>Become a Dakhilaa Partner</h1>
+  <p class="sub">JEE educator or influencer? Share your referral, help students find their weak areas, and earn from every student you bring in.</p>
+  <div class="perks">
+    <span class="perk">Your referral code</span>
+    <span class="perk">Earn per student</span>
+    <span class="perk">Priority support</span>
+  </div>
+
+  <div class="card">
+    <div class="field"><label>Full Name <span class="req">*</span></label><input id="p_name" type="text" placeholder="Your full name"></div>
+    <div class="field"><label>Phone Number <span class="req">*</span></label>
+      <div class="ig-wrap"><span class="pfx">+91</span><input id="p_phone" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile"></div>
+    </div>
+    <div class="field"><label>Email ID <span class="req">*</span></label><input id="p_email" type="email" placeholder="you@example.com"></div>
+    <div class="field"><label>Instagram ID <span class="opt">(optional)</span></label><input id="p_insta" type="text" placeholder="@yourhandle or profile link"></div>
+    <div class="field"><label>Facebook ID <span class="opt">(optional)</span></label><input id="p_fb" type="text" placeholder="Profile name or link"></div>
+    <div class="field"><label>YouTube ID <span class="opt">(optional)</span></label><input id="p_yt" type="text" placeholder="Channel name or link"></div>
+    <button class="btn" id="p_btn" onclick="submitPartner()">Submit Application</button>
+    <div class="msg" id="p_msg"></div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-bg" id="thanksModal">
+  <div class="modal">
+    <div class="tick">✓</div>
+    <h3>Thank You for Your trust</h3>
+    <p>We will contact you soon.</p>
+    <a class="btn" href="index.html">Back to Home</a>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script>
+var firebaseConfig = {
+  apiKey: "AIzaSyA-W_3VSzsTujSYWV0HtwUkWc7OBLqpQxc",
+  authDomain: "dakhilaa-cb41a.firebaseapp.com",
+  projectId: "dakhilaa-cb41a",
+  storageBucket: "dakhilaa-cb41a.firebasestorage.app",
+  messagingSenderId: "1055517618428",
+  appId: "1:1055517618428:web:b6dcd8d696ccb94b7a6779"
+};
+var pDB=null;
+try{ if(typeof firebase!=="undefined"){ firebase.initializeApp(firebaseConfig); pDB=firebase.firestore(); } }catch(e){ pDB=null; }
+
+function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+function validPhone(p){ return /^[6-9]\d{9}$/.test(p); }
+
+function submitPartner(){
+  var msg=document.getElementById("p_msg"); msg.style.color="#ef4444";
+  var name=document.getElementById("p_name").value.trim();
+  var phone=(document.getElementById("p_phone").value||"").replace(/\D/g,"");
+  var email=document.getElementById("p_email").value.trim();
+  var insta=document.getElementById("p_insta").value.trim();
+  var fb=document.getElementById("p_fb").value.trim();
+  var yt=document.getElementById("p_yt").value.trim();
+  if(!name){ msg.textContent="Please enter your full name."; return; }
+  if(!validPhone(phone)){ msg.textContent="Please enter a valid 10-digit phone number."; return; }
+  if(!validEmail(email)){ msg.textContent="Please enter a valid email address."; return; }
+
+  var data={ name:name, phone:"+91"+phone, email:email, instagram:insta, facebook:fb, youtube:yt, created:Date.now(), status:"new" };
+  var btn=document.getElementById("p_btn");
+  btn.disabled=true; btn.textContent="Submitting…";
+  function done(){ btn.disabled=false; btn.textContent="Submit Application"; clearForm(); document.getElementById("thanksModal").classList.add("show"); }
+  function fail(){ btn.disabled=false; btn.textContent="Submit Application"; msg.textContent="Couldn't submit right now. Please try again, or email support@dakhilaa.com."; }
+
+  if(pDB){
+    pDB.collection("partners").add(data).then(done).catch(function(e){ console.error("partner save failed:", e); fail(); });
+  } else {
+    // Firebase not reachable — don't lose the lead silently
+    fail();
+  }
+}
+function clearForm(){ ["p_name","p_phone","p_email","p_insta","p_fb","p_yt"].forEach(function(id){ document.getElementById(id).value=""; }); document.getElementById("p_msg").textContent=""; }
+</script>
+</body>
+</html>
