@@ -356,6 +356,10 @@
   .mnr-band > div{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 20px; text-align:center; min-width:160px; }
   .mnr-band .k{ font-size:12px; color:var(--muted); }
   .mnr-band .v{ font-size:22px; font-weight:900; color:var(--orange-l); margin-top:2px; }
+  .mn-num{ margin-bottom:16px; }
+  .mn-num input{ width:100%; box-sizing:border-box; background:var(--card); border:2px solid var(--border); color:var(--text); font-size:20px; font-weight:800; padding:14px 16px; border-radius:12px; outline:none; }
+  .mn-num input:focus{ border-color:var(--orange); }
+  .mn-numhint{ font-size:12px; color:var(--muted); margin-top:6px; }
 </style>
 </head>
 <body>
@@ -499,6 +503,21 @@
           <div class="chip" data-s="Mathematics" onclick="mnChap(this)">Maths</div>
         </div>
         <div class="mock-grid" id="mnChapGrid"></div>
+
+        <div style="height:1px;background:var(--border);margin:30px 0 26px"></div>
+        <div style="display:inline-block;background:rgba(249,115,22,.14);color:var(--orange-l);font-weight:800;font-size:12px;padding:5px 12px;border-radius:999px;margin-bottom:12px">CLASS 11</div>
+        <h3 class="sec-h" style="font-size:18px">Class 11 — Mock Tests (scored)</h3>
+        <div class="sec-sub">75-question papers on Class 11 syllabus, JEE Main pattern. Attempt, submit, and get your score, estimated percentile &amp; rank. Correct answer shown for every question.</div>
+        <div class="mock-grid" id="mn11MockGrid"></div>
+
+        <h3 class="sec-h" style="font-size:18px">Class 11 — Chapter-wise Tests (scored)</h3>
+        <div class="sec-sub">One Class 11 chapter at a time — attempt and get scored with the correct answer for each question.</div>
+        <div class="chips" id="mn11_chips">
+          <div class="chip active" data-s="Physics" onclick="mn11Chap(this)">Physics</div>
+          <div class="chip" data-s="Chemistry" onclick="mn11Chap(this)">Chemistry</div>
+          <div class="chip" data-s="Mathematics" onclick="mn11Chap(this)">Maths</div>
+        </div>
+        <div class="mock-grid" id="mn11ChapGrid"></div>
       </section>
 
       <!-- MY TESTS -->
@@ -1028,7 +1047,7 @@ function go(sec){
   closeSidebar();
   if(sec==="overview") renderOverview();
   if(sec==="qbank") qbLoad();
-  if(sec==="tests"){ renderMocks(); renderAdvGrid(); mnRenderTests(); }
+  if(sec==="tests"){ renderMocks(); renderAdvGrid(); mnRenderTests(); mn11RenderTests(); }
   if(sec==="mytests") renderMyTests();
   if(sec==="weak") renderWeak();
   if(sec==="progress") renderProgress();
@@ -1380,14 +1399,21 @@ function mnGoto(i){ if(!mnS||i<0||i>=mnS.qs.length) return; mnS.cur=i; var q=mnS
   document.getElementById("mn_imgwrap").innerHTML='<img src="'+q.img+'" alt="Question '+(i+1)+'">';
   mnRenderOpts();
   var sb=document.getElementById("mn_solbox"), rb=document.getElementById("mn_revealBtn");
-  if(mnS.seen[i]){ document.getElementById("mn_solwrap").innerHTML='<img src="'+q.sol+'" alt="solution">'; sb.classList.remove("hidden"); rb.textContent="Solution shown"; rb.disabled=true; }
-  else { sb.classList.add("hidden"); document.getElementById("mn_solwrap").innerHTML=""; rb.textContent="Check Answer & View Solution"; rb.disabled=false; }
+  if(!q.sol){ rb.style.display="none"; sb.classList.add("hidden"); document.getElementById("mn_solwrap").innerHTML=""; }
+  else { rb.style.display="";
+    if(mnS.seen[i]){ document.getElementById("mn_solwrap").innerHTML='<img src="'+q.sol+'" alt="solution">'; sb.classList.remove("hidden"); rb.textContent="Solution shown"; rb.disabled=true; }
+    else { sb.classList.add("hidden"); document.getElementById("mn_solwrap").innerHTML=""; rb.textContent="Check Answer & View Solution"; rb.disabled=false; } }
   mnPaint(); window.scrollTo(0,0);
 }
-function mnRenderOpts(){ var el=document.getElementById("mn_ans"); var pick=mnS.picks[mnS.cur]; var h='<div class="mn-opts">';
+function mnRenderOpts(){ var el=document.getElementById("mn_ans"); var q=mnS.qs[mnS.cur]; var pick=mnS.picks[mnS.cur];
+  if(q.type==="numerical"){
+    el.innerHTML='<div class="mn-num"><input id="mn_numin" type="text" inputmode="decimal" autocomplete="off" placeholder="Type your numerical answer" value="'+(pick!=null?String(pick).replace(/"/g,"")+'':"")+'" oninput="mnNumIn(this.value)"><div class="mn-numhint">Numerical answer — type the value (e.g. 12 or 0.50). +4 correct · no negative.</div></div>';
+    return; }
+  var h='<div class="mn-opts">';
   ["1","2","3","4"].forEach(function(n){ h+='<button class="mn-opt'+(pick===n?" selected":"")+'" onclick="mnPick(\''+n+'\')">'+n+'</button>'; });
   el.innerHTML=h+'</div>'; }
 function mnPick(n){ mnS.picks[mnS.cur]=n; mnRenderOpts(); mnPaint(); }
+function mnNumIn(v){ mnS.picks[mnS.cur]=(String(v).trim()===""?null:String(v).trim()); mnPaint(); }
 function mnReveal(){ var i=mnS.cur, q=mnS.qs[i]; mnS.seen[i]=true;
   document.getElementById("mn_solwrap").innerHTML='<img src="'+q.sol+'" alt="solution">';
   document.getElementById("mn_solbox").classList.remove("hidden");
@@ -1407,12 +1433,13 @@ function mnEstPercentile(pct){ // pct = marks/300*100 ; approximate JEE Main per
   for(var i=0;i<pts.length-1;i++){ if(pct<=pts[i+1][0]){ var a=pts[i],b=pts[i+1]; var t=(pct-a[0])/(b[0]-a[0]); return a[1]+t*(b[1]-a[1]); } }
   return 100;
 }
+function mnNumEq(a,b){ var x=parseFloat(a), y=parseFloat(b); if(isNaN(x)||isNaN(y)) return false; return Math.abs(x-y)<0.011 || Math.abs(x-y)<=0.02*Math.max(1,Math.abs(y)); }
+function mnIsCorrect(q,p){ if(p==null) return false; if(q.type==="numerical") return mnNumEq(p,q.answer); return String(p)===String(q.answer); }
 function mnScore(){ var correct=0,wrong=0,blank=0,marks=0,perSub={};
   mnS.qs.forEach(function(q,i){ var p=mnS.picks[i]; var s=perSub[q.subject]||(perSub[q.subject]={c:0,w:0,b:0,m:0});
     if(p==null){ blank++; s.b++; }
-    else if(p===String(q.answer)){ correct++; marks+=4; s.c++; s.m+=4; }
-    else { wrong++; marks-=1; s.w++; s.m-=1; } });
-  if(marks<0) marks=marks; // allow negative display but floor rank at 0
+    else if(mnIsCorrect(q,p)){ correct++; marks+=4; s.c++; s.m+=4; }
+    else { wrong++; var neg=(q.type==="numerical")?0:-1; marks+=neg; s.w++; s.m+=neg; } });
   return {correct:correct,wrong:wrong,blank:blank,marks:marks,perSub:perSub};
 }
 function mnSubmit(){
@@ -1431,12 +1458,12 @@ function mnSubmit(){
   var subs=Object.keys(r.perSub);
   document.getElementById("mnr_subjects").innerHTML=subs.map(function(s){ var d=r.perSub[s]; var mx=(d.c+d.w+d.b)*4;
     return '<div class="subj-row"><div class="top"><span>'+s+'</span><span class="sc">'+d.m+' / '+mx+' marks · '+d.c+'✓ '+d.w+'✗</span></div><div class="bar"><div class="f" style="width:'+Math.max(0,Math.min(100,d.m/mx*100))+'%;background:'+(subColor(s)||"var(--orange)")+'"></div></div></div>'; }).join("");
-  document.getElementById("mnr_review").innerHTML=mnS.qs.map(function(q,i){ var p=mnS.picks[i]; var ok=(p===String(q.answer));
-    var cls=(p==null)?"zero":(ok?"pos":"neg"); var mk=(p==null)?"0":(ok?"+4":"−1");
+  document.getElementById("mnr_review").innerHTML=mnS.qs.map(function(q,i){ var p=mnS.picks[i]; var ok=mnIsCorrect(q,p);
+    var neg=(q.type==="numerical")?"0":"−1"; var cls=(p==null)?"zero":(ok?"pos":"neg"); var mk=(p==null)?"0":(ok?"+4":neg);
     var yr=(p==null)?"—":p;
-    return '<div class="adv-rq"><div class="rqtop"><span>'+q.subject+' · Q'+(i+1)+'</span><span class="mk '+cls+'">'+mk+'</span></div><img src="'+q.img+'" alt="" loading="lazy">'+
-      '<div class="rqans">Your answer: <span class="'+(ok?"ok":(p==null?"":"bad"))+'">'+yr+'</span> &nbsp;·&nbsp; Correct: <span class="yr">'+q.answer+'</span></div>'+
-      '<details class="adv-sol"><summary>Show detailed solution</summary><img src="'+q.sol+'" alt="solution" loading="lazy"></details></div>'; }).join("");
+    var sol=q.sol?('<details class="adv-sol"><summary>Show detailed solution</summary><img src="'+q.sol+'" alt="solution" loading="lazy"></details>'):'';
+    return '<div class="adv-rq"><div class="rqtop"><span>'+q.subject+' · Q'+(i+1)+(q.type==="numerical"?" · numerical":"")+'</span><span class="mk '+cls+'">'+mk+'</span></div><img src="'+q.img+'" alt="" loading="lazy">'+
+      '<div class="rqans">Your answer: <span class="'+(ok?"ok":(p==null?"":"bad"))+'">'+yr+'</span> &nbsp;·&nbsp; Correct: <span class="yr">'+q.answer+'</span></div>'+sol+'</div>'; }).join("");
   // save to history
   if(currentProfile){ var pctInt=Math.round(pct);
     var he={ type:mnS.name, score:pctInt, marks:r.marks, correct:r.correct, total:mnS.qs.length, subjects:{}, date:Date.now() };
@@ -1448,6 +1475,50 @@ function mnSubmit(){
   view("mnResults");
 }
 function mnResultsBack(){ view("shell"); go("tests"); }
+
+/* ============ CLASS 11 — scored chapter tests & mocks (answer key, no worked solution) ============ */
+var MN11_DIR="mains11_bank/";
+var mn11Chapters=null, mn11Mocks=null, mn11CurSub="Physics";
+var MN11_FREE_MOCK=1, MN11_FREE_CHAP=1;
+function mn11Ensure(cb){
+  if(mn11Chapters && mn11Mocks){ cb(); return; }
+  var need=0, fail=false;
+  function done(){ need--; if(need<=0){ if(fail) payToast("Couldn't load Class 11 tests. Please refresh.", true); else cb(); } }
+  if(!mn11Chapters){ need++; fetch(MN11_DIR+"mains11_chapters.json").then(function(r){ if(!r.ok)throw 0; return r.json(); }).then(function(d){ mn11Chapters=d; done(); }).catch(function(){ fail=true; done(); }); }
+  if(!mn11Mocks){ need++; fetch(MN11_DIR+"mains11_mocks.json").then(function(r){ if(!r.ok)throw 0; return r.json(); }).then(function(d){ mn11Mocks=d; done(); }).catch(function(){ fail=true; done(); }); }
+  if(need===0) cb();
+}
+function mn11RenderTests(){ mn11Ensure(function(){ mn11RenderMocks(); mn11RenderChap(); }); }
+function mn11RenderMocks(){
+  var g=document.getElementById("mn11MockGrid"); if(!g||!mn11Mocks) return; var paid=hasPaid();
+  g.innerHTML=mn11Mocks.map(function(m,i){
+    var locked=(!paid && i>=MN11_FREE_MOCK);
+    if(locked) return '<div class="mk locked"><span class="pat">Class 11 · Scored</span><h4>'+m.title+' 🔒</h4><div class="meta">75 Questions · +4/−1 · score, percentile &amp; rank</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
+    return '<div class="mk"><span class="pat">Class 11 · Scored</span><h4>'+m.title+'</h4><div class="meta">75 Questions · +4/−1 · score, percentile &amp; rank</div><button class="btn btn-block" onclick="mn11StartMock('+i+')">Start Test</button></div>';
+  }).join("");
+}
+function mn11Chap(el){ var c=el.parentElement.querySelectorAll(".chip"); for(var i=0;i<c.length;i++) c[i].classList.remove("active"); el.classList.add("active"); mn11CurSub=el.getAttribute("data-s"); mn11RenderChap(); }
+function mn11RenderChap(){
+  var g=document.getElementById("mn11ChapGrid"); if(!g||!mn11Chapters) return; var paid=hasPaid();
+  var list=mn11Chapters[mn11CurSub]||[];
+  g.innerHTML=list.map(function(ch,i){
+    var locked=(!paid && i>=MN11_FREE_CHAP);
+    if(locked) return '<div class="mk mn-chapcard locked"><span class="pat">Class 11 · '+mn11CurSub+'</span><h4>'+ch.topic+' 🔒</h4><div class="meta">'+ch.count+' questions · scored</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
+    return '<div class="mk mn-chapcard"><span class="pat">Class 11 · '+mn11CurSub+'</span><h4>'+ch.topic+'</h4><div class="meta">'+ch.count+' questions · scored</div><button class="btn btn-block" onclick="mn11StartChap(\''+mn11CurSub+'\','+i+')">Start Test</button></div>';
+  }).join("");
+}
+function mn11StartMock(i){
+  if(!hasPaid() && i>=MN11_FREE_MOCK){ go("settings"); payToast("This Class 11 mock is part of a plan. Choose a plan to unlock all mocks.", true); return; }
+  var m=mn11Mocks[i]; if(!m) return;
+  var qs=m.qs.map(function(q){ return {img:MN11_DIR+q.img, subject:q.subject, type:q.type, answer:q.answer}; });
+  mnBegin(m.title, qs, true);
+}
+function mn11StartChap(sub,i){
+  if(!hasPaid() && i>=MN11_FREE_CHAP){ go("settings"); payToast("This Class 11 chapter test is part of a plan. Choose a plan to unlock all chapter tests.", true); return; }
+  var ch=(mn11Chapters[sub]||[])[i]; if(!ch) return;
+  var qs=ch.qs.map(function(q){ return {img:MN11_DIR+q.img, subject:sub, topic:ch.topic, type:q.type, answer:q.answer}; });
+  mnBegin("Class 11 · "+sub+" · "+ch.topic, qs, false);
+}
 
 function startDaily(){ var pool=shuffle(allQuestions.slice()).slice(0,10); beginTest(pool, "daily", false); }
 function startSubjectTest(){ var pool=allQuestions.filter(function(q){ return q.subject===subjTestPick; }); beginTest(shuffle(pool.slice()).slice(0,25), "subject", false); }
