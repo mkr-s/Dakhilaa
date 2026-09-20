@@ -96,13 +96,29 @@
   .fcard h3{ font-size:18px; margin-bottom:8px; }
   .fcard p{ color:var(--muted); font-size:15px; }
 
-  /* STREAK STATS */
-  .streaks{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; max-width:900px; margin:0 auto; }
-  @media(max-width:720px){ .streaks{ grid-template-columns:1fr; } }
-  .scard{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:30px 20px; text-align:center; }
-  .scard .ic{ font-size:30px; }
-  .scard .big{ font-size:38px; font-weight:900; color:var(--orange); margin:6px 0 4px; }
-  .scard p{ color:var(--muted); font-size:14px; }
+  /* STUDENT GROWTH MATRIX */
+  .growth{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  @media(max-width:900px){ .growth{ grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:520px){ .growth{ grid-template-columns:1fr; } }
+  .gcard{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; position:relative; overflow:hidden; transition:.18s; }
+  .gcard::before{ content:""; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--orange),var(--orange-l)); }
+  .gcard:hover{ transform:translateY(-4px); border-color:var(--orange); box-shadow:0 12px 34px rgba(249,115,22,.14); }
+  .g-head{ display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .g-av{ width:42px; height:42px; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px; color:#fff; }
+  .g-name{ font-weight:800; font-size:15px; line-height:1.1; }
+  .g-tag{ font-size:11px; color:var(--muted); margin-top:2px; }
+  .g-jump{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; }
+  .g-metric{ text-align:center; }
+  .g-metric .v{ font-size:26px; font-weight:900; line-height:1; }
+  .g-metric .v.from{ color:var(--dim); }
+  .g-metric .v.to{ color:var(--orange); }
+  .g-metric .k{ font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-top:3px; }
+  .g-arrow{ color:var(--green); font-size:20px; font-weight:900; }
+  .g-bar{ height:7px; background:var(--bg-2); border-radius:5px; overflow:hidden; margin-bottom:10px; }
+  .g-bar span{ display:block; height:100%; background:linear-gradient(90deg,var(--orange),var(--orange-l)); border-radius:5px; }
+  .g-note{ font-size:12px; color:var(--muted); }
+  .g-delta{ display:inline-block; font-size:11px; font-weight:800; color:var(--green); background:rgba(34,197,94,.12); border-radius:20px; padding:2px 9px; }
+  .g-disc{ text-align:center; color:var(--dim); font-size:12px; margin-top:20px; }
 
   /* COLLEGE PREDICTOR */
   .predictor{ background:var(--card); border:1px solid var(--border); border-radius:18px; padding:28px; max-width:760px; margin:0 auto; }
@@ -121,10 +137,16 @@
   .pred-result .status-far{ color:var(--orange-l); font-weight:800; }
 
   /* BLOG */
-  .grid-blog{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; max-width:940px; margin:0 auto; }
-  @media(max-width:760px){ .grid-blog{ grid-template-columns:1fr; } }
+  .grid-blog{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; max-width:1040px; margin:0 auto; }
+  @media(max-width:760px){ .grid-blog{ grid-auto-flow:column; grid-template-columns:none; grid-auto-columns:78%; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:8px; -webkit-overflow-scrolling:touch; }
+    .grid-blog .bcard{ scroll-snap-align:center; } }
   .bcard{ background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
-  .bcard .banner{ height:150px; display:flex; align-items:center; justify-content:center; font-size:40px; }
+  .bcard .banner{ height:190px; display:flex; align-items:center; justify-content:center; font-size:40px; position:relative; overflow:hidden; }
+  .bcard .banner img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .9s ease; }
+  .bcard .banner img.on{ opacity:1; }
+  .bcard .banner .dots{ position:absolute; bottom:8px; left:0; right:0; display:flex; gap:5px; justify-content:center; z-index:2; }
+  .bcard .banner .dots i{ width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.45); }
+  .bcard .banner .dots i.on{ background:#fff; }
   .bcard .banner.b1{ background:linear-gradient(135deg,#7c2d12,#c2410c); }
   .bcard .banner.b2{ background:linear-gradient(135deg,#1e3a8a,#2563eb); }
   .bcard .banner.b3{ background:linear-gradient(135deg,#4c1d95,#7c3aed); }
@@ -303,19 +325,16 @@
   </div>
 </section>
 
-<!-- STREAKS -->
+<!-- STUDENT GROWTH MATRIX -->
 <section>
   <div class="wrap">
-    <div class="eyebrow">Stay consistent</div>
-    <h2 class="section-title">Prep That Feels Like a Streak, Not a Chore</h2>
-    <p class="section-sub">Daily goals, streaks, and progress that keep you coming back.</p>
-    <div class="streaks">
-      <div class="scard"><div class="ic">🔥</div><div class="big">30-day</div><p>Practice streaks to build momentum</p></div>
-      <div class="scard"><div class="ic">🎯</div><div class="big">10</div><p>Daily targeted questions on weak topics</p></div>
-      <div class="scard"><div class="ic">📈</div><div class="big">100%</div><p>Progress tracking toward your target score</p></div>
-    </div>
-  </div>
-</section>
+    <div class="eyebrow">Student Growth</div>
+    <h2 class="section-title">Real Prep, Real Percentile Jumps</h2>
+    <p class="section-sub">What focused, weak-area-first practice does to a JEE percentile over a few months.</p>
+    <div class="growth" id="growthGrid"></div>
+    <div id="growthEmpty" class="g-disc hidden">Top student growth journeys will appear here automatically as students train on Dakhilaa. Only the highest-growth students are featured.</div>
+    <div class="g-disc">★ Auto-updated from real student progress — only top-growth students are shown.</div>
+  </section>
 
 <!-- COLLEGE PREDICTOR -->
 <section id="predictor" style="background:var(--bg-2);">
@@ -388,7 +407,7 @@
           <li>Topic-wise performance analysis</li>
           <li>Peer community (11th graders)</li>
         </ul>
-        <a class="btn btn-ghost" href="app.html">Choose 11th Prep</a>
+        <a class="btn btn-ghost" href="app.html?plan=grade11">Choose 11th Prep</a>
       </div>
 
       <!-- 12th Grade Intensive -->
@@ -419,7 +438,7 @@
           <li>Success stories from peers</li>
           <li>Priority community support</li>
         </ul>
-        <a class="btn btn-primary" href="app.html">Choose 12th Intensive</a>
+        <a class="btn btn-primary" href="app.html?plan=grade12">Choose 12th Intensive</a>
       </div>
 
       <!-- Dropper Focused -->
@@ -449,7 +468,7 @@
           <li>Comeback success stories</li>
           <li>One-on-one support</li>
         </ul>
-        <a class="btn btn-ghost" href="app.html">Choose Dropper Plan</a>
+        <a class="btn btn-ghost" href="app.html?plan=dropper">Choose Dropper Plan</a>
       </div>
     </div>
     <p style="text-align:center;color:var(--dim);font-size:13px;margin-top:18px" class="reveal">Yearly plans · Cancel anytime · Secure payments</p>
@@ -464,7 +483,7 @@
     <p class="section-sub">Strategy, topic breakdowns, and score tips.</p>
     <div class="grid-blog">
       <article class="bcard">
-        <div class="banner b1">📚</div>
+        <div class="banner b1"><img class="on" src="blog1a.jpg" alt="Working hard vs smart" onerror="this.style.display='none'"><img src="blog1b.jpg" alt="More hours vs better rank" onerror="this.style.display='none'"><span class="dots"><i class="on"></i><i></i></span>📚</div>
         <div class="body">
           <h3>The Biggest Lie About 12-Hour Study Schedules</h3>
           <p>Everyone talks about studying 12–16 hours a day for JEE. I analyzed what actually improves rank — and why most students fail when they blindly follow extreme study schedules.</p>
@@ -472,7 +491,7 @@
         </div>
       </article>
       <article class="bcard">
-        <div class="banner b2">🎓</div>
+        <div class="banner b2"><img class="on" src="blog2a.jpg" alt="Talent to discipline" onerror="this.style.display='none'"><img src="blog2b.jpg" alt="Intelligence is not enough" onerror="this.style.display='none'"><span class="dots"><i class="on"></i><i></i></span>🎓</div>
         <div class="body">
           <h3>Why Smart Students Fail JEE (And Average Students Sometimes Beat Them)</h3>
           <p>I have seen brilliant students fail JEE despite strong academic records. Discover the hidden reasons why smart students struggle — and how to avoid the same mistakes.</p>
@@ -480,7 +499,7 @@
         </div>
       </article>
       <article class="bcard">
-        <div class="banner b3">🏛️</div>
+        <div class="banner b3"><img class="on" src="blog3a.jpg" alt="Following the crowd vs owning" onerror="this.style.display='none'"><img src="blog3b.jpg" alt="Distraction vs discipline" onerror="this.style.display='none'"><span class="dots"><i class="on"></i><i></i></span>🏛️</div>
         <div class="body">
           <h3>The Coaching Industry Secret Nobody Talks About</h3>
           <p>I analyzed why some JEE aspirants succeed while thousands struggle despite joining expensive coaching programs. Here's the coaching industry secret nobody talks about.</p>
@@ -525,7 +544,7 @@
       <div class="eyebrow">Partner Program</div>
       <h2>Grow with Dakhilaa — Become a Partner</h2>
       <p>JEE educator or influencer? Get your referral code, share it, and earn from every student you bring in.</p>
-      <a class="btn btn-primary" href="mailto:Support@dakhilaa.com?subject=Partner%20Program">Join the Partner Program →</a>
+      <a class="btn btn-primary" href="mailto:support@dakhilaa.com?subject=Partner%20Program">Join the Partner Program →</a>
     </div>
   </div>
 </section>
@@ -544,18 +563,18 @@
         <a href="#features">Features</a>
         <a href="#blog">Blog</a>
         <a href="#pricing">Pricing</a>
-        <a href="mailto:Support@dakhilaa.com?subject=Partner%20Program">Become a Partner</a>
+        <a href="mailto:support@dakhilaa.com?subject=Partner%20Program">Become a Partner</a>
       </div>
       <div>
         <h4>Connect</h4>
-        <a href="https://instagram.com/Dakhilaaofficial" target="_blank" rel="noopener">Instagram</a>
-        <a href="mailto:Support@dakhilaa.com">Email us</a>
-        <a href="https://facebook.com" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.instagram.com/dakhilaaofficial/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.facebook.com/share/1C3fUTvwuA/" target="_blank" rel="noopener">Facebook</a>
+        <a href="mailto:support@dakhilaa.com">Email us</a>
       </div>
     </div>
     <div class="foot-bottom">
       © 2026 Dakhilaa. Made for JEE aspirants who want precision prep.<br>
-      @Dakhilaaofficial &nbsp;·&nbsp; Support@dakhilaa.com &nbsp;·&nbsp; dakhilaa.com
+      <a href="https://www.instagram.com/dakhilaaofficial/" target="_blank" rel="noopener" style="color:inherit">@dakhilaaofficial</a> &nbsp;·&nbsp; <a href="mailto:support@dakhilaa.com" style="color:inherit">support@dakhilaa.com</a> &nbsp;·&nbsp; dakhilaa.com
     </div>
   </div>
 </footer>
@@ -714,7 +733,7 @@ function loadTestimonials(){
 
 /* ---- Scroll reveal animation (whole page) ---- */
 (function(){
-  var sels = ".eyebrow,.section-title,.section-sub,.fcard,.step,.scard,.bcard,.qa,.price-card,.stat,.pills,.hero-btns,.checks,.predictor,.cta,.partner,.tm-viewport,.foot-grid,.hero h1,.hero p.lead,.badge";
+  var sels = ".eyebrow,.section-title,.section-sub,.fcard,.step,.gcard,.bcard,.qa,.price-card,.stat,.pills,.hero-btns,.checks,.predictor,.cta,.partner,.tm-viewport,.foot-grid,.hero h1,.hero p.lead,.badge";
   var picked = [].slice.call(document.querySelectorAll(sels));
   picked.forEach(function(el){ el.classList.add("reveal"); });
   var all = [].slice.call(document.querySelectorAll(".reveal"));
@@ -725,6 +744,42 @@ function loadTestimonials(){
     setTimeout(function(){ all.forEach(function(e){ e.classList.add("in"); }); }, 3000);
   }
 })();
+/* ---- Blog banner image rotation (2 images per card) ---- */
+(function(){
+  var banners=[].slice.call(document.querySelectorAll('.grid-blog .banner'));
+  banners.forEach(function(bn){
+    var imgs=bn.querySelectorAll('img'), dots=bn.querySelectorAll('.dots i');
+    if(imgs.length<2) return; var i=0;
+    setInterval(function(){ imgs[i].classList.remove('on'); if(dots[i])dots[i].classList.remove('on'); i=(i+1)%imgs.length; imgs[i].classList.add('on'); if(dots[i])dots[i].classList.add('on'); }, 4500);
+  });
+})();
+
+/* ---- Student growth matrix (real, top-growth students from Firestore) ---- */
+var GROWTH_MIN=12, GROWTH_MAX=8;
+function gCard(g){
+  var nm=g.name||"Student", initial=nm.charAt(0).toUpperCase();
+  var before=Math.round(g.before||0), after=Math.round(g.after||0), delta=Math.round((typeof g.delta==="number")?g.delta:(after-before));
+  var pct=Math.max(6,Math.min(100,after));
+  return '<div class="gcard reveal in">'
+    +'<div class="g-head"><div class="g-av" style="background:'+avatarColor(nm)+'">'+escapeHtml(initial)+'</div><div><div class="g-name">'+escapeHtml(nm)+'</div><div class="g-tag">'+escapeHtml(g.tag||"JEE aspirant")+'</div></div></div>'
+    +'<div class="g-jump"><div class="g-metric"><div class="v from">'+before+'</div><div class="k">Before</div></div><div class="g-arrow">↗</div><div class="g-metric"><div class="v to">'+after+'</div><div class="k">Now</div></div></div>'
+    +'<div class="g-bar"><span style="width:'+pct+'%"></span></div>'
+    +'<div class="g-note">Readiness score <span class="g-delta">+'+delta+'</span></div>'
+    +'</div>';
+}
+function renderGrowth(list){
+  var grid=document.getElementById("growthGrid"), empty=document.getElementById("growthEmpty");
+  if(!list.length){ if(grid) grid.classList.add("hidden"); if(empty) empty.classList.remove("hidden"); return; }
+  if(empty) empty.classList.add("hidden"); if(grid){ grid.classList.remove("hidden"); grid.innerHTML=list.slice(0,GROWTH_MAX).map(gCard).join(""); }
+}
+function loadGrowth(){
+  if(!tmDB){ renderGrowth([]); return; }
+  tmDB.collection("growth").orderBy("delta","desc").limit(GROWTH_MAX).get().then(function(snap){
+    var arr=[]; snap.forEach(function(d){ var x=d.data(); if((x.delta||0)>=GROWTH_MIN) arr.push(x); });
+    renderGrowth(arr);
+  }).catch(function(e){ console.error("growth load", e); renderGrowth([]); });
+}
+loadGrowth();
 loadTestimonials();
 </script>
 </body>

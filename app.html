@@ -37,6 +37,13 @@
   .field input:focus{ outline:none; border-color:var(--orange); }
   .switch{ text-align:center; margin-top:16px; font-size:14px; color:var(--muted); }
   .switch a{ color:var(--orange-l); font-weight:600; cursor:pointer; }
+  .req{ color:var(--orange); }
+  .fld-opt{ color:var(--dim); font-weight:400; font-size:12px; }
+  .phone-wrap{ display:flex; align-items:stretch; border:1px solid var(--border-2); border-radius:9px; overflow:hidden; background:var(--bg); }
+  .phone-wrap:focus-within{ border-color:var(--orange); }
+  .phone-wrap .cc{ display:flex; align-items:center; padding:0 12px; background:var(--card-2); color:var(--muted); font-size:15px; font-weight:700; border-right:1px solid var(--border-2); }
+  .phone-wrap input{ border:none !important; border-radius:0 !important; flex:1; }
+  #recaptcha-container{ display:flex; justify-content:center; margin-top:10px; }
   .msg{ font-size:13px; margin-top:10px; text-align:center; min-height:18px; }
   .msg.err{ color:var(--red); }
   .spinner{ width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
@@ -290,6 +297,26 @@
   .stars span{ cursor:pointer; }
   .stars span.on{ color:var(--amber); }
   .modal textarea{ width:100%; height:90px; background:var(--bg-2); border:1px solid var(--border-2); border-radius:10px; color:var(--text); padding:10px; font-family:inherit; font-size:14px; resize:vertical; }
+  /* payments */
+  .pay-toast{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--card); border:1px solid var(--border-2); color:var(--text); padding:12px 18px; border-radius:12px; font-size:14px; font-weight:600; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,.45); max-width:90%; text-align:center; }
+  .pay-toast.err{ border-color:#ef4444; }
+  .auth-note{ background:rgba(249,115,22,.1); border:1px solid rgba(249,115,22,.3); color:var(--orange-l,#fb923c); font-size:13px; font-weight:600; padding:10px 12px; border-radius:10px; margin-bottom:14px; text-align:center; }
+  .gate-banner{ background:rgba(249,115,22,.1); border:1px solid rgba(249,115,22,.3); color:var(--text); font-size:13px; padding:10px 14px; border-radius:10px; margin-bottom:12px; }
+  .gate-banner a{ color:var(--orange); font-weight:700; cursor:pointer; text-decoration:underline; }
+  .mk.locked{ opacity:.72; }
+  .plan-active{ background:linear-gradient(135deg,rgba(34,197,94,.14),rgba(34,197,94,.04)); border:1px solid rgba(34,197,94,.35); border-radius:14px; padding:18px; }
+  .plan-active .pa-badge{ display:inline-block; font-size:11px; font-weight:800; color:#22c55e; background:rgba(34,197,94,.14); padding:3px 10px; border-radius:20px; }
+  .plan-active .pa-name{ font-size:20px; font-weight:900; margin-top:8px; }
+  .plan-active .pa-sub{ color:var(--muted); font-size:13px; margin-top:2px; }
+  .plan-opts{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px; }
+  @media(max-width:640px){ .plan-opts{ grid-template-columns:1fr; } }
+  .plan-opt{ background:var(--card); border:1px solid var(--border-2); border-radius:12px; padding:16px 14px; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:6px; transition:.15s; font-family:inherit; }
+  .plan-opt:hover{ border-color:var(--orange); transform:translateY(-2px); }
+  .plan-opt .po-name{ font-weight:800; font-size:15px; color:var(--text); }
+  .plan-opt .po-price{ font-size:22px; font-weight:900; color:var(--orange); }
+  .plan-opt .po-price small{ font-size:12px; color:var(--muted); font-weight:600; }
+  .plan-opt .po-cta{ margin-top:4px; font-size:12px; font-weight:700; color:var(--orange); }
+  .pm-opts{ display:grid; gap:10px; text-align:left; }
 </style>
 </head>
 <body>
@@ -303,21 +330,26 @@
   <div class="auth-card">
     <div class="auth-brand"><img src="logo.png" alt=""> Dakhilaa</div>
     <div class="tagline">Find your weak areas · Free diagnostic</div>
-    <div id="signupForm">
-      <div class="field"><label>Name</label><input id="su_name" type="text" placeholder="Your name"></div>
-      <div class="field"><label>Email</label><input id="su_email" type="email" placeholder="you@example.com"></div>
-      <div class="field"><label>Password</label><input id="su_pass" type="password" placeholder="At least 6 characters"></div>
-      <button class="btn btn-block" id="su_btn" onclick="handleSignup()">Create Account</button>
-      <div class="msg" id="su_msg"></div>
-      <div class="switch">Already have an account? <a onclick="showSignin()">Sign in</a></div>
+    <div id="auth_note" class="auth-note hidden"></div>
+    <!-- Step 1: details -->
+    <div id="authStep1">
+      <div class="field"><label>Name <span class="req">*</span></label><input id="au_name" type="text" placeholder="Your full name"></div>
+      <div class="field"><label>Mobile number <span class="req">*</span></label>
+        <div class="phone-wrap"><span class="cc">+91</span><input id="au_mobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile"></div>
+      </div>
+      <div class="field"><label>Instagram handle <span class="fld-opt">(optional)</span></label><input id="au_insta" type="text" placeholder="@yourhandle"></div>
+      <button class="btn btn-block" id="otp_send_btn" onclick="sendOtp(false)">Send OTP</button>
+      <div class="msg" id="au_msg"></div>
+      <div class="switch" style="font-size:12px;color:var(--dim)">We'll text a one-time code to verify your number.</div>
     </div>
-    <div id="signinForm" class="hidden">
-      <div class="field"><label>Email</label><input id="si_email" type="email" placeholder="you@example.com"></div>
-      <div class="field"><label>Password</label><input id="si_pass" type="password" placeholder="Your password"></div>
-      <button class="btn btn-block" id="si_btn" onclick="handleSignin()">Sign In</button>
-      <div class="msg" id="si_msg"></div>
-      <div class="switch">New here? <a onclick="showSignup()">Create an account</a></div>
+    <!-- Step 2: OTP -->
+    <div id="authStep2" class="hidden">
+      <div class="field"><label>Enter the 6-digit OTP sent to <b id="otp_to"></b></label><input id="au_otp" type="tel" inputmode="numeric" maxlength="6" placeholder="------" style="letter-spacing:8px;text-align:center;font-size:20px"></div>
+      <button class="btn btn-block" id="otp_verify_btn" onclick="verifyOtp()">Verify &amp; Continue</button>
+      <div class="msg" id="au_msg2"></div>
+      <div class="switch"><a onclick="otpChangeNumber()">Change number</a> &nbsp;·&nbsp; <a onclick="sendOtp(true)">Resend OTP</a></div>
     </div>
+    <div id="recaptcha-container"></div>
   </div>
 </div>
 
@@ -345,7 +377,7 @@
       <div class="ucard">
         <div class="av" id="sb_av">S</div>
         <div class="un" id="sb_name">Student</div>
-        <div class="up">Free plan</div>
+        <div class="up" id="sb_plan">Free plan</div>
         <button class="btn btn-block" style="padding:8px;font-size:13px" onclick="openRate()">Rate Dakhilaa</button>
       </div>
     </div>
@@ -402,6 +434,7 @@
           <div class="chip" data-s="Chemistry" onclick="qbFilter(this)">Chemistry</div>
           <div class="chip" data-s="Mathematics" onclick="qbFilter(this)">Maths</div>
         </div>
+        <div id="qb_gate" class="gate-banner hidden">🔒 You're on the free preview (first 25 questions). <a onclick="go('settings')">Choose a plan</a> to unlock the full question bank.</div>
         <div class="qcard" id="qb_card"></div>
       </section>
 
@@ -511,11 +544,16 @@
         <div class="sec-sub">Your account details.</div>
         <div class="setcard">
           <div class="setrow"><span class="k">Name</span><span id="set_name">—</span></div>
-          <div class="setrow"><span class="k">Email</span><span id="set_email">—</span></div>
-          <div class="setrow"><span class="k">Plan</span><span>Free</span></div>
+          <div class="setrow"><span class="k">Mobile</span><span id="set_email">—</span></div>
+          <div class="setrow"><span class="k">Instagram</span><span id="set_insta">—</span></div>
+          <div class="setrow"><span class="k">Plan</span><span id="set_plan">Free</span></div>
           <div class="setrow"><span class="k">Diagnostics taken</span><span id="set_tests">0</span></div>
           <div style="margin-top:16px"><button class="btn btn-outline btn-block" onclick="logout()">Log out</button></div>
         </div>
+
+        <h3 class="sec-h" style="font-size:18px;margin-top:26px">My Plan</h3>
+        <div class="sec-sub">Unlock the full question bank and all mock tests. Billed yearly.</div>
+        <div id="planCard"></div>
       </section>
 
     </div>
@@ -597,9 +635,22 @@
   </div>
 </div>
 
+<!-- PRICING MODAL -->
+<div class="modal-bg" id="priceModal">
+  <div class="modal" style="max-width:560px">
+    <button class="x" onclick="closePricingModal()">×</button>
+    <h3>Unlock full access 🚀</h3>
+    <div class="sub" id="pm_sub">Choose a plan to unlock unlimited diagnostics and full access.</div>
+    <div id="pm_opts" class="pm-opts"></div>
+    <button class="btn btn-outline btn-block" style="margin-top:14px" onclick="closePricingModal()">Maybe later</button>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<div id="payToast" class="pay-toast hidden"></div>
 <script>
 "use strict";
 
@@ -633,70 +684,179 @@ function clearCurrentStore(){ try{ localStorage.removeItem("dakhilaaCurrent"); }
 
 /* ---------- top-level views ---------- */
 function view(id){ ["loadingScreen","authScreen","shell","testScreen","resultsScreen"].forEach(function(s){ document.getElementById(s).classList.add("hidden"); }); document.getElementById(id).classList.remove("hidden"); window.scrollTo(0,0); }
-function showSignup(){ document.getElementById("signupForm").classList.remove("hidden"); document.getElementById("signinForm").classList.add("hidden"); }
-function showSignin(){ document.getElementById("signinForm").classList.remove("hidden"); document.getElementById("signupForm").classList.add("hidden"); }
+function showAuthStep1(){ document.getElementById("authStep1").classList.remove("hidden"); document.getElementById("authStep2").classList.add("hidden"); }
+function showAuthStep2(){ document.getElementById("authStep2").classList.remove("hidden"); document.getElementById("authStep1").classList.add("hidden"); }
+function showSignup(){ showAuthStep1(); }
+function showSignin(){ showAuthStep1(); }
 function setBtnBusy(id,b,t){ var x=document.getElementById(id); if(!x)return; x.disabled=b; if(b){ x.dataset.l=x.textContent; x.textContent=t||"Please wait…"; } else if(x.dataset.l){ x.textContent=x.dataset.l; } }
 function fbError(err){ var c=(err&&err.code)?err.code:"";
-  if(c.indexOf("email-already-in-use")>=0) return "This email is already registered. Please sign in.";
-  if(c.indexOf("invalid-email")>=0) return "Please enter a valid email address.";
-  if(c.indexOf("weak-password")>=0) return "Password must be at least 6 characters.";
-  if(c.indexOf("user-not-found")>=0) return "No account found for this email.";
-  if(c.indexOf("wrong-password")>=0||c.indexOf("invalid-credential")>=0||c.indexOf("invalid-login")>=0) return "Incorrect email or password.";
+  if(c.indexOf("invalid-phone-number")>=0||c.indexOf("missing-phone-number")>=0) return "Please enter a valid mobile number.";
+  if(c.indexOf("invalid-verification-code")>=0) return "Incorrect OTP. Please check and try again.";
+  if(c.indexOf("code-expired")>=0) return "This OTP expired. Please resend a new one.";
+  if(c.indexOf("captcha-check-failed")>=0||c.indexOf("captcha")>=0) return "Verification check failed. Please reload and try again.";
+  if(c.indexOf("quota-exceeded")>=0) return "SMS limit reached for now. Please try again later.";
   if(c.indexOf("network")>=0) return "Network error. Please check your connection.";
   if(c.indexOf("too-many-requests")>=0) return "Too many attempts. Please wait and try again.";
+  if(c.indexOf("operation-not-allowed")>=0) return "Phone sign-in isn't enabled yet. (Admin: enable Phone in Firebase Authentication.)";
   return "Something went wrong. Please try again."; }
 
-/* ---------- auth ---------- */
-function handleSignup(){
-  var name=document.getElementById("su_name").value.trim();
-  var email=document.getElementById("su_email").value.trim().toLowerCase();
-  var pass=document.getElementById("su_pass").value;
-  var msg=document.getElementById("su_msg"); msg.className="msg err";
-  if(!name||!email||!pass){ msg.textContent="Please fill all fields."; return; }
-  if(pass.length<MIN_PASS){ msg.textContent="Password must be at least "+MIN_PASS+" characters."; return; }
+/* ---------- auth: mobile OTP ---------- */
+var pendingSignup=null, confirmationResult=null, recaptcha=null;
+function validMobile(m){ return /^[6-9]\d{9}$/.test(m); }
+function ensureRecaptcha(){ if(recaptcha) return recaptcha; recaptcha=new firebase.auth.RecaptchaVerifier('recaptcha-container',{ size:'invisible' }); return recaptcha; }
+function sendOtp(isResend){
+  var name=document.getElementById("au_name").value.trim();
+  var mobile=(document.getElementById("au_mobile").value||"").replace(/\D/g,'');
+  var insta=document.getElementById("au_insta").value.trim();
+  var msg=document.getElementById("au_msg"); msg.className="msg err";
+  if(!name){ msg.textContent="Please enter your name."; return; }
+  if(!validMobile(mobile)){ msg.textContent="Please enter a valid 10-digit mobile number."; return; }
+  pendingSignup={ name:name, mobile:mobile, instagram:insta };
   if(USE_FIREBASE){
-    setBtnBusy("su_btn",true,"Creating account…");
-    fbAuth.createUserWithEmailAndPassword(email,pass).then(function(cred){
-      return cred.user.updateProfile({displayName:name}).then(function(){
-        return fbDB.collection("users").doc(cred.user.uid).set({ name:name, email:email, testsTaken:0, questionsSolved:0, correctAnswers:0, history:[] });
-      });
-    }).catch(function(err){ msg.textContent=fbError(err); setBtnBusy("su_btn",false); });
+    setBtnBusy("otp_send_btn",true,"Sending OTP…");
+    var v; try{ v=ensureRecaptcha(); }catch(e){ msg.textContent="Could not start verification. Please reload the page."; setBtnBusy("otp_send_btn",false); return; }
+    fbAuth.signInWithPhoneNumber("+91"+mobile, v).then(function(cr){
+      confirmationResult=cr; setBtnBusy("otp_send_btn",false);
+      document.getElementById("otp_to").textContent="+91 "+mobile;
+      msg.className="msg"; msg.textContent="";
+      var m2=document.getElementById("au_msg2"); m2.className="msg"; m2.textContent=isResend?"A new OTP has been sent.":"";
+      document.getElementById("au_otp").value="";
+      showAuthStep2(); document.getElementById("au_otp").focus();
+    }).catch(function(err){ setBtnBusy("otp_send_btn",false); msg.textContent=fbError(err); try{ if(recaptcha){ recaptcha.clear(); recaptcha=null; } }catch(e){} });
   } else {
-    if(usersDB[email]){ msg.textContent="This email is already registered. Please sign in."; return; }
-    usersDB[email]={ name:name, email:email, password:pass, stats:{testsTaken:0,questionsSolved:0,correctAnswers:0}, last:null, history:[] };
-    persistDB(); currentUser=email; currentEmail=email; currentProfile=usersDB[email]; persistCurrent(email); enterApp();
+    localCreateOrLogin();
   }
 }
-function handleSignin(){
-  var email=document.getElementById("si_email").value.trim().toLowerCase();
-  var pass=document.getElementById("si_pass").value;
-  var msg=document.getElementById("si_msg"); msg.className="msg err";
-  if(!email||!pass){ msg.textContent="Please enter your email and password."; return; }
-  if(USE_FIREBASE){
-    setBtnBusy("si_btn",true,"Signing in…");
-    fbAuth.signInWithEmailAndPassword(email,pass).catch(function(err){ msg.textContent=fbError(err); setBtnBusy("si_btn",false); });
-  } else {
-    if(!usersDB[email]){ msg.textContent="No account found for this email."; return; }
-    if(usersDB[email].password!==pass){ msg.textContent="Incorrect password."; return; }
-    currentUser=email; currentEmail=email; currentProfile=usersDB[email]; persistCurrent(email); enterApp();
-  }
+function verifyOtp(){
+  var code=(document.getElementById("au_otp").value||"").replace(/\D/g,'');
+  var msg=document.getElementById("au_msg2"); msg.className="msg err";
+  if(code.length<6){ msg.textContent="Enter the 6-digit code."; return; }
+  if(!confirmationResult){ msg.textContent="Please request an OTP first."; return; }
+  setBtnBusy("otp_verify_btn",true,"Verifying…");
+  confirmationResult.confirm(code).catch(function(err){ setBtnBusy("otp_verify_btn",false); msg.textContent=fbError(err); });
 }
-function logout(){ if(USE_FIREBASE){ fbAuth.signOut(); } else { clearCurrentStore(); currentUser=null; currentProfile=null; view("authScreen"); showSignin(); } }
+function otpChangeNumber(){ confirmationResult=null; showAuthStep1(); }
+function localCreateOrLogin(){
+  var key=pendingSignup.mobile;
+  if(!usersDB[key]){ usersDB[key]={ name:pendingSignup.name, mobile:key, instagram:pendingSignup.instagram, email:"", stats:{testsTaken:0,questionsSolved:0,correctAnswers:0}, last:null, history:[], plan:null }; }
+  else { usersDB[key].name=pendingSignup.name; usersDB[key].instagram=pendingSignup.instagram; }
+  persistDB(); currentUser=key; currentEmail=""; currentProfile=usersDB[key]; persistCurrent(key); enterApp();
+}
+function logout(){ if(USE_FIREBASE){ fbAuth.signOut(); } else { clearCurrentStore(); currentUser=null; currentProfile=null; view("authScreen"); showAuthStep1(); } confirmationResult=null; }
 function initFirebaseAuth(){
   fbAuth.onAuthStateChanged(function(user){
-    setBtnBusy("su_btn",false); setBtnBusy("si_btn",false);
+    setBtnBusy("otp_send_btn",false); setBtnBusy("otp_verify_btn",false);
     if(user){
       fbDB.collection("users").doc(user.uid).get().then(function(doc){
-        var d=doc.exists?doc.data():{};
-        currentUser=user.uid; currentEmail=d.email||user.email||"";
-        currentProfile={ name:d.name||user.displayName||"Student", email:currentEmail,
+        var isNew=!doc.exists; var d=doc.exists?doc.data():{};
+        if(isNew && pendingSignup){
+          d={ name:pendingSignup.name, mobile:pendingSignup.mobile, instagram:pendingSignup.instagram, testsTaken:0, questionsSolved:0, correctAnswers:0, history:[] };
+          fbDB.collection("users").doc(user.uid).set(d).catch(function(e){ console.error(e); });
+        }
+        var mob=d.mobile||(user.phoneNumber||"").replace("+91","");
+        currentUser=user.uid; currentEmail=mob;
+        currentProfile={ name:d.name||(pendingSignup&&pendingSignup.name)||"Student", email:(mob?("+91 "+mob):""), mobile:mob, instagram:d.instagram||(pendingSignup&&pendingSignup.instagram)||"",
           stats:{ testsTaken:d.testsTaken||0, questionsSolved:d.questionsSolved||0, correctAnswers:d.correctAnswers||0 },
           last:(typeof d.lastReadiness==="number")?{ readiness:d.lastReadiness, weakest:d.weakestSubject||"", est:d.lastEst||0, per:d.lastPer||null }:null,
-          history:Array.isArray(d.history)?d.history:[] };
+          history:Array.isArray(d.history)?d.history:[],
+          plan:d.plan||null, planName:d.planName||"", planSince:d.planSince||0, lastPaymentId:d.lastPaymentId||"",
+          diagMonth:d.diagMonth||"", diagCount:d.diagCount||0,
+          firstReadiness:(typeof d.firstReadiness==="number"?d.firstReadiness:undefined) };
+        pendingSignup=null;
         enterApp();
-      }).catch(function(){ currentUser=user.uid; currentEmail=user.email||""; currentProfile={ name:user.displayName||"Student", email:currentEmail, stats:{testsTaken:0,questionsSolved:0,correctAnswers:0}, last:null, history:[] }; enterApp(); });
-    } else { currentUser=null; currentProfile=null; view("authScreen"); showSignin(); }
+      }).catch(function(){ var mob=(user.phoneNumber||"").replace("+91",""); currentUser=user.uid; currentEmail=mob; currentProfile={ name:(pendingSignup&&pendingSignup.name)||"Student", email:(mob?("+91 "+mob):""), mobile:mob, instagram:"", stats:{testsTaken:0,questionsSolved:0,correctAnswers:0}, last:null, history:[], plan:null }; enterApp(); });
+    } else { currentUser=null; currentProfile=null; view("authScreen"); if(pendingPlan){ showPlanIntent(); } else { showAuthStep1(); } }
   });
+}
+
+/* ---------- payments (Razorpay) ---------- */
+var PLANS={
+  grade11:{ name:"11th Grade Prep",      price:"₹1,499", amount:149900 },
+  grade12:{ name:"12th Grade Intensive", price:"₹1,799", amount:179900 },
+  dropper:{ name:"Dropper Focused",      price:"₹1,999", amount:199900 }
+};
+var pendingPlan=null, _toastT=null;
+function hasPaid(){ return !!(currentProfile && currentProfile.plan && PLANS[currentProfile.plan]); }
+function payToast(msg,isErr){ var t=document.getElementById("payToast"); if(!t){ alert(msg); return; } t.textContent=msg; t.className="pay-toast"+(isErr?" err":""); clearTimeout(_toastT); _toastT=setTimeout(function(){ t.className="pay-toast hidden"; }, isErr?6000:4200); }
+
+function showPlanIntent(){
+  if(!pendingPlan||!PLANS[pendingPlan]) return;
+  var n=document.getElementById("auth_note"); if(n){ n.textContent="Create your account to continue to payment for "+PLANS[pendingPlan].name+" ("+PLANS[pendingPlan].price+"/yr)."; n.classList.remove("hidden"); }
+  showSignup();
+}
+function startCheckout(planKey){
+  if(!PLANS[planKey]) return;
+  if(!currentProfile){ pendingPlan=planKey; view("authScreen"); showPlanIntent(); return; }
+  beginPayment(planKey);
+}
+function beginPayment(planKey){
+  var plan=PLANS[planKey]; if(!plan) return;
+  if(typeof Razorpay==="undefined"){ payToast("Payment system is still loading — please try again in a moment.", true); return; }
+  payToast("Starting secure checkout…");
+  fetch("/api/create-order",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ plan:planKey, email:currentProfile.email, name:currentProfile.name }) })
+    .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
+    .then(function(res){
+      if(!res.ok){ payToast((res.d&&res.d.error)||"Could not start payment. Please try again.", true); return; }
+      var d=res.d;
+      var rz=new Razorpay({
+        key:d.key_id, order_id:d.order_id, amount:d.amount, currency:d.currency||"INR",
+        name:"Dakhilaa", description:plan.name+" (yearly)",
+        prefill:{ name:currentProfile.name, email:currentProfile.email },
+        theme:{ color:"#f97316" },
+        handler:function(resp){ verifyPayment(planKey,resp); },
+        modal:{ ondismiss:function(){ payToast("Payment cancelled.", true); } }
+      });
+      rz.on("payment.failed", function(e){ payToast((e&&e.error&&e.error.description)||"Payment failed. No money was charged.", true); });
+      rz.open();
+    })
+    .catch(function(){ payToast("Network error starting payment. Please try again.", true); });
+}
+function verifyPayment(planKey,resp){
+  payToast("Verifying payment…");
+  fetch("/api/verify-payment",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ razorpay_order_id:resp.razorpay_order_id, razorpay_payment_id:resp.razorpay_payment_id, razorpay_signature:resp.razorpay_signature }) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d && d.valid){ activatePlan(planKey, resp.razorpay_payment_id); }
+      else { payToast("Payment could not be verified. If money was deducted it will be auto-refunded — please contact us with your payment id.", true); }
+    })
+    .catch(function(){ payToast("Couldn't verify payment. Please contact us with payment id "+(resp.razorpay_payment_id||""), true); });
+}
+function activatePlan(planKey,paymentId){
+  var plan=PLANS[planKey]; if(!plan) return;
+  currentProfile.plan=planKey; currentProfile.planName=plan.name; currentProfile.planSince=Date.now(); currentProfile.lastPaymentId=paymentId||"";
+  if(USE_FIREBASE && fbDB && currentUser){
+    fbDB.collection("users").doc(currentUser).set({ plan:planKey, planName:plan.name, planSince:currentProfile.planSince, lastPaymentId:currentProfile.lastPaymentId },{merge:true}).catch(function(e){ console.error(e); });
+  } else { persistDB(); }
+  applyPlanUI();
+  payToast("🎉 "+plan.name+" activated! Full access unlocked.");
+}
+function applyPlanUI(){
+  var p=currentProfile;
+  var name=(p&&p.plan&&PLANS[p.plan])?PLANS[p.plan].name:null;
+  var sp=document.getElementById("sb_plan"); if(sp) sp.textContent=name?name:"Free plan";
+  var stp=document.getElementById("set_plan"); if(stp) stp.textContent=name?name:"Free";
+  renderPlanCard();
+}
+function openPricingModal(msg){
+  var m=document.getElementById("priceModal"); if(!m) return;
+  document.getElementById("pm_sub").textContent=msg||"Choose a plan to unlock unlimited diagnostics and full access.";
+  document.getElementById("pm_opts").innerHTML=["grade11","grade12","dropper"].map(function(k){ var p=PLANS[k]; return '<button class="plan-opt" onclick="closePricingModal();startCheckout(\''+k+'\')"><span class="po-name">'+p.name+'</span><span class="po-price">'+p.price+'<small>/yr</small></span><span class="po-cta">Choose →</span></button>'; }).join("");
+  m.classList.add("show");
+}
+function closePricingModal(){ var m=document.getElementById("priceModal"); if(m) m.classList.remove("show"); }
+function renderPlanCard(){
+  var el=document.getElementById("planCard"); if(!el) return;
+  var p=currentProfile;
+  if(p && p.plan && PLANS[p.plan]){
+    var since=p.planSince?new Date(p.planSince).toLocaleDateString():"";
+    el.innerHTML='<div class="plan-active"><span class="pa-badge">✓ ACTIVE</span><div class="pa-name">'+PLANS[p.plan].name+'</div><div class="pa-sub">Yearly plan · Full access unlocked'+(since?(' · since '+since):'')+'</div></div>';
+    return;
+  }
+  var keys=["grade11","grade12","dropper"];
+  var html='<div class="plan-opts">';
+  keys.forEach(function(k){ var pl=PLANS[k]; html+='<button class="plan-opt" onclick="startCheckout(\''+k+'\')"><span class="po-name">'+pl.name+'</span><span class="po-price">'+pl.price+'<small>/yr</small></span><span class="po-cta">Choose →</span></button>'; });
+  html+='</div>';
+  el.innerHTML=html;
 }
 
 /* ---------- enter app ---------- */
@@ -707,7 +867,11 @@ function enterApp(){
   document.getElementById("sb_av").textContent=(p.name||"S").charAt(0).toUpperCase();
   document.getElementById("set_name").textContent=p.name;
   document.getElementById("set_email").textContent=p.email||"—";
+  var si=document.getElementById("set_insta"); if(si) si.textContent=p.instagram||"—";
+  var an=document.getElementById("auth_note"); if(an) an.classList.add("hidden");
+  applyPlanUI();
   view("shell"); go("overview");
+  if(pendingPlan){ var pk=pendingPlan; pendingPlan=null; setTimeout(function(){ beginPayment(pk); }, 500); }
 }
 
 /* ---------- navigation ---------- */
@@ -765,9 +929,13 @@ function subColor(s){ return s==="Physics"?"#fbbf24":(s==="Chemistry"?"#34d399":
 /* ---------- question bank ---------- */
 function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 function qbFilter(el){ var c=document.querySelectorAll("#qb_chips .chip"); for(var i=0;i<c.length;i++) c[i].classList.remove("active"); el.classList.add("active"); qb.subject=el.getAttribute("data-s"); qbLoad(); }
+var FREE_QB=25;
 function qbLoad(){
   qb.pool=shuffle(allQuestions.filter(function(q){ return qb.subject==="Mixed"?true:q.subject===qb.subject; }).slice());
+  if(!hasPaid()) qb.pool=qb.pool.slice(0,FREE_QB);
   qb.idx=0; qbRender();
+  var b=document.getElementById("qb_gate");
+  if(b) b.classList.toggle("hidden", hasPaid());
 }
 function qbRender(){
   if(!qb.pool.length){ document.getElementById("qb_card").innerHTML="<p style='color:var(--muted)'>No questions.</p>"; return; }
@@ -797,17 +965,58 @@ function buildMocks(){
   var per=25; var count=Math.min.apply(null, SUBJECTS.map(function(s){ return Math.floor(bySub[s].length/per); }));
   for(var n=0;n<count;n++){ var qs=[]; SUBJECTS.forEach(function(s){ qs=qs.concat(bySub[s].slice(n*per,(n+1)*per)); }); MOCKS.push({ name:"Mock Test "+(n+1), questions:qs }); }
 }
+var FREE_MOCKS=1;
 function renderMocks(){
   var g=document.getElementById("mockGrid"); if(!g) return;
   if(!MOCKS.length){ g.innerHTML='<div class="coming" style="grid-column:1/-1"><b>Mock tests unavailable</b><p style="margin-top:6px">Please refresh.</p></div>'; return; }
-  g.innerHTML=MOCKS.map(function(m,i){ return '<div class="mk"><span class="pat">JEE Main Pattern</span><h4>'+m.name+'</h4><div class="meta">75 Questions · 180 min · +4 / −1</div><button class="btn btn-block" onclick="startMock('+i+')">Start Test</button></div>'; }).join("");
+  var paid=hasPaid();
+  g.innerHTML=MOCKS.map(function(m,i){
+    var locked=(!paid && i>=FREE_MOCKS);
+    if(locked){
+      return '<div class="mk locked"><span class="pat">JEE Main Pattern</span><h4>'+m.name+' 🔒</h4><div class="meta">75 Questions · 180 min · +4 / −1</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
+    }
+    return '<div class="mk"><span class="pat">JEE Main Pattern</span><h4>'+m.name+'</h4><div class="meta">75 Questions · 180 min · +4 / −1</div><button class="btn btn-block" onclick="startMock('+i+')">Start Test</button></div>';
+  }).join("");
 }
 
 /* ---------- tests ---------- */
 function subjPick(el){ var c=el.parentElement.querySelectorAll(".chip"); for(var i=0;i<c.length;i++) c[i].classList.remove("active"); el.classList.add("active"); subjTestPick=el.getAttribute("data-st"); }
 function pickBalanced(perSubject){ var out=[]; SUBJECTS.forEach(function(su){ var pool=allQuestions.filter(function(q){ return q.subject===su; }); out=out.concat(shuffle(pool.slice()).slice(0,perSubject)); }); return shuffle(out); }
-function startDiagnostic(){ beginTest(pickBalanced(5), "diagnostic", false); }
-function startMock(i){ var m=MOCKS[i]; if(!m) return; beginTest(m.questions.slice(), "mock", true, 180, m.name); }
+var FREE_DIAG_PER_MONTH=5, DIAG_QS=10;
+function curMonth(){ return new Date().toISOString().slice(0,7); }
+function diagUsed(){ var p=currentProfile; if(!p) return 0; if(p.diagMonth!==curMonth()){ p.diagMonth=curMonth(); p.diagCount=0; } return p.diagCount||0; }
+function diagLeft(){ return Math.max(0, FREE_DIAG_PER_MONTH - diagUsed()); }
+function recordDiag(){
+  var p=currentProfile; if(!p) return;
+  if(p.diagMonth!==curMonth()){ p.diagMonth=curMonth(); p.diagCount=0; }
+  p.diagCount=(p.diagCount||0)+1;
+  if(USE_FIREBASE && fbDB && currentUser){ fbDB.collection("users").doc(currentUser).set({ diagMonth:p.diagMonth, diagCount:p.diagCount },{merge:true}).catch(function(e){ console.error(e); }); }
+  else { persistDB(); }
+}
+function pickDiag(){ var per={Physics:4,Chemistry:3,Mathematics:3}; var out=[]; SUBJECTS.forEach(function(s){ var pool=allQuestions.filter(function(q){ return q.subject===s; }); out=out.concat(shuffle(pool.slice()).slice(0,per[s])); }); return shuffle(out).slice(0,DIAG_QS); }
+function startDiagnostic(){
+  if(!hasPaid()){
+    if(diagUsed()>=FREE_DIAG_PER_MONTH){ openPricingModal("You've used all "+FREE_DIAG_PER_MONTH+" free diagnostics this month. Upgrade for unlimited diagnostics and full access."); return; }
+    recordDiag();
+  }
+  beginTest(pickDiag(), "diagnostic", false);
+}
+/* ---- growth matrix (writes only high-growth students to public 'growth' collection) ---- */
+var GROWTH_MIN=12;
+function growthTag(){ var p=currentProfile; if(p&&p.plan==="grade11")return "Class 11"; if(p&&p.plan==="grade12")return "Class 12"; if(p&&p.plan==="dropper")return "Dropper"; return "JEE aspirant"; }
+function upsertGrowth(){
+  var p=currentProfile; if(!p||!p.last) return;
+  var cur=Math.round(p.last.readiness||0);
+  if(typeof p.firstReadiness!=="number"){ p.firstReadiness=cur; }
+  var delta=cur - p.firstReadiness;
+  if(USE_FIREBASE && fbDB && currentUser){
+    fbDB.collection("users").doc(currentUser).set({ firstReadiness:p.firstReadiness },{merge:true}).catch(function(){});
+    if(delta>=GROWTH_MIN){
+      fbDB.collection("growth").doc(currentUser).set({ name:(p.name||"Student"), tag:growthTag(), before:p.firstReadiness, after:cur, delta:delta, updated:Date.now() }).catch(function(e){ console.error("growth write", e); });
+    }
+  } else { persistDB(); }
+}
+function startMock(i){ var m=MOCKS[i]; if(!m) return; if(!hasPaid() && i>=FREE_MOCKS){ go("settings"); payToast("This mock is part of a plan. Choose a plan to unlock all mock tests.", true); return; } beginTest(m.questions.slice(), "mock", true, 180, m.name); }
 function startDaily(){ var pool=shuffle(allQuestions.slice()).slice(0,10); beginTest(pool, "daily", false); }
 function startSubjectTest(){ var pool=allQuestions.filter(function(q){ return q.subject===subjTestPick; }); beginTest(shuffle(pool.slice()).slice(0,25), "subject", false); }
 function modeLabel(m){ return m==="diagnostic"?"Diagnostic":(m==="mock"?"Mock Test":(m==="subject"?"Subject Test":(m==="daily"?"Daily Practice":"Test"))); }
@@ -956,6 +1165,7 @@ function renderMockReport(per, correct, wrong, total, marks, scorePct, qs, ans){
   ph+='</p><p style="font-size:12px;color:var(--dim);margin-top:8px">Cutoff ranges are approximate; real cutoffs vary by category, branch and year.</p></div>';
   document.getElementById("r_path").innerHTML=ph;
   currentProfile.last={ readiness:scorePct, weakest:weakest, est:marks, per:{Physics:{c:per.Physics.c,t:per.Physics.t},Chemistry:{c:per.Chemistry.c,t:per.Chemistry.t},Mathematics:{c:per.Mathematics.c,t:per.Mathematics.t}} };
+  upsertGrowth();
   renderReview(qs, ans);
 }
 function renderDiagnosticReport(per, correct, total, score, qs, ans){
@@ -980,6 +1190,7 @@ function renderDiagnosticReport(per, correct, total, score, qs, ans){
   ph+='</p><p style="font-size:12px;color:var(--dim);margin-top:8px">Estimate based on this test and past-year trends; real cutoffs vary.</p></div>';
   document.getElementById("r_path").innerHTML=ph;
   currentProfile.last={ readiness:score, weakest:weakest, est:est, per:per };
+  upsertGrowth();
   renderReview(qs, ans);
 }
 function renderPracticeResult(correct, total, score, qs, ans){
@@ -1157,12 +1368,13 @@ function submitRate(){
 /* ---------- init ---------- */
 function initApp(){
   loadDB(); initPredictor();
+  try{ var up=new URLSearchParams(location.search).get("plan"); if(up && PLANS[up]) pendingPlan=up; }catch(e){}
   fetch("questions.json").then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); })
     .then(function(data){
       allQuestions=data; buildMocks();
       if(USE_FIREBASE){ initFirebaseAuth(); }
-      else { var saved=readCurrent(); if(saved && usersDB[saved]){ currentUser=saved; currentEmail=saved; currentProfile=usersDB[saved]; enterApp(); } else { view("authScreen"); showSignup(); } }
-    }).catch(function(){ allQuestions=[]; var el=document.getElementById("su_msg"); if(el){ el.className="msg err"; el.textContent="Could not load question bank. Please refresh."; } view("authScreen"); showSignup(); });
+      else { var saved=readCurrent(); if(saved && usersDB[saved]){ currentUser=saved; currentEmail=saved; currentProfile=usersDB[saved]; enterApp(); } else { view("authScreen"); if(pendingPlan){ showPlanIntent(); } else { showSignup(); } } }
+    }).catch(function(){ allQuestions=[]; var el=document.getElementById("au_msg"); if(el){ el.className="msg err"; el.textContent="Could not load question bank. Please refresh."; } view("authScreen"); showAuthStep1(); });
 }
 initApp();
 </script>
