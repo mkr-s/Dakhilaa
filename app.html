@@ -1510,13 +1510,13 @@ function mn11RenderChap(){
 function mn11StartMock(i){
   if(!hasPaid() && i>=MN11_FREE_MOCK){ go("settings"); payToast("This Class 11 mock is part of a plan. Choose a plan to unlock all mocks.", true); return; }
   var m=mn11Mocks[i]; if(!m) return;
-  var qs=m.qs.map(function(q){ return {img:MN11_DIR+q.img, subject:q.subject, type:q.type, answer:q.answer}; });
+  var qs=m.qs.map(function(q){ return {img:MN11_DIR+q.img, subject:q.subject, type:q.type, answer:q.answer, sol:q.sol?MN11_DIR+q.sol:null}; });
   mnBegin(m.title, qs, true);
 }
 function mn11StartChap(sub,i){
   if(!hasPaid() && i>=MN11_FREE_CHAP){ go("settings"); payToast("This Class 11 chapter test is part of a plan. Choose a plan to unlock all chapter tests.", true); return; }
   var ch=(mn11Chapters[sub]||[])[i]; if(!ch) return;
-  var qs=ch.qs.map(function(q){ return {img:MN11_DIR+q.img, subject:sub, topic:ch.topic, type:q.type, answer:q.answer}; });
+  var qs=ch.qs.map(function(q){ return {img:MN11_DIR+q.img, subject:sub, topic:ch.topic, type:q.type, answer:q.answer, sol:q.sol?MN11_DIR+q.sol:null}; });
   mnBegin("Class 11 · "+sub+" · "+ch.topic, qs, false);
 }
 
