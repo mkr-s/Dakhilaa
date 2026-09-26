@@ -304,6 +304,24 @@
   .ref-note.ok{ color:#22c55e; }
   .ref-note.err{ color:#ef4444; }
   #ref_input:focus{ outline:none; border-color:var(--orange,#f97316); }
+  .live-card{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px; }
+  .live-card.livenow{ border-color:rgba(239,68,68,.5); box-shadow:0 0 0 1px rgba(239,68,68,.25), 0 10px 30px rgba(239,68,68,.12); }
+  .live-card h3{ font-size:19px; font-weight:800; margin:10px 0 6px; }
+  .live-badge{ display:inline-block; font-size:12px; font-weight:800; padding:4px 11px; border-radius:20px; letter-spacing:.4px; }
+  .live-badge.now{ background:rgba(239,68,68,.16); color:#fca5a5; animation:livepulse 1.6s ease-in-out infinite; }
+  .live-badge.up{ background:rgba(249,115,22,.14); color:var(--orange-l,#fb923c); }
+  @keyframes livepulse{ 0%,100%{ opacity:1; } 50%{ opacity:.55; } }
+  .live-meta{ color:var(--muted); font-size:14px; }
+  .live-meta b{ color:var(--text); font-variant-numeric:tabular-nums; }
+  .live-done{ margin-top:12px; color:var(--green,#22c55e); font-weight:700; font-size:14px; }
+  .live-myrank{ background:var(--card-2,#151c2c); border:1px solid var(--border-2,#293349); border-radius:10px; padding:10px 14px; margin-bottom:12px; font-size:14px; }
+  .live-empty{ color:var(--muted); padding:16px; font-size:14px; }
+  table.lb{ width:100%; border-collapse:collapse; font-size:14px; }
+  table.lb th,table.lb td{ padding:10px 12px; border-bottom:1px solid var(--border); text-align:left; }
+  table.lb th{ color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.4px; }
+  table.lb th.r,table.lb td.r{ text-align:right; font-variant-numeric:tabular-nums; }
+  table.lb tr.me{ background:rgba(249,115,22,.08); }
+  table.lb tr.me td{ font-weight:700; }
   .auth-note{ background:rgba(249,115,22,.1); border:1px solid rgba(249,115,22,.3); color:var(--orange-l,#fb923c); font-size:13px; font-weight:600; padding:10px 12px; border-radius:10px; margin-bottom:14px; text-align:center; }
   .gate-banner{ background:rgba(249,115,22,.1); border:1px solid rgba(249,115,22,.3); color:var(--text); font-size:13px; padding:10px 14px; border-radius:10px; margin-bottom:12px; }
   .gate-banner a{ color:var(--orange); font-weight:700; cursor:pointer; text-decoration:underline; }
@@ -602,8 +620,8 @@
       <!-- LIVE -->
       <section id="sec-live" class="hidden">
         <h3 class="sec-h">Live NTA CBT Portal</h3>
-        <div class="sec-sub">Exam-day-style tests with an all-India leaderboard.</div>
-        <div class="coming"><div class="ic">🏆</div><b>Live Test Arena — coming soon</b><p style="margin-top:6px">No live test is scheduled right now. Competitive, timed tests with a leaderboard are on the way.</p></div>
+        <div class="sec-sub">Every Sunday 8:00 PM — one live JEE Main test for your class, with an all-India leaderboard.</div>
+        <div id="liveWrap"></div>
       </section>
 
       <!-- SETTINGS -->
@@ -731,6 +749,7 @@
   <div class="exam-top">
     <button class="exit" onclick="mnExit()">← Exit</button>
     <div class="et-title" id="mn_title">Practice</div>
+    <div class="timer hidden" id="mn_livetimer" style="color:#f87171;font-weight:800">⏱ --:--</div>
     <div class="timer" id="mn_prog" style="color:var(--orange)">1 / 1</div>
   </div>
   <div class="exam-body">
@@ -765,6 +784,7 @@
 <div id="mnResults" class="hidden"><div class="fullpage">
   <h2 style="text-align:center;margin-bottom:4px" id="mnr_title">Result</h2>
   <div style="text-align:center;color:var(--muted);font-size:14px;margin-bottom:18px">JEE Main marking · +4 correct, −1 wrong</div>
+  <div id="mnr_live" class="hidden" style="text-align:center;margin-bottom:18px"></div>
   <div class="ring-wrap" style="text-align:center;margin-bottom:8px"><div id="mnr_marks" style="font-size:44px;font-weight:900;color:var(--orange)">0</div><div style="color:var(--muted);font-size:14px">out of <span id="mnr_max">300</span> marks</div></div>
   <div id="mnr_stats" style="display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin:16px 0 18px"></div>
   <div id="mnr_rank" style="margin-bottom:22px"></div>
@@ -1118,6 +1138,7 @@ function go(sec){
   if(sec==="weak") renderWeak();
   if(sec==="progress") renderProgress();
   if(sec==="ai") aiInit();
+  if(sec==="live"){ liveRender(); liveStartTicker(); } else { liveStopTicker(); }
   if(sec==="settings"){ document.getElementById("set_tests").textContent=currentProfile.stats.testsTaken; prefillRef(); }
   window.scrollTo(0,0);
 }
@@ -1453,6 +1474,7 @@ function mnStartMock(i){
   mnBegin(m.title, qs, true);
 }
 function mnBegin(name, qs, isMock){
+  liveDisarmTimer();
   var scored = !!isMock && qs.length>0 && qs.every(function(q){ return q.answer; });
   mnS={ name:name, qs:qs, isMock:isMock, scored:scored, cur:0, picks:qs.map(function(){return null;}), seen:qs.map(function(){return false;}), visited:qs.map(function(){return false;}) };
   document.getElementById("mn_title").textContent=name;
@@ -1508,7 +1530,7 @@ function mnFinish(){
   var seen=mnS.seen.filter(Boolean).length, pk=mnS.picks.filter(function(x){return x!=null;}).length; var tot=mnS.qs.length;
   view("shell"); go("tests");
   payToast("Practice saved. You attempted "+pk+" and viewed "+seen+" solutions out of "+tot+".", false); }
-function mnExit(){ if(confirm("Exit this practice? Your progress in this session will be lost.")){ view("shell"); go("tests"); } }
+function mnExit(){ var live=mnS&&mnS.live; if(confirm(live?"Exit the LIVE test? Your progress will be lost and you can't re-enter this week.":"Exit this practice? Your progress in this session will be lost.")){ liveDisarmTimer(); if(mnS) mnS.live=false; view("shell"); go(live?"live":"tests"); } }
 /* ----- Mains mock scoring (JEE Main: +4 correct, -1 wrong, 0 blank) ----- */
 function mnEstPercentile(pct){ // pct = marks/300*100 ; approximate JEE Main percentile curve
   var pts=[[0,0],[7,8],[13,20],[20,35],[27,50],[33,62],[40,72],[50,83],[60,90],[70,95],[80,98],[90,99.4],[100,100]];
@@ -1554,9 +1576,145 @@ function mnSubmit(){
     if(currentProfile.stats) currentProfile.stats.testsTaken=(currentProfile.stats.testsTaken||0)+1;
     if(USE_FIREBASE && fbDB && currentUser){ fbDB.collection("users").doc(currentUser).set({ testsTaken:firebase.firestore.FieldValue.increment(1), history:currentProfile.history },{merge:true}).catch(function(){}); }
     else { persistDB(); } }
+  var lv=document.getElementById("mnr_live");
+  if(mnS && mnS.live){ liveOnSubmit(r); } else if(lv){ lv.classList.add("hidden"); lv.innerHTML=""; }
   view("mnResults");
 }
-function mnResultsBack(){ view("shell"); go("tests"); }
+function mnResultsBack(){ view("shell"); go(mnS&&mnS.liveDone?"live":"tests"); }
+
+/* ============ LIVE NTA CBT — weekly Sunday 8PM test + category leaderboard ============ */
+var LIVE_IST_MIN=330;        // IST = UTC+5:30
+var LIVE_OPEN_H=20, LIVE_CLOSE_H=23;  // Sunday 8:00 PM -> 11:00 PM IST
+var liveTimerId=null, liveTicker=null, liveNowOverride=null, liveLastStatus=null;
+function liveNow(){ return liveNowOverride||Date.now(); }
+function pad2(n){ return (n<10?"0":"")+n; }
+function fmtClock(ms){ if(ms<0)ms=0; var s=Math.floor(ms/1000); var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60; return (h>0?(pad2(h)+":"):"")+pad2(m)+":"+pad2(ss); }
+function fmtMMSS(sec){ sec=sec||0; var m=Math.floor(sec/60),s=sec%60; return pad2(m)+":"+pad2(s); }
+function fmtDur(ms){ if(ms<0)ms=0; var s=Math.floor(ms/1000); var d=Math.floor(s/86400),h=Math.floor((s%86400)/3600),m=Math.floor((s%3600)/60),ss=s%60; return (d>0?(d+"d "):"")+pad2(h)+":"+pad2(m)+":"+pad2(ss); }
+function escLive(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+function liveCategory(){ var p=currentProfile&&currentProfile.plan; if(p==="grade11") return "11"; if(p==="grade12"||p==="dropper") return "12"; return null; }
+function liveCatLabel(c){ return c==="11"?"Class 11":"Class 12 & Dropper"; }
+function liveBucket(weekId,cat){ return weekId+"_"+cat; }
+
+function liveInfo(){
+  var now=liveNow();
+  var ist=new Date(now+LIVE_IST_MIN*60000);
+  var dow=ist.getUTCDay(), y=ist.getUTCFullYear(), mo=ist.getUTCMonth(), da=ist.getUTCDate();
+  var sunMid=Date.UTC(y,mo,da)-dow*86400000;   // Sunday's calendar date (IST)
+  var sd=new Date(sunMid), sy=sd.getUTCFullYear(), sm=sd.getUTCMonth(), sda=sd.getUTCDate();
+  var open=Date.UTC(sy,sm,sda,LIVE_OPEN_H,0,0)-LIVE_IST_MIN*60000;
+  var close=Date.UTC(sy,sm,sda,LIVE_CLOSE_H,0,0)-LIVE_IST_MIN*60000;
+  var weekId=sy+"-"+pad2(sm+1)+"-"+pad2(sda);
+  var pdt=new Date(sunMid-7*86400000);
+  var prevWeekId=pdt.getUTCFullYear()+"-"+pad2(pdt.getUTCMonth()+1)+"-"+pad2(pdt.getUTCDate());
+  var status,nextOpen;
+  if(now>=open && now<close){ status="live"; nextOpen=open+7*86400000; }
+  else if(now<open){ status="upcoming"; nextOpen=open; }
+  else { status="ended"; nextOpen=open+7*86400000; }
+  return { status:status, weekId:weekId, prevWeekId:prevWeekId, open:open, close:close, nextOpen:nextOpen };
+}
+function liveWeekIndex(openMs){ return Math.floor(openMs/(7*86400000)); }
+function livePaper(cat, openMs, cb){
+  if(cat==="11"){ mn11Ensure(function(){ var list=mn11Mocks||[]; if(!list.length){ cb(null); return; } var m=list[liveWeekIndex(openMs)%list.length]; cb({ title:m.title, qs:m.qs.map(function(q){ return {img:MN11_DIR+q.img, subject:q.subject, type:q.type, answer:q.answer, sol:q.sol?MN11_DIR+q.sol:null}; }) }); }); }
+  else { mnEnsure(function(){ var list=mnMocks||[]; if(!list.length){ cb(null); return; } var m=list[liveWeekIndex(openMs)%list.length]; cb({ title:m.title, qs:m.qs.map(function(q){ return {img:MN_DIR+q.img, sol:MN_DIR+q.sol, subject:q.subject, answer:q.answer}; }) }); }); }
+}
+function liveGetEntry(weekId,cat,cb){
+  if(!(USE_FIREBASE&&fbDB&&currentUser)){ cb(null); return; }
+  fbDB.collection("live_lb").doc(liveBucket(weekId,cat)).collection("entries").doc(currentUser).get()
+    .then(function(d){ cb(d.exists?d.data():null); }).catch(function(){ cb(null); });
+}
+function liveArmTimer(endMs){
+  liveDisarmTimer();
+  var el=document.getElementById("mn_livetimer"); if(el){ el.classList.remove("hidden"); el.textContent="⏱ "+fmtClock(endMs-Date.now()); }
+  liveTimerId=setInterval(function(){
+    var left=endMs-Date.now();
+    var e=document.getElementById("mn_livetimer");
+    if(left<=0){ liveDisarmTimer(); if(mnS&&mnS.live){ payToast("Time up — submitting your live test."); mnSubmit(); } return; }
+    if(e) e.textContent="⏱ "+fmtClock(left);
+  },1000);
+}
+function liveDisarmTimer(){ if(liveTimerId){ clearInterval(liveTimerId); liveTimerId=null; } var el=document.getElementById("mn_livetimer"); if(el){ el.classList.add("hidden"); el.textContent="⏱ --:--"; } }
+function liveStart(){
+  var cat=liveCategory();
+  if(!hasPaid()||!cat){ go("settings"); payToast("Live tests are part of a plan. Choose a plan to join.", true); return; }
+  var info=liveInfo();
+  if(info.status!=="live"){ liveRender(); payToast("No live test right now. It starts every Sunday 8:00 PM.", true); return; }
+  liveGetEntry(info.weekId,cat,function(entry){
+    if(entry){ liveRender(); payToast("You've already submitted this week's live test.", true); return; }
+    livePaper(cat, info.open, function(paper){
+      if(!paper){ payToast("Live paper unavailable right now. Please refresh.", true); return; }
+      mnBegin("🔴 LIVE · "+liveCatLabel(cat)+" · "+paper.title, paper.qs, true);
+      mnS.live=true; mnS.liveDone=false; mnS.liveWeekId=info.weekId; mnS.liveCat=cat; mnS.liveStartTs=Date.now();
+      liveArmTimer(info.close);
+    });
+  });
+}
+function liveOnSubmit(r){
+  liveDisarmTimer();
+  var weekId=mnS.liveWeekId, cat=mnS.liveCat, marks=r.marks;
+  var timeSec=Math.round((Date.now()-(mnS.liveStartTs||Date.now()))/1000);
+  mnS.live=false; mnS.liveDone=true;
+  var lv=document.getElementById("mnr_live"); if(lv){ lv.classList.remove("hidden"); lv.innerHTML='<div style="color:var(--muted)">Posting to the live leaderboard…</div>'; }
+  if(USE_FIREBASE && fbDB && currentUser){
+    fbDB.collection("live_lb").doc(liveBucket(weekId,cat)).collection("entries").doc(currentUser)
+      .set({ name:(currentProfile&&currentProfile.name)||"Student", score:marks, correct:r.correct, total:mnS.qs.length, timeSec:timeSec, ts:Date.now(), weekId:weekId, cat:cat })
+      .then(function(){ if(lv) lv.innerHTML='<div style="color:var(--green);font-weight:800;margin-bottom:10px">🏆 Submitted to the live leaderboard!</div><button class="btn" style="width:auto;padding:12px 24px" onclick="view(\'shell\');go(\'live\')">See Live Leaderboard</button>'; })
+      .catch(function(e){ console.error("live write:",e); if(lv) lv.innerHTML='<div style="color:#f87171">Couldn\'t post to the leaderboard (you may have already submitted, or the connection dropped).</div>'; });
+  } else if(lv){ lv.innerHTML='<div style="color:var(--muted)">The live leaderboard needs the online app.</div>'; }
+}
+function liveRenderBoard(weekId,cat,host){
+  if(!host) return;
+  if(!(USE_FIREBASE&&fbDB)){ host.innerHTML='<div class="live-empty">The leaderboard needs the online app.</div>'; return; }
+  host.innerHTML='<div class="live-empty">Loading leaderboard…</div>';
+  fbDB.collection("live_lb").doc(liveBucket(weekId,cat)).collection("entries").orderBy("score","desc").limit(100).get()
+    .then(function(snap){
+      var rows=[]; snap.forEach(function(d){ var o=d.data(); o._id=d.id; rows.push(o); });
+      rows.sort(function(a,b){ return (b.score-a.score)||((a.timeSec||0)-(b.timeSec||0)); });
+      if(!rows.length){ host.innerHTML='<div class="live-empty">No entries yet — be the first to top the board!</div>'; return; }
+      var myRank=-1; for(var i=0;i<rows.length;i++){ if(rows[i]._id===currentUser){ myRank=i+1; break; } }
+      var html=''; if(myRank>0) html+='<div class="live-myrank">Your rank: <b>#'+myRank+'</b> of '+rows.length+' · '+rows[myRank-1].score+' marks</div>';
+      html+='<table class="lb"><thead><tr><th>#</th><th>Name</th><th class="r">Marks</th><th class="r">Time</th></tr></thead><tbody>';
+      rows.forEach(function(r,i){ var me=(r._id===currentUser); html+='<tr'+(me?' class="me"':'')+'><td>'+(i+1)+'</td><td>'+escLive(r.name||"Student")+(me?' <span style="color:var(--orange)">(You)</span>':'')+'</td><td class="r">'+r.score+'</td><td class="r">'+fmtMMSS(r.timeSec)+'</td></tr>'; });
+      host.innerHTML=html+'</tbody></table>';
+    }).catch(function(e){ console.error("board:",e); host.innerHTML='<div class="live-empty" style="color:#f87171">Couldn\'t load the leaderboard. If this persists, publish the updated security rules.</div>'; });
+}
+function liveRender(){
+  var host=document.getElementById("liveWrap"); if(!host) return;
+  var cat=liveCategory();
+  if(!hasPaid()||!cat){
+    host.innerHTML='<div class="coming"><div class="ic">🏆</div><b>Live weekly test — plan required</b><p style="margin-top:6px">The <b>Sunday 8:00 PM</b> live JEE Main test and all-India leaderboard are part of a plan. Choose your class plan to join.</p><button class="btn" style="width:auto;margin-top:14px;padding:12px 22px" onclick="go(\'settings\')">Choose a plan</button></div>';
+    return;
+  }
+  var info=liveInfo(); liveLastStatus=info.status;
+  var catL=liveCatLabel(cat);
+  var boardWeek=(info.status==="upcoming")?info.prevWeekId:info.weekId;
+  var head;
+  if(info.status==="live"){
+    head='<div class="live-card livenow"><span class="live-badge now">🔴 LIVE NOW</span><h3>'+catL+' — JEE Main Live Test</h3><div class="live-meta">75 Questions · 3 hours · +4 / −1 · closes in <b id="live_count">'+fmtClock(info.close-liveNow())+'</b></div><div id="live_cta"></div></div>';
+  } else {
+    head='<div class="live-card"><span class="live-badge up">⏳ NEXT LIVE TEST</span><h3>'+catL+' — JEE Main Live Test</h3><div class="live-meta">Every Sunday 8:00 PM IST · starts in <b id="live_count">'+fmtDur(info.nextOpen-liveNow())+'</b></div></div>';
+  }
+  var boardLabel=info.status==="live"?"live":(info.status==="upcoming"?"last week":"this week");
+  host.innerHTML=head+'<h3 class="sec-h" style="font-size:16px;margin:22px 0 10px">Leaderboard · '+catL+' <span style="color:var(--dim);font-weight:600;font-size:13px">('+boardLabel+')</span></h3><div id="live_board"><div class="live-empty">Loading…</div></div>';
+  if(info.status==="live"){
+    liveGetEntry(info.weekId,cat,function(entry){
+      var cta=document.getElementById("live_cta"); if(!cta) return;
+      if(entry){ cta.innerHTML='<div class="live-done">✓ You submitted — '+entry.score+' marks. Your rank is on the board below.</div>'; }
+      else { cta.innerHTML='<button class="btn" style="width:auto;margin-top:14px;padding:14px 28px" onclick="liveStart()">Start Live Test</button>'; }
+    });
+  }
+  liveRenderBoard(boardWeek,cat,document.getElementById("live_board"));
+}
+function liveStartTicker(){
+  liveStopTicker();
+  liveTicker=setInterval(function(){
+    var info=liveInfo();
+    if(info.status!==liveLastStatus){ liveRender(); return; }   // window opened/closed — refresh whole view
+    var c=document.getElementById("live_count"); if(!c) return;
+    c.textContent=(info.status==="live")?fmtClock(info.close-liveNow()):fmtDur(info.nextOpen-liveNow());
+  },1000);
+}
+function liveStopTicker(){ if(liveTicker){ clearInterval(liveTicker); liveTicker=null; } }
 
 /* ============ CLASS 11 — scored chapter tests & mocks (answer key, no worked solution) ============ */
 var MN11_DIR="mains11_bank/";
