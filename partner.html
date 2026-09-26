@@ -3,97 +3,245 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Become a Partner — Dakhilaa</title>
-<meta name="description" content="Join the Dakhilaa Partner Program. Share your referral and earn from every student you bring in.">
+<title>Partner Portal — Dakhilaa</title>
+<meta name="description" content="Dakhilaa Partner Program — sign in to your partner dashboard, track referrals and earnings.">
 <link rel="icon" href="logo.png">
 <style>
   *{ margin:0; padding:0; box-sizing:border-box; }
-  :root{ --bg:#0a0e17; --bg-2:#0d1220; --card:#121826; --card-2:#151c2c; --border:#1e2739; --border-2:#293349; --text:#f8fafc; --muted:#94a3b8; --dim:#64748b; --orange:#f97316; --orange-l:#fb923c; --orange-d:#ea580c; --green:#22c55e; }
+  :root{ --bg:#0a0e17; --bg-2:#0d1220; --card:#121826; --card-2:#151c2c; --border:#1e2739; --border-2:#293349; --text:#f8fafc; --muted:#94a3b8; --dim:#64748b; --orange:#f97316; --orange-l:#fb923c; --orange-d:#ea580c; --green:#22c55e; --red:#ef4444; --blue:#3b82f6; }
   body{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif; background:var(--bg); color:var(--text); line-height:1.6; -webkit-font-smoothing:antialiased; min-height:100vh; }
   a{ color:inherit; text-decoration:none; }
   header{ position:sticky; top:0; z-index:20; background:rgba(10,14,23,.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
-  .nav{ max-width:720px; margin:0 auto; padding:0 20px; height:64px; display:flex; align-items:center; justify-content:space-between; }
+  .nav{ max-width:920px; margin:0 auto; padding:0 20px; height:64px; display:flex; align-items:center; justify-content:space-between; }
   .brand{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:20px; }
   .brand img{ height:34px; }
-  .nav a.home{ color:var(--muted); font-size:14px; font-weight:600; }
-  .nav a.home:hover{ color:var(--orange-l); }
+  .nav .rt{ display:flex; align-items:center; gap:16px; }
+  .nav a.home,.nav .lnk{ color:var(--muted); font-size:14px; font-weight:600; cursor:pointer; }
+  .nav a.home:hover,.nav .lnk:hover{ color:var(--orange-l); }
   .wrap{ max-width:620px; margin:0 auto; padding:40px 20px 60px; }
+  .wrap.wide{ max-width:920px; }
   .eyebrow{ color:var(--orange); font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; text-align:center; }
-  h1{ font-size:clamp(26px,5vw,38px); font-weight:900; text-align:center; line-height:1.15; margin:10px 0 10px; }
-  .sub{ color:var(--muted); text-align:center; font-size:15px; max-width:480px; margin:0 auto 30px; }
+  h1{ font-size:clamp(24px,5vw,34px); font-weight:900; text-align:center; line-height:1.15; margin:10px 0 8px; }
+  .sub{ color:var(--muted); text-align:center; font-size:15px; max-width:480px; margin:0 auto 26px; }
   .card{ background:var(--card); border:1px solid var(--border); border-radius:18px; padding:26px; }
-  .field{ margin-bottom:16px; }
+  .field{ margin-bottom:15px; }
   .field label{ display:block; font-size:13px; color:var(--muted); margin-bottom:7px; font-weight:600; }
   .field .req{ color:var(--orange); }
   .field .opt{ color:var(--dim); font-weight:400; font-size:12px; }
   .field input{ width:100%; padding:13px 14px; background:var(--bg); border:1px solid var(--border-2); border-radius:10px; color:var(--text); font-size:15px; font-family:inherit; }
   .field input:focus{ outline:none; border-color:var(--orange); }
+  .field input:disabled{ opacity:.6; }
   .ig-wrap{ display:flex; align-items:stretch; border:1px solid var(--border-2); border-radius:10px; overflow:hidden; background:var(--bg); }
   .ig-wrap:focus-within{ border-color:var(--orange); }
   .ig-wrap .pfx{ display:flex; align-items:center; padding:0 12px; background:var(--card-2); color:var(--dim); font-size:13px; border-right:1px solid var(--border-2); white-space:nowrap; }
   .ig-wrap input{ border:none !important; border-radius:0 !important; }
-  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; width:100%; font-size:16px; font-weight:800; padding:15px 26px; border-radius:12px; border:none; cursor:pointer; font-family:inherit; background:var(--orange); color:#fff; box-shadow:0 8px 26px rgba(249,115,22,.35); transition:.18s; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; width:100%; font-size:16px; font-weight:800; padding:14px 26px; border-radius:12px; border:none; cursor:pointer; font-family:inherit; background:var(--orange); color:#fff; box-shadow:0 8px 26px rgba(249,115,22,.3); transition:.18s; }
   .btn:hover{ background:var(--orange-d); }
   .btn:disabled{ opacity:.7; cursor:default; }
-  .msg{ font-size:13.5px; margin-top:12px; text-align:center; min-height:18px; color:#ef4444; }
-  .perks{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:26px; }
-  .perk{ font-size:12.5px; font-weight:700; color:var(--orange-l); background:rgba(249,115,22,.1); border:1px solid rgba(249,115,22,.25); border-radius:20px; padding:6px 13px; }
-  /* success modal */
-  .modal-bg{ position:fixed; inset:0; background:rgba(3,6,12,.72); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; z-index:60; padding:20px; }
-  .modal-bg.show{ display:flex; }
-  .modal{ background:var(--card); border:1px solid var(--border-2); border-radius:18px; padding:34px 28px; max-width:400px; width:100%; text-align:center; animation:pop .22s ease; }
-  @keyframes pop{ from{ transform:scale(.94); opacity:0; } to{ transform:scale(1); opacity:1; } }
-  .modal .tick{ width:64px; height:64px; border-radius:50%; background:rgba(34,197,94,.14); border:1px solid rgba(34,197,94,.4); color:var(--green); font-size:34px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
-  .modal h3{ font-size:22px; font-weight:900; margin-bottom:6px; }
-  .modal p{ color:var(--muted); font-size:15px; margin-bottom:20px; }
-  .modal .btn{ width:auto; padding:12px 30px; }
+  .btn.sm{ width:auto; padding:9px 16px; font-size:14px; box-shadow:none; }
+  .btn.gray{ background:var(--card-2); color:var(--text); border:1px solid var(--border-2); box-shadow:none; }
+  .btn.gray:hover{ background:var(--border); }
+  .btn.green{ background:var(--green); box-shadow:none; }
+  .btn.red{ background:var(--red); box-shadow:none; }
+  .msg{ font-size:13.5px; margin-top:12px; text-align:center; min-height:18px; color:var(--red); }
+  .msg.ok{ color:var(--green); }
+  /* tabs */
+  .tabs{ display:flex; background:var(--bg); border:1px solid var(--border-2); border-radius:12px; padding:5px; margin-bottom:22px; }
+  .tab{ flex:1; text-align:center; padding:11px; border-radius:8px; font-weight:800; font-size:15px; color:var(--muted); cursor:pointer; transition:.15s; }
+  .tab.active{ background:var(--orange); color:#fff; }
+  .hidden{ display:none !important; }
+  .hint{ font-size:12.5px; color:var(--dim); margin-top:-6px; margin-bottom:14px; }
+  .pw-wrap{ position:relative; }
+  .pw-wrap .toggle{ position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:12px; color:var(--muted); cursor:pointer; font-weight:700; }
+  /* status screens */
+  .status-ic{ width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:36px; margin:0 auto 16px; }
+  .status-ic.wait{ background:rgba(249,115,22,.14); border:1px solid rgba(249,115,22,.4); color:var(--orange-l); }
+  .status-ic.no{ background:rgba(239,68,68,.14); border:1px solid rgba(239,68,68,.4); color:var(--red); }
+  /* dashboard */
+  .dash-head{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:22px; }
+  .dash-head h2{ font-size:24px; font-weight:900; }
+  .dash-head .pill{ font-size:12px; font-weight:800; padding:5px 11px; border-radius:20px; background:rgba(34,197,94,.14); color:var(--green); border:1px solid rgba(34,197,94,.35); }
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .grid4{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  @media(max-width:760px){ .grid4{ grid-template-columns:1fr 1fr; } .grid2{ grid-template-columns:1fr; } }
+  .stat{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; }
+  .stat .lbl{ font-size:12px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+  .stat .val{ font-size:26px; font-weight:900; margin-top:6px; }
+  .stat .val.money{ color:var(--green); }
+  .sec-title{ font-size:16px; font-weight:800; margin:28px 0 12px; }
+  .ref-box{ display:flex; align-items:center; gap:10px; background:var(--bg); border:1px dashed var(--orange); border-radius:12px; padding:14px 16px; }
+  .ref-box .code{ font-size:22px; font-weight:900; letter-spacing:2px; color:var(--orange-l); flex:1; }
+  .ref-link{ font-size:12.5px; color:var(--dim); margin-top:8px; word-break:break-all; }
+  table.brk{ width:100%; border-collapse:collapse; font-size:14px; }
+  table.brk th,table.brk td{ padding:10px 12px; text-align:left; border-bottom:1px solid var(--border); }
+  table.brk th{ color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+  table.brk td.num{ text-align:right; font-variant-numeric:tabular-nums; }
+  table.brk td.money{ text-align:right; color:var(--green); font-weight:700; font-variant-numeric:tabular-nums; }
+  .setrow{ display:flex; justify-content:space-between; gap:12px; padding:11px 0; border-bottom:1px solid var(--border); font-size:14px; }
+  .setrow .k{ color:var(--muted); }
+  .kyc-note{ font-size:12px; color:var(--dim); background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin:10px 0 4px; }
+  /* admin */
+  .prow{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:10px; }
+  .prow .pn{ font-weight:800; font-size:15px; }
+  .prow .pm{ color:var(--muted); font-size:13px; }
+  .prow .pacts{ display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .badge{ font-size:11px; font-weight:800; padding:3px 9px; border-radius:12px; }
+  .badge.pending{ background:rgba(249,115,22,.14); color:var(--orange-l); }
+  .badge.approved{ background:rgba(34,197,94,.14); color:var(--green); }
+  .badge.rejected{ background:rgba(239,68,68,.14); color:var(--red); }
+  .toast{ position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:var(--card-2); border:1px solid var(--border-2); color:var(--text); padding:12px 20px; border-radius:12px; font-size:14px; font-weight:600; z-index:80; box-shadow:0 10px 30px rgba(0,0,0,.4); }
+  .toast.err{ border-color:rgba(239,68,68,.5); color:#fecaca; }
+  .spin{ text-align:center; color:var(--muted); padding:40px; font-size:14px; }
 </style>
 </head>
 <body>
 <header>
   <div class="nav">
     <a class="brand" href="index.html"><img src="logo.png" alt="Dakhilaa"> Dakhilaa</a>
-    <a class="home" href="index.html">← Back to site</a>
+    <div class="rt">
+      <a class="home" href="index.html">← Back to site</a>
+      <span class="lnk hidden" id="nav_logout" onclick="pLogout()">Log out</span>
+    </div>
   </div>
 </header>
 
-<div class="wrap">
+<!-- ================= AUTH VIEW ================= -->
+<div class="wrap" id="authView">
   <div class="eyebrow">Partner Program</div>
-  <h1>Become a Dakhilaa Partner</h1>
-  <p class="sub">JEE educator or influencer? Share your referral, help students find their weak areas, and earn from every student you bring in.</p>
-  <div class="perks">
-    <span class="perk">Your referral code</span>
-    <span class="perk">Earn per student</span>
-    <span class="perk">Priority support</span>
-  </div>
+  <h1>Dakhilaa Partner Portal</h1>
+  <p class="sub">JEE educator or influencer? Share your referral, help students find their weak areas, and earn 20% from every student you bring in.</p>
 
   <div class="card">
-    <div class="field"><label>Full Name <span class="req">*</span></label><input id="p_name" type="text" placeholder="Your full name"></div>
-    <div class="field"><label>Phone Number <span class="req">*</span></label>
-      <div class="ig-wrap"><span class="pfx">+91</span><input id="p_phone" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile"></div>
+    <div class="tabs">
+      <div class="tab active" id="tab_login" onclick="switchTab('login')">Log In</div>
+      <div class="tab" id="tab_signup" onclick="switchTab('signup')">Sign Up</div>
     </div>
-    <div class="field"><label>Email ID <span class="req">*</span></label><input id="p_email" type="email" placeholder="you@example.com"></div>
-    <div class="field"><label>Instagram ID <span class="opt">(optional)</span></label><input id="p_insta" type="text" placeholder="@yourhandle or profile link"></div>
-    <div class="field"><label>Facebook ID <span class="opt">(optional)</span></label><input id="p_fb" type="text" placeholder="Profile name or link"></div>
-    <div class="field"><label>YouTube ID <span class="opt">(optional)</span></label><input id="p_yt" type="text" placeholder="Channel name or link"></div>
-    <button class="btn" id="p_btn" onclick="submitPartner()">Submit Application</button>
-    <div class="msg" id="p_msg"></div>
+
+    <!-- LOGIN -->
+    <div id="loginForm">
+      <div class="field"><label>Email or Mobile Number <span class="req">*</span></label><input id="l_id" type="text" placeholder="you@example.com or 10-digit mobile"></div>
+      <div class="field"><label>Password <span class="req">*</span></label>
+        <div class="pw-wrap"><input id="l_pw" type="password" placeholder="Your password"><span class="toggle" onclick="togglePw('l_pw',this)">Show</span></div>
+      </div>
+      <button class="btn" id="l_btn" onclick="doLogin()">Log In</button>
+      <div class="msg" id="l_msg"></div>
+    </div>
+
+    <!-- SIGNUP -->
+    <div id="signupForm" class="hidden">
+      <div class="field"><label>Full Name <span class="req">*</span></label><input id="s_name" type="text" placeholder="Your full name"></div>
+      <div class="field"><label>Mobile Number <span class="req">*</span></label>
+        <div class="ig-wrap"><span class="pfx">+91</span><input id="s_phone" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile"></div>
+      </div>
+      <div class="field"><label>Email ID <span class="req">*</span></label><input id="s_email" type="email" placeholder="you@example.com"></div>
+      <div class="field"><label>Create Password <span class="req">*</span></label>
+        <div class="pw-wrap"><input id="s_pw" type="password" placeholder="At least 6 characters"><span class="toggle" onclick="togglePw('s_pw',this)">Show</span></div>
+      </div>
+      <div class="field"><label>Confirm Password <span class="req">*</span></label><input id="s_pw2" type="password" placeholder="Re-enter password"></div>
+      <div class="field"><label>Instagram ID <span class="opt">(optional)</span></label><input id="s_insta" type="text" placeholder="@yourhandle or profile link"></div>
+      <div class="field"><label>Facebook ID <span class="opt">(optional)</span></label><input id="s_fb" type="text" placeholder="Profile name or link"></div>
+      <div class="field"><label>YouTube ID <span class="opt">(optional)</span></label><input id="s_yt" type="text" placeholder="Channel name or link"></div>
+      <button class="btn" id="s_btn" onclick="doSignup()">Create Partner Account</button>
+      <div class="msg" id="s_msg"></div>
+      <p class="hint" style="text-align:center;margin-top:12px">After you sign up, your application goes to Dakhilaa for review. You'll be able to log in once it's approved.</p>
+    </div>
   </div>
 </div>
 
-<!-- SUCCESS MODAL -->
-<div class="modal-bg" id="thanksModal">
-  <div class="modal">
-    <div class="tick">✓</div>
-    <h3>Thank You for Your trust</h3>
-    <p>We will contact you soon.</p>
-    <a class="btn" href="index.html">Back to Home</a>
+<!-- ================= PENDING / REJECTED VIEW ================= -->
+<div class="wrap" id="statusView">
+  <div class="card" style="text-align:center">
+    <div class="status-ic wait" id="st_ic">⏳</div>
+    <h1 id="st_title" style="font-size:24px">Application under review</h1>
+    <p class="sub" id="st_text" style="margin-bottom:20px">Thanks for signing up! Your partner application is being reviewed. You'll be able to log in and access your dashboard once it's approved.</p>
+    <button class="btn gray sm" style="margin:0 auto" onclick="pLogout()">Back to login</button>
   </div>
 </div>
+
+<!-- ================= DASHBOARD VIEW ================= -->
+<div class="wrap wide" id="dashView">
+  <div class="dash-head">
+    <h2>Hi, <span id="d_name">Partner</span> 👋</h2>
+    <span class="pill">✓ Approved Partner</span>
+  </div>
+
+  <!-- referral code -->
+  <div class="card">
+    <div class="sec-title" style="margin-top:0">Your Referral Code</div>
+    <div class="ref-box">
+      <span class="code" id="d_code">—</span>
+      <button class="btn sm" onclick="copyCode()" id="copyBtn">Copy code</button>
+      <button class="btn sm gray" onclick="copyLink()">Copy link</button>
+    </div>
+    <div class="ref-link">Share this link — the code is applied automatically at checkout: <span id="d_link">—</span></div>
+    <p class="hint" style="margin-top:10px">You earn <b>20%</b> of the plan price for every student who buys through your code.</p>
+  </div>
+
+  <!-- stats -->
+  <div class="sec-title">Referrals &amp; Earnings</div>
+  <div class="grid4">
+    <div class="stat"><div class="lbl">Total Referrals</div><div class="val" id="d_totref">0</div></div>
+    <div class="stat"><div class="lbl">This Month Referrals</div><div class="val" id="d_moref">0</div></div>
+    <div class="stat"><div class="lbl">Total Earnings</div><div class="val money" id="d_totearn">₹0</div></div>
+    <div class="stat"><div class="lbl">This Month Earnings</div><div class="val money" id="d_moearn">₹0</div></div>
+  </div>
+
+  <!-- 12 month breakdown -->
+  <div class="sec-title">Last 12 Months</div>
+  <div class="card" style="padding:8px 6px">
+    <table class="brk">
+      <thead><tr><th>Month</th><th style="text-align:right">Referrals</th><th style="text-align:right">Earnings</th></tr></thead>
+      <tbody id="d_break"></tbody>
+    </table>
+  </div>
+
+  <!-- profile / KYC -->
+  <div class="sec-title">Your Profile &amp; Payout Details</div>
+  <div class="card">
+    <div class="setrow"><span class="k">Full Name</span><span id="d_pf_name">—</span></div>
+    <div class="setrow"><span class="k">Email</span><span id="d_pf_email">—</span></div>
+    <div class="setrow"><span class="k">Mobile</span><span id="d_pf_mobile">—</span></div>
+    <div style="height:14px"></div>
+    <div class="field"><label>Instagram ID</label><input id="d_insta" type="text" placeholder="@yourhandle"></div>
+    <div class="field"><label>Facebook ID</label><input id="d_fb" type="text" placeholder="Profile name or link"></div>
+    <div class="field"><label>YouTube ID</label><input id="d_yt" type="text" placeholder="Channel name or link"></div>
+    <div class="kyc-note">🔒 Aadhaar &amp; PAN are used only to verify you for payouts. Keep them accurate.</div>
+    <div class="field"><label>Aadhaar Number <span class="opt">(for payouts)</span></label><input id="d_aadhaar" type="text" inputmode="numeric" maxlength="12" placeholder="12-digit Aadhaar"></div>
+    <div class="field"><label>PAN Card Number <span class="opt">(for payouts)</span></label><input id="d_pan" type="text" maxlength="10" placeholder="ABCDE1234F" style="text-transform:uppercase"></div>
+    <button class="btn sm" onclick="saveProfile()" id="saveBtn" style="margin-top:6px">Save details</button>
+    <div class="msg" id="d_msg"></div>
+  </div>
+</div>
+
+<!-- ================= ADMIN VIEW (owner only) ================= -->
+<div class="wrap wide" id="adminView">
+  <div class="dash-head">
+    <h2>Partner Admin</h2>
+    <span class="pill" style="background:rgba(59,130,246,.14);color:#93c5fd;border-color:rgba(59,130,246,.35)">Owner</span>
+  </div>
+  <div class="tabs" style="max-width:420px">
+    <div class="tab active" id="atab_pending" onclick="adminTab('pending')">Pending</div>
+    <div class="tab" id="atab_all" onclick="adminTab('all')">All Partners</div>
+  </div>
+  <div id="adminList"><div class="spin">Loading…</div></div>
+</div>
+
+<div id="bootSpin" class="spin" style="padding-top:80px">Loading partner portal…</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script>
+"use strict";
+/* ============================================================
+   OWNER EMAIL — the account that approves partners.
+   Sign up ONCE in this portal with this exact email to become admin.
+   To change the owner, edit this line AND the same email in firestore.rules.
+   ============================================================ */
+var OWNER_EMAIL = "mukeshit3043@gmail.com";
+var COMMISSION_RATE = 0.20;
+var APP_ORIGIN = location.origin; // referral links point at this site
+
 var firebaseConfig = {
   apiKey: "AIzaSyA-W_3VSzsTujSYWV0HtwUkWc7OBLqpQxc",
   authDomain: "dakhilaa-cb41a.firebaseapp.com",
@@ -102,38 +250,274 @@ var firebaseConfig = {
   messagingSenderId: "1055517618428",
   appId: "1:1055517618428:web:b6dcd8d696ccb94b7a6779"
 };
-var pDB=null;
-try{ if(typeof firebase!=="undefined"){ firebase.initializeApp(firebaseConfig); pDB=firebase.firestore(); } }catch(e){ pDB=null; }
+var fbAuth=null, fbDB=null, FB_OK=false;
+try{ if(typeof firebase!=="undefined"){ firebase.initializeApp(firebaseConfig); fbAuth=firebase.auth(); fbDB=firebase.firestore(); FB_OK=true; } }catch(e){ FB_OK=false; }
 
+var VIEWS=["authView","statusView","dashView","adminView","bootSpin"];
+function show(id){ VIEWS.forEach(function(v){ var el=document.getElementById(v); if(el) el.classList.toggle("hidden", v!==id); }); document.getElementById("nav_logout").classList.toggle("hidden", id==="authView"||id==="bootSpin"); window.scrollTo(0,0); }
+function toast(m,err){ var t=document.createElement("div"); t.className="toast"+(err?" err":""); t.textContent=m; document.body.appendChild(t); setTimeout(function(){ t.remove(); }, err?5000:2600); }
+function togglePw(id,el){ var i=document.getElementById(id); if(i.type==="password"){ i.type="text"; el.textContent="Hide"; } else { i.type="password"; el.textContent="Show"; } }
+function busy(id,b,t){ var x=document.getElementById(id); if(!x)return; x.disabled=b; if(b){ x.dataset.l=x.textContent; x.textContent=t||"Please wait…"; } else if(x.dataset.l){ x.textContent=x.dataset.l; } }
+
+/* ---------- validation ---------- */
 function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
 function validPhone(p){ return /^[6-9]\d{9}$/.test(p); }
+function validPAN(p){ return /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(p); }
+function validAadhaar(a){ return /^\d{12}$/.test(a); }
+function fbErr(err){ var c=(err&&err.code)?err.code:"";
+  if(c.indexOf("email-already-in-use")>=0) return "This email already has a partner account. Try logging in.";
+  if(c.indexOf("weak-password")>=0) return "Password should be at least 6 characters.";
+  if(c.indexOf("invalid-email")>=0) return "Please enter a valid email address.";
+  if(c.indexOf("wrong-password")>=0||c.indexOf("invalid-credential")>=0||c.indexOf("invalid-login")>=0) return "Incorrect email/mobile or password.";
+  if(c.indexOf("user-not-found")>=0) return "No partner account found. Please sign up first.";
+  if(c.indexOf("too-many-requests")>=0) return "Too many attempts. Please wait a bit and try again.";
+  if(c.indexOf("network")>=0) return "Network error. Please check your connection.";
+  return "Something went wrong. Please try again."; }
 
-function submitPartner(){
-  var msg=document.getElementById("p_msg"); msg.style.color="#ef4444";
-  var name=document.getElementById("p_name").value.trim();
-  var phone=(document.getElementById("p_phone").value||"").replace(/\D/g,"");
-  var email=document.getElementById("p_email").value.trim();
-  var insta=document.getElementById("p_insta").value.trim();
-  var fb=document.getElementById("p_fb").value.trim();
-  var yt=document.getElementById("p_yt").value.trim();
-  if(!name){ msg.textContent="Please enter your full name."; return; }
-  if(!validPhone(phone)){ msg.textContent="Please enter a valid 10-digit phone number."; return; }
-  if(!validEmail(email)){ msg.textContent="Please enter a valid email address."; return; }
-
-  var data={ name:name, phone:"+91"+phone, email:email, instagram:insta, facebook:fb, youtube:yt, created:Date.now(), status:"new" };
-  var btn=document.getElementById("p_btn");
-  btn.disabled=true; btn.textContent="Submitting…";
-  function done(){ btn.disabled=false; btn.textContent="Submit Application"; clearForm(); document.getElementById("thanksModal").classList.add("show"); }
-  function fail(){ btn.disabled=false; btn.textContent="Submit Application"; msg.textContent="Couldn't submit right now. Please try again, or email support@dakhilaa.com."; }
-
-  if(pDB){
-    pDB.collection("partners").add(data).then(done).catch(function(e){ console.error("partner save failed:", e); fail(); });
-  } else {
-    // Firebase not reachable — don't lose the lead silently
-    fail();
-  }
+/* ---------- tabs ---------- */
+function switchTab(which){
+  document.getElementById("tab_login").classList.toggle("active", which==="login");
+  document.getElementById("tab_signup").classList.toggle("active", which==="signup");
+  document.getElementById("loginForm").classList.toggle("hidden", which!=="login");
+  document.getElementById("signupForm").classList.toggle("hidden", which!=="signup");
 }
-function clearForm(){ ["p_name","p_phone","p_email","p_insta","p_fb","p_yt"].forEach(function(id){ document.getElementById(id).value=""; }); document.getElementById("p_msg").textContent=""; }
+
+/* ---------- referral code ---------- */
+function genCode(name){
+  var initials=(name||"").replace(/[^A-Za-z]/g,"").toUpperCase().slice(0,3);
+  while(initials.length<3) initials+="X";
+  var ch="ABCDEFGHJKLMNPQRSTUVWXYZ23456789", r="";
+  for(var i=0;i<4;i++) r+=ch.charAt(Math.floor(Math.random()*ch.length));
+  return "DAK"+initials+r;
+}
+function reserveCode(uid,name,mobile,tries){
+  tries=tries||0;
+  var code=genCode(name);
+  return fbDB.collection("refcodes").doc(code).get().then(function(doc){
+    if(doc.exists){ if(tries>6) throw new Error("code"); return reserveCode(uid,name,mobile,tries+1); }
+    /* public lookup — keep it minimal: only the partner's uid (opaque), no name/mobile */
+    return fbDB.collection("refcodes").doc(code).set({ uid:uid, created:Date.now() }).then(function(){ return code; });
+  });
+}
+
+/* ---------- signup ---------- */
+function doSignup(){
+  var msg=document.getElementById("s_msg"); msg.className="msg";
+  var name=document.getElementById("s_name").value.trim();
+  var phone=(document.getElementById("s_phone").value||"").replace(/\D/g,"");
+  var email=document.getElementById("s_email").value.trim().toLowerCase();
+  var pw=document.getElementById("s_pw").value;
+  var pw2=document.getElementById("s_pw2").value;
+  var insta=document.getElementById("s_insta").value.trim();
+  var fb=document.getElementById("s_fb").value.trim();
+  var yt=document.getElementById("s_yt").value.trim();
+  if(!name){ msg.textContent="Please enter your full name."; return; }
+  if(!validPhone(phone)){ msg.textContent="Please enter a valid 10-digit mobile number."; return; }
+  if(!validEmail(email)){ msg.textContent="Please enter a valid email address."; return; }
+  if(pw.length<6){ msg.textContent="Password should be at least 6 characters."; return; }
+  if(pw!==pw2){ msg.textContent="Passwords do not match."; return; }
+  if(!FB_OK){ msg.textContent="Service unavailable right now. Please try again later."; return; }
+  busy("s_btn",true,"Creating account…");
+  var isOwner=(email===OWNER_EMAIL.toLowerCase());
+  var newUid=null, newCode=null;
+  fbAuth.createUserWithEmailAndPassword(email,pw).then(function(cred){
+    newUid=cred.user.uid;
+    // reserve a unique referral code, then write partner doc, then sign out
+    var codeStep = isOwner ? Promise.resolve("") : reserveCode(newUid,name,phone);
+    return codeStep.then(function(code){
+      newCode=code;
+      var pdoc={ fullName:name, email:email, mobile:phone, instagram:insta, facebook:fb, youtube:yt,
+        aadhaar:"", pan:"", referralCode:code, role:(isOwner?"admin":"partner"),
+        status:(isOwner?"approved":"pending"), created:Date.now() };
+      return fbDB.collection("partners").doc(newUid).set(pdoc);
+    }).then(function(){
+      // mobile -> email index so partners can log in with their mobile
+      return fbDB.collection("partner_index").doc(phone).set({ email:email, uid:newUid }).catch(function(){});
+    });
+  }).then(function(){
+    busy("s_btn",false);
+    return fbAuth.signOut();
+  }).then(function(){
+    if(isOwner){ toast("Owner account created. Please log in."); switchTab("login"); show("authView"); }
+    else{ showStatus("pending"); }
+    // clear form
+    ["s_name","s_phone","s_email","s_pw","s_pw2","s_insta","s_fb","s_yt"].forEach(function(id){ document.getElementById(id).value=""; });
+  }).catch(function(err){
+    busy("s_btn",false);
+    console.error("signup:",err);
+    // if auth user got created but doc failed, surface a clear message
+    msg.textContent=fbErr(err);
+  });
+}
+
+/* ---------- login ---------- */
+function doLogin(){
+  var msg=document.getElementById("l_msg"); msg.className="msg";
+  var id=document.getElementById("l_id").value.trim();
+  var pw=document.getElementById("l_pw").value;
+  if(!id){ msg.textContent="Enter your email or mobile number."; return; }
+  if(!pw){ msg.textContent="Enter your password."; return; }
+  if(!FB_OK){ msg.textContent="Service unavailable right now. Please try again later."; return; }
+  busy("l_btn",true,"Logging in…");
+  var digits=id.replace(/\D/g,"");
+  var emailPromise;
+  if(validEmail(id)){ emailPromise=Promise.resolve(id.toLowerCase()); }
+  else if(/^[6-9]\d{9}$/.test(digits)){
+    emailPromise=fbDB.collection("partner_index").doc(digits).get().then(function(doc){
+      if(doc.exists && doc.data().email) return doc.data().email;
+      throw { code:"user-not-found" };
+    });
+  } else { busy("l_btn",false); msg.textContent="Enter a valid email or 10-digit mobile."; return; }
+
+  emailPromise.then(function(email){
+    return fbAuth.signInWithEmailAndPassword(email,pw);
+  }).then(function(){
+    busy("l_btn",false); document.getElementById("l_pw").value="";
+    // onAuthStateChanged routes to the right view
+  }).catch(function(err){ busy("l_btn",false); msg.textContent=fbErr(err); });
+}
+
+function pLogout(){ if(FB_OK && fbAuth){ fbAuth.signOut(); } document.getElementById("l_id").value=""; document.getElementById("l_pw").value=""; switchTab("login"); show("authView"); }
+
+/* ---------- status screen ---------- */
+function showStatus(kind){
+  var ic=document.getElementById("st_ic"), t=document.getElementById("st_title"), tx=document.getElementById("st_text");
+  if(kind==="rejected"){ ic.className="status-ic no"; ic.textContent="✕"; t.textContent="Application not approved"; tx.textContent="Your partner application wasn't approved. If you think this is a mistake, please contact support@dakhilaa.com."; }
+  else{ ic.className="status-ic wait"; ic.textContent="⏳"; t.textContent="Application under review"; tx.textContent="Thanks for signing up! Your partner application is being reviewed. You'll be able to log in and access your dashboard once it's approved."; }
+  show("statusView");
+}
+
+/* ---------- auth state routing ---------- */
+var CUR=null; // {uid, doc}
+function initAuth(){
+  fbAuth.onAuthStateChanged(function(user){
+    if(!user){ CUR=null; show("authView"); return; }
+    fbDB.collection("partners").doc(user.uid).get().then(function(doc){
+      if(!doc.exists){ // authed but no partner profile (edge case) — sign out
+        fbAuth.signOut(); return;
+      }
+      var d=doc.data(); CUR={ uid:user.uid, email:(user.email||d.email||"").toLowerCase(), doc:d };
+      var isOwner=(CUR.email===OWNER_EMAIL.toLowerCase()) || d.role==="admin";
+      if(isOwner){ openAdmin(); return; }
+      if(d.status==="approved"){ openDashboard(); }
+      else if(d.status==="rejected"){ fbAuth.signOut(); showStatus("rejected"); }
+      else { fbAuth.signOut(); showStatus("pending"); }
+    }).catch(function(e){ console.error(e); toast("Couldn't load your account. Please retry.", true); fbAuth.signOut(); });
+  });
+}
+
+/* ---------- dashboard ---------- */
+function monthKey(ts){ var dt=new Date(ts); return dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0"); }
+function money(n){ return "₹"+Math.round(n).toLocaleString("en-IN"); }
+function last12(){ var arr=[], now=new Date(); for(var i=11;i>=0;i--){ var d=new Date(now.getFullYear(),now.getMonth()-i,1); arr.push({ key:d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"), label:d.toLocaleString("en-IN",{month:"short",year:"numeric"}) }); } return arr; }
+
+function openDashboard(){
+  var d=CUR.doc;
+  document.getElementById("d_name").textContent=(d.fullName||"Partner").split(" ")[0];
+  document.getElementById("d_code").textContent=d.referralCode||"—";
+  var link=APP_ORIGIN+"/app.html?ref="+(d.referralCode||"");
+  document.getElementById("d_link").textContent=link;
+  document.getElementById("d_pf_name").textContent=d.fullName||"—";
+  document.getElementById("d_pf_email").textContent=d.email||"—";
+  document.getElementById("d_pf_mobile").textContent=d.mobile?("+91 "+d.mobile):"—";
+  document.getElementById("d_insta").value=d.instagram||"";
+  document.getElementById("d_fb").value=d.facebook||"";
+  document.getElementById("d_yt").value=d.youtube||"";
+  document.getElementById("d_aadhaar").value=d.aadhaar||"";
+  document.getElementById("d_pan").value=d.pan||"";
+  show("dashView");
+  loadEarnings();
+}
+
+function loadEarnings(){
+  fbDB.collection("commissions").where("partnerUid","==",CUR.uid).get().then(function(snap){
+    var rows=[]; snap.forEach(function(doc){ rows.push(doc.data()); });
+    var months=last12(), curKey=monthKey(Date.now());
+    var byMonth={}; months.forEach(function(m){ byMonth[m.key]={ref:0,earn:0}; });
+    var totRef=0, totEarn=0, moRef=0, moEarn=0;
+    rows.forEach(function(r){
+      var mk=r.month||monthKey(r.ts||Date.now());
+      var earn=(typeof r.commission==="number")?r.commission:0;
+      totRef++; totEarn+=earn;
+      if(byMonth[mk]){ byMonth[mk].ref++; byMonth[mk].earn+=earn; }
+      if(mk===curKey){ moRef++; moEarn+=earn; }
+    });
+    document.getElementById("d_totref").textContent=totRef;
+    document.getElementById("d_moref").textContent=moRef;
+    document.getElementById("d_totearn").textContent=money(totEarn);
+    document.getElementById("d_moearn").textContent=money(moEarn);
+    var tb=document.getElementById("d_break"); tb.innerHTML="";
+    months.slice().reverse().forEach(function(m){
+      var c=byMonth[m.key];
+      tb.innerHTML+='<tr><td>'+m.label+'</td><td class="num">'+c.ref+'</td><td class="money">'+money(c.earn)+'</td></tr>';
+    });
+  }).catch(function(e){ console.error("earnings:",e); toast("Couldn't load earnings yet.", true); });
+}
+
+function saveProfile(){
+  var msg=document.getElementById("d_msg"); msg.className="msg";
+  var insta=document.getElementById("d_insta").value.trim();
+  var fb=document.getElementById("d_fb").value.trim();
+  var yt=document.getElementById("d_yt").value.trim();
+  var aadhaar=document.getElementById("d_aadhaar").value.replace(/\D/g,"");
+  var pan=document.getElementById("d_pan").value.trim().toUpperCase();
+  if(aadhaar && !validAadhaar(aadhaar)){ msg.textContent="Aadhaar must be 12 digits."; return; }
+  if(pan && !validPAN(pan)){ msg.textContent="PAN must look like ABCDE1234F."; return; }
+  busy("saveBtn",true,"Saving…");
+  fbDB.collection("partners").doc(CUR.uid).set({ instagram:insta, facebook:fb, youtube:yt, aadhaar:aadhaar, pan:pan },{merge:true}).then(function(){
+    busy("saveBtn",false); CUR.doc.instagram=insta; CUR.doc.facebook=fb; CUR.doc.youtube=yt; CUR.doc.aadhaar=aadhaar; CUR.doc.pan=pan;
+    msg.className="msg ok"; msg.textContent="Saved!";
+  }).catch(function(e){ busy("saveBtn",false); console.error(e); msg.textContent="Couldn't save. Please try again."; });
+}
+
+function copyCode(){ var c=CUR&&CUR.doc?CUR.doc.referralCode:""; if(!c) return; copyText(c,"Referral code copied!"); }
+function copyLink(){ var c=CUR&&CUR.doc?CUR.doc.referralCode:""; if(!c) return; copyText(APP_ORIGIN+"/app.html?ref="+c,"Referral link copied!"); }
+function copyText(txt,ok){
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){ toast(ok); }).catch(function(){ legacyCopy(txt,ok); }); }
+  else legacyCopy(txt,ok);
+}
+function legacyCopy(txt,ok){ var ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); toast(ok); }catch(e){ toast("Copy failed — long-press to copy.", true); } ta.remove(); }
+
+/* ---------- admin ---------- */
+var adminCache=null, adminMode="pending";
+function openAdmin(){ show("adminView"); adminTab("pending"); }
+function adminTab(mode){
+  adminMode=mode;
+  document.getElementById("atab_pending").classList.toggle("active", mode==="pending");
+  document.getElementById("atab_all").classList.toggle("active", mode==="all");
+  document.getElementById("adminList").innerHTML='<div class="spin">Loading…</div>';
+  fbDB.collection("partners").orderBy("created","desc").get().then(function(snap){
+    var list=[]; snap.forEach(function(doc){ var d=doc.data(); if(d.role==="admin") return; list.push({ id:doc.id, d:d }); });
+    adminCache=list; renderAdmin();
+  }).catch(function(e){ console.error(e); document.getElementById("adminList").innerHTML='<div class="spin">Couldn\'t load partners. Check that you are logged in as the owner and rules are published.</div>'; });
+}
+function renderAdmin(){
+  var list=adminCache||[]; if(adminMode==="pending") list=list.filter(function(x){ return x.d.status==="pending"; });
+  var host=document.getElementById("adminList");
+  if(!list.length){ host.innerHTML='<div class="spin">No '+(adminMode==="pending"?"pending applications":"partners")+' yet.</div>'; return; }
+  host.innerHTML=list.map(function(x){
+    var d=x.d;
+    var social=[d.instagram?("IG: "+d.instagram):"", d.facebook?("FB: "+d.facebook):"", d.youtube?("YT: "+d.youtube):""].filter(Boolean).join(" · ");
+    var acts="";
+    if(d.status==="pending"){ acts='<button class="btn sm green" onclick="setStatus(\''+x.id+'\',\'approved\')">Approve</button><button class="btn sm red" onclick="setStatus(\''+x.id+'\',\'rejected\')">Reject</button>'; }
+    else if(d.status==="approved"){ acts='<button class="btn sm gray" onclick="setStatus(\''+x.id+'\',\'rejected\')">Revoke</button>'; }
+    else { acts='<button class="btn sm green" onclick="setStatus(\''+x.id+'\',\'approved\')">Approve</button>'; }
+    return '<div class="prow"><div class="pn">'+esc(d.fullName||"—")+' <span class="badge '+d.status+'">'+d.status+'</span></div>'+
+      '<div class="pm">'+esc(d.email||"")+' · +91 '+esc(d.mobile||"")+(d.referralCode?(" · code "+esc(d.referralCode)):"")+'</div>'+
+      (social?'<div class="pm">'+esc(social)+'</div>':"")+
+      '<div class="pacts">'+acts+'</div></div>';
+  }).join("");
+}
+function setStatus(uid,status){
+  fbDB.collection("partners").doc(uid).set({ status:status },{merge:true}).then(function(){
+    toast("Partner "+status+".");
+    if(adminCache){ adminCache.forEach(function(x){ if(x.id===uid) x.d.status=status; }); renderAdmin(); }
+  }).catch(function(e){ console.error(e); toast("Couldn't update. Are the security rules published?", true); });
+}
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+
+/* ---------- boot ---------- */
+if(FB_OK){ initAuth(); } else { show("authView"); toast("Couldn't reach the server. Check your connection.", true); }
 </script>
 </body>
 </html>

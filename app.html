@@ -300,6 +300,10 @@
   /* payments */
   .pay-toast{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--card); border:1px solid var(--border-2); color:var(--text); padding:12px 18px; border-radius:12px; font-size:14px; font-weight:600; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,.45); max-width:90%; text-align:center; }
   .pay-toast.err{ border-color:#ef4444; }
+  .ref-note{ font-size:12.5px; margin-top:8px; min-height:16px; }
+  .ref-note.ok{ color:#22c55e; }
+  .ref-note.err{ color:#ef4444; }
+  #ref_input:focus{ outline:none; border-color:var(--orange,#f97316); }
   .auth-note{ background:rgba(249,115,22,.1); border:1px solid rgba(249,115,22,.3); color:var(--orange-l,#fb923c); font-size:13px; font-weight:600; padding:10px 12px; border-radius:10px; margin-bottom:14px; text-align:center; }
   .gate-banner{ background:rgba(249,115,22,.1); border:1px solid rgba(249,115,22,.3); color:var(--text); font-size:13px; padding:10px 14px; border-radius:10px; margin-bottom:12px; }
   .gate-banner a{ color:var(--orange); font-weight:700; cursor:pointer; text-decoration:underline; }
@@ -518,6 +522,10 @@
           <div class="chip" data-s="Mathematics" onclick="mn11Chap(this)">Maths</div>
         </div>
         <div class="mock-grid" id="mn11ChapGrid"></div>
+
+        <h3 class="sec-h" style="font-size:18px">Class 11 — JEE Advanced Mocks</h3>
+        <div class="sec-sub">25 full JEE Advanced pattern papers on Class 11 syllabus — single-correct, one-or-more-correct, numerical &amp; match-the-column, with Advanced marking, auto score, rank and full solutions.</div>
+        <div class="mock-grid" id="adv11Grid"></div>
       </section>
 
       <!-- MY TESTS -->
@@ -614,6 +622,13 @@
         <h3 class="sec-h" style="font-size:18px;margin-top:26px">My Plan</h3>
         <div class="sec-sub">Unlock the full question bank and all mock tests. Billed yearly.</div>
         <div id="planCard"></div>
+
+        <div class="setcard" style="margin-top:16px">
+          <label style="display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:7px">Referral code <span style="color:var(--dim);font-weight:400;font-size:12px">(optional)</span></label>
+          <input id="ref_input" type="text" oninput="onRefInput()" placeholder="e.g. DAKXXXXXXX" style="width:100%;padding:12px 14px;background:var(--bg,#0a0e17);border:1px solid var(--border-2,#293349);border-radius:10px;color:inherit;font-size:15px;font-family:inherit;text-transform:uppercase">
+          <div id="ref_note" class="ref-note"></div>
+          <p style="font-size:12px;color:var(--dim);margin-top:8px">Got a code from a Dakhilaa partner or teacher? Enter it here before you buy — it's applied automatically at checkout.</p>
+        </div>
       </section>
 
     </div>
@@ -985,7 +1000,58 @@ function activatePlan(planKey,paymentId){
     fbDB.collection("users").doc(currentUser).set({ plan:planKey, planName:plan.name, planSince:currentProfile.planSince, lastPaymentId:currentProfile.lastPaymentId },{merge:true}).catch(function(e){ console.error(e); });
   } else { persistDB(); }
   applyPlanUI();
+  writeReferralCommission(planKey);
   payToast("🎉 "+plan.name+" activated! Full access unlocked.");
+}
+
+/* ---------- referral / partner commission ---------- */
+var REF_RE=/^DAK[A-Z0-9]{7}$/;
+function captureRef(){
+  try{
+    var r=new URLSearchParams(location.search).get("ref");
+    if(r){ r=r.trim().toUpperCase(); if(REF_RE.test(r)) localStorage.setItem("dakhilaaRef", r); }
+  }catch(e){}
+}
+function getRef(){ try{ return (localStorage.getItem("dakhilaaRef")||"").trim().toUpperCase(); }catch(e){ return ""; } }
+function prefillRef(){
+  var i=document.getElementById("ref_input"); if(!i) return;
+  var used=""; try{ used=localStorage.getItem("dakhilaaRefUsed")||""; }catch(e){}
+  var note=document.getElementById("ref_note");
+  if(used && hasPaid()){ i.value=used; i.disabled=true; if(note){ note.className="ref-note ok"; note.textContent="Referral "+used+" applied to your purchase. Thank you!"; } return; }
+  i.value=getRef();
+}
+function onRefInput(){
+  var i=document.getElementById("ref_input"); if(!i) return;
+  var v=(i.value||"").trim().toUpperCase(); i.value=v;
+  try{ if(v) localStorage.setItem("dakhilaaRef", v); else localStorage.removeItem("dakhilaaRef"); }catch(e){}
+  var note=document.getElementById("ref_note");
+  if(note){ if(!v){ note.textContent=""; note.className="ref-note"; } else if(REF_RE.test(v)){ note.className="ref-note ok"; note.textContent="Looks good — this code will be applied when you buy a plan."; } else { note.className="ref-note err"; note.textContent="Referral codes look like DAKXXXXXXX."; } }
+}
+// Writes a 20% commission for the referring partner. Only runs on a real, verified purchase
+// (called from activatePlan, which runs only after /api/verify-payment confirms the payment).
+function writeReferralCommission(planKey){
+  try{
+    if(!USE_FIREBASE || !fbDB || !currentUser) return;
+    var code=getRef(); if(!REF_RE.test(code)) return;
+    var plan=PLANS[planKey]; if(!plan) return;
+    var amountRs=Math.round(plan.amount/100);
+    var commission=Math.round(amountRs*0.20);
+    fbDB.collection("refcodes").doc(code).get().then(function(doc){
+      if(!doc.exists) return;                       // unknown code — skip silently
+      var partnerUid=doc.data().uid;
+      if(!partnerUid || partnerUid===currentUser) return;  // no self-referral
+      var now=Date.now(); var dt=new Date(now);
+      var mk=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0");
+      fbDB.collection("commissions").add({
+        partnerUid:partnerUid, refCode:code,
+        studentUid:currentUser, studentName:(currentProfile&&currentProfile.name)||"", studentMobile:(currentProfile&&currentProfile.mobile)||"",
+        plan:planKey, planName:plan.name, amount:amountRs, commission:commission,
+        ts:now, month:mk
+      }).then(function(){
+        try{ localStorage.setItem("dakhilaaRefUsed", code); localStorage.removeItem("dakhilaaRef"); }catch(e){}
+      }).catch(function(e){ console.error("commission write failed:", e); });
+    }).catch(function(e){ console.error(e); });
+  }catch(e){}
 }
 function applyPlanUI(){
   var p=currentProfile;
@@ -1047,12 +1113,12 @@ function go(sec){
   closeSidebar();
   if(sec==="overview") renderOverview();
   if(sec==="qbank") qbLoad();
-  if(sec==="tests"){ renderMocks(); renderAdvGrid(); mnRenderTests(); mn11RenderTests(); }
+  if(sec==="tests"){ renderMocks(); renderAdvGrid(); mnRenderTests(); mn11RenderTests(); renderAdv11Grid(); }
   if(sec==="mytests") renderMyTests();
   if(sec==="weak") renderWeak();
   if(sec==="progress") renderProgress();
   if(sec==="ai") aiInit();
-  if(sec==="settings"){ document.getElementById("set_tests").textContent=currentProfile.stats.testsTaken; }
+  if(sec==="settings"){ document.getElementById("set_tests").textContent=currentProfile.stats.testsTaken; prefillRef(); }
   window.scrollTo(0,0);
 }
 function openSidebar(){ document.getElementById("sidebar").classList.add("open"); document.getElementById("backdrop").classList.add("show"); }
@@ -1219,6 +1285,22 @@ function startAdvTopic(i){
   function run(){ var mk=advTopicData[i]; if(!mk){ payToast("Mock unavailable.", true); return; } advBegin("Advanced Mock "+(i+1), mk, 180); }
   if(advTopicData){ run(); return; }
   fetch("adv_mocks.json").then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); }).then(function(d){ advTopicData=d; run(); }).catch(function(){ payToast("Couldn't load the mock. Please refresh.", true); });
+}
+var ADV11_COUNT=25, adv11Data=null;
+function renderAdv11Grid(){
+  var g=document.getElementById("adv11Grid"); if(!g) return; var paid=hasPaid();
+  var html="";
+  for(var i=0;i<ADV11_COUNT;i++){ var nm="Class 11 Advanced Mock "+(i+1);
+    if(!paid) html+='<div class="mk adv-mockcard locked"><span class="pat">Class 11 · JEE Advanced</span><h4>'+nm+' 🔒</h4><div class="meta">48 Q · 172 marks · 3 hrs · with solutions</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
+    else html+='<div class="mk adv-mockcard"><span class="pat">Class 11 · JEE Advanced</span><h4>'+nm+'</h4><div class="meta">48 Q · 172 marks · 3 hrs · with solutions</div><button class="btn btn-block" onclick="adv11StartMock('+i+')">Start Test</button></div>';
+  }
+  g.innerHTML=html;
+}
+function adv11StartMock(i){
+  if(!hasPaid()){ go("settings"); payToast("JEE Advanced mocks are part of a plan. Choose a plan to unlock.", true); return; }
+  function run(){ var mk=adv11Data[i]; if(!mk){ payToast("Mock unavailable.", true); return; } advBegin("Class 11 Advanced Mock "+(i+1), mk, 172); }
+  if(adv11Data){ run(); return; }
+  fetch("mains11_bank/adv11_mocks.json").then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); }).then(function(d){ adv11Data=d; run(); }).catch(function(){ payToast("Couldn't load the mock. Please refresh.", true); });
 }
 function advSubjects(){ var seen=[]; advS.qs.forEach(function(q){ if(seen.indexOf(q.subject)<0) seen.push(q.subject); }); return seen; }
 function advBuildSections(){ var el=document.getElementById("adv_sections"); el.innerHTML=advSubjects().map(function(s){ return '<div class="stab" data-sub="'+s+'" onclick="advJumpSubject(\''+s+'\')">'+s+'</div>'; }).join(""); }
@@ -1870,7 +1952,7 @@ function submitRate(){
 
 /* ---------- init ---------- */
 function initApp(){
-  loadDB(); initPredictor();
+  loadDB(); initPredictor(); captureRef();
   try{ var up=new URLSearchParams(location.search).get("plan"); if(up && PLANS[up]) pendingPlan=up; }catch(e){}
   fetch("questions.json").then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); })
     .then(function(data){
