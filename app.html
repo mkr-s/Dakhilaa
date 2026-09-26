@@ -1136,9 +1136,12 @@ function enterApp(){
   document.getElementById("set_email").textContent=p.email||"—";
   var si=document.getElementById("set_insta"); if(si) si.textContent=p.instagram||"—";
   var an=document.getElementById("auth_note"); if(an) an.classList.add("hidden");
-  /* Owner test-unlock: open the app once with ?unlock=DAKHILAA-OWNER-2026 to get full access without payment. Stays unlocked on this account afterwards. */
+  /* Owner full-access: these mobile numbers auto-unlock everything (no payment).
+     Also works via ?unlock=DAKHILAA-OWNER-2026. Add more owner numbers to the list if needed. */
   try{ var _ul=new URLSearchParams(location.search).get("unlock");
-    if(_ul==="DAKHILAA-OWNER-2026" && p.plan!=="dropper"){
+    var _ownerNums=["9599105264"];
+    var _isOwner=(p.mobile && _ownerNums.indexOf(String(p.mobile).replace(/\D/g,"").slice(-10))>=0) || _ul==="DAKHILAA-OWNER-2026";
+    if(_isOwner && p.plan!=="dropper"){
       p.plan="dropper"; p.planName="Owner Access"; p.planSince=Date.now();
       if(USE_FIREBASE && fbDB && currentUser){ fbDB.collection("users").doc(currentUser).set({plan:"dropper",planName:"Owner Access",planSince:p.planSince},{merge:true}).catch(function(){}); }
       else { persistDB(); }
