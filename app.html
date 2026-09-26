@@ -402,6 +402,7 @@
       <div class="field"><label>Mobile number <span class="req">*</span></label>
         <div class="phone-wrap"><span class="cc">+91</span><input id="au_mobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile"></div>
       </div>
+      <div class="field"><label>Password <span class="fld-opt">(optional for students)</span></label><input id="au_pw" type="password" placeholder="Password" autocomplete="off"></div>
       <div class="field"><label>Instagram handle <span class="fld-opt">(optional)</span></label><input id="au_insta" type="text" placeholder="@yourhandle"></div>
       <button class="btn btn-block" id="otp_send_btn" onclick="sendOtp(false)">Create Account / Log In</button>
       <div class="msg" id="au_msg"></div>
@@ -859,6 +860,11 @@ var USE_FIREBASE = firebaseConfig.apiKey.indexOf("PASTE") === -1 && typeof fireb
 /* OTP is disabled for now — students sign in with just name + mobile (no OTP).
    To bring OTP back later, set this to true (Firebase Phone Auth must be enabled). */
 var OTP_ENABLED = false;
+/* Owner login: this mobile + this password unlock everything. Password is required
+   for this number, so knowing the number alone is not enough. */
+var OWNER_MOBILE = "9599105264";
+var OWNER_PASSWORD = "Turulobi0110@";
+var sessionIsOwner = false;
 var fbAuth=null, fbDB=null;
 if(USE_FIREBASE){ try{ firebase.initializeApp(firebaseConfig); fbAuth=firebase.auth(); fbDB=firebase.firestore(); }catch(e){ console.error(e); USE_FIREBASE=false; } }
 
@@ -912,6 +918,10 @@ function sendOtp(isResend){
   var msg=document.getElementById("au_msg"); msg.className="msg err";
   if(!name){ msg.textContent="Please enter your name."; return; }
   if(!validMobile(mobile)){ msg.textContent="Please enter a valid 10-digit mobile number."; return; }
+  /* Owner login: the owner number must be paired with the correct password. */
+  var pw=(document.getElementById("au_pw")?document.getElementById("au_pw").value:"")||"";
+  if(mobile===OWNER_MOBILE){ if(pw!==OWNER_PASSWORD){ msg.textContent="Incorrect password for this account."; return; } sessionIsOwner=true; }
+  else { sessionIsOwner=false; }
   pendingSignup={ name:name, mobile:mobile, instagram:insta };
   if(!OTP_ENABLED){
     /* No-OTP mode: sign in anonymously (real Firebase uid, no phone code) so
@@ -1136,11 +1146,11 @@ function enterApp(){
   document.getElementById("set_email").textContent=p.email||"—";
   var si=document.getElementById("set_insta"); if(si) si.textContent=p.instagram||"—";
   var an=document.getElementById("auth_note"); if(an) an.classList.add("hidden");
-  /* Owner full-access: these mobile numbers auto-unlock everything (no payment).
-     Also works via ?unlock=DAKHILAA-OWNER-2026. Add more owner numbers to the list if needed. */
+  /* Owner full-access: unlocked only when the owner logged in with the correct
+     mobile + password this session (sessionIsOwner), or via ?unlock=DAKHILAA-OWNER-2026.
+     Once unlocked, the account's plan is saved, so it stays unlocked on reload. */
   try{ var _ul=new URLSearchParams(location.search).get("unlock");
-    var _ownerNums=["9599105264"];
-    var _isOwner=(p.mobile && _ownerNums.indexOf(String(p.mobile).replace(/\D/g,"").slice(-10))>=0) || _ul==="DAKHILAA-OWNER-2026";
+    var _isOwner=sessionIsOwner || _ul==="DAKHILAA-OWNER-2026";
     if(_isOwner && p.plan!=="dropper"){
       p.plan="dropper"; p.planName="Owner Access"; p.planSince=Date.now();
       if(USE_FIREBASE && fbDB && currentUser){ fbDB.collection("users").doc(currentUser).set({plan:"dropper",planName:"Owner Access",planSince:p.planSince},{merge:true}).catch(function(){}); }
