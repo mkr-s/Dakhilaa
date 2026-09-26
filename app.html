@@ -403,9 +403,9 @@
         <div class="phone-wrap"><span class="cc">+91</span><input id="au_mobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile"></div>
       </div>
       <div class="field"><label>Instagram handle <span class="fld-opt">(optional)</span></label><input id="au_insta" type="text" placeholder="@yourhandle"></div>
-      <button class="btn btn-block" id="otp_send_btn" onclick="sendOtp(false)">Send OTP</button>
+      <button class="btn btn-block" id="otp_send_btn" onclick="sendOtp(false)">Create Account / Log In</button>
       <div class="msg" id="au_msg"></div>
-      <div class="switch" style="font-size:12px;color:var(--dim)">We'll text a one-time code to verify your number.</div>
+      <div class="switch" id="au_help" style="font-size:12px;color:var(--dim)">New here or returning — just enter your details to continue.</div>
     </div>
     <!-- Step 2: OTP -->
     <div id="authStep2" class="hidden">
@@ -856,6 +856,9 @@ var firebaseConfig = {
   appId: "1:1055517618428:web:b6dcd8d696ccb94b7a6779"
 };
 var USE_FIREBASE = firebaseConfig.apiKey.indexOf("PASTE") === -1 && typeof firebase !== "undefined";
+/* OTP is disabled for now — students sign in with just name + mobile (no OTP).
+   To bring OTP back later, set this to true (Firebase Phone Auth must be enabled). */
+var OTP_ENABLED = false;
 var fbAuth=null, fbDB=null;
 if(USE_FIREBASE){ try{ firebase.initializeApp(firebaseConfig); fbAuth=firebase.auth(); fbDB=firebase.firestore(); }catch(e){ console.error(e); USE_FIREBASE=false; } }
 
@@ -895,6 +898,11 @@ function fbError(err){ var c=(err&&err.code)?err.code:"";
 
 /* ---------- auth: mobile OTP ---------- */
 var pendingSignup=null, confirmationResult=null, recaptcha=null;
+function applyAuthMode(){
+  var btn=document.getElementById("otp_send_btn"), help=document.getElementById("au_help");
+  if(OTP_ENABLED){ if(btn) btn.textContent="Send OTP"; if(help) help.textContent="We'll text a one-time code to verify your number."; }
+  else { if(btn) btn.textContent="Create Account / Log In"; if(help) help.textContent="New here or returning — just enter your details to continue."; }
+}
 function validMobile(m){ return /^[6-9]\d{9}$/.test(m); }
 function ensureRecaptcha(){ if(recaptcha) return recaptcha; recaptcha=new firebase.auth.RecaptchaVerifier('recaptcha-container',{ size:'invisible' }); return recaptcha; }
 function sendOtp(isResend){
@@ -905,6 +913,21 @@ function sendOtp(isResend){
   if(!name){ msg.textContent="Please enter your name."; return; }
   if(!validMobile(mobile)){ msg.textContent="Please enter a valid 10-digit mobile number."; return; }
   pendingSignup={ name:name, mobile:mobile, instagram:insta };
+  if(!OTP_ENABLED){
+    /* No-OTP mode: sign in anonymously (real Firebase uid, no phone code) so
+       progress, live leaderboard & referrals keep working; fall back to local. */
+    if(USE_FIREBASE && fbAuth){
+      setBtnBusy("otp_send_btn",true,"Please wait…");
+      fbAuth.signInAnonymously().catch(function(err){
+        setBtnBusy("otp_send_btn",false); console.error("anon sign-in:", err);
+        msg.className="msg"; msg.textContent="";
+        localCreateOrLogin();  // fallback so the student still gets in
+      });
+    } else {
+      localCreateOrLogin();
+    }
+    return;
+  }
   if(USE_FIREBASE){
     setBtnBusy("otp_send_btn",true,"Sending OTP…");
     var v; try{ v=ensureRecaptcha(); }catch(e){ msg.textContent="Could not start verification. Please reload the page."; setBtnBusy("otp_send_btn",false); return; }
@@ -2111,7 +2134,7 @@ function submitRate(){
 
 /* ---------- init ---------- */
 function initApp(){
-  loadDB(); initPredictor(); captureRef();
+  loadDB(); initPredictor(); captureRef(); applyAuthMode();
   try{ var up=new URLSearchParams(location.search).get("plan"); if(up && PLANS[up]) pendingPlan=up; }catch(e){}
   fetch("questions.json").then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); })
     .then(function(data){
