@@ -66,7 +66,9 @@
   .sb-nav .divider{ height:1px; background:var(--border); margin:8px 6px; }
   .sb-user{ padding:14px; border-top:1px solid var(--border); }
   .sb-user .ucard{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; text-align:center; }
-  .sb-user .av{ width:44px; height:44px; border-radius:12px; margin:0 auto 8px; background:linear-gradient(135deg,var(--orange),#a855f7); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px; color:#fff; }
+  .sb-user .av{ width:44px; height:44px; border-radius:12px; margin:0 auto 8px; background:linear-gradient(135deg,var(--orange),#a855f7); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px; color:#fff; cursor:pointer; position:relative; }
+  .sb-user .av img{ width:44px; height:44px; border-radius:12px; object-fit:cover; display:block; }
+  .sb-user .av::after{ content:"📷"; position:absolute; right:-4px; bottom:-4px; width:18px; height:18px; border-radius:50%; background:var(--orange); font-size:9px; display:flex; align-items:center; justify-content:center; border:2px solid var(--card); }
   .sb-user .un{ font-weight:700; font-size:14px; }
   .sb-user .up{ font-size:11px; color:var(--muted); margin-bottom:8px; }
 
@@ -492,7 +494,8 @@
     </nav>
     <div class="sb-user">
       <div class="ucard">
-        <div class="av" id="sb_av">S</div>
+        <div class="av" id="sb_av" title="Change photo" onclick="pickPhoto()">S</div>
+        <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="photoPicked(this)">
         <div class="un" id="sb_name">Student</div>
         <div class="up" id="sb_plan">Free plan</div>
         <button class="btn btn-block" style="padding:8px;font-size:13px" onclick="openRate()">Rate Dakhilaa</button>
@@ -687,7 +690,8 @@
           <div class="setrow"><span class="k">Instagram</span><span id="set_insta">—</span></div>
           <div class="setrow"><span class="k">Plan</span><span id="set_plan">Free</span></div>
           <div class="setrow"><span class="k">Diagnostics taken</span><span id="set_tests">0</span></div>
-          <div style="margin-top:16px"><button class="btn btn-outline btn-block" onclick="logout()">Log out</button></div>
+          <div style="margin-top:16px"><button class="btn btn-outline btn-block" onclick="pickPhoto()">📷 Change profile photo</button></div>
+          <div style="margin-top:8px"><button class="btn btn-outline btn-block" onclick="logout()">Log out</button></div>
         </div>
 
         <h3 class="sec-h" style="font-size:18px;margin-top:26px">My Plan</h3>
@@ -1056,6 +1060,7 @@ function initFirebaseAuth(){
           stats:{ testsTaken:d.testsTaken||0, questionsSolved:d.questionsSolved||0, correctAnswers:d.correctAnswers||0 },
           last:(typeof d.lastReadiness==="number")?{ readiness:d.lastReadiness, weakest:d.weakestSubject||"", est:d.lastEst||0, per:d.lastPer||null }:null,
           history:Array.isArray(d.history)?d.history:[],
+          photo:d.photo||"",
           plan:d.plan||null, planName:d.planName||"", planSince:d.planSince||0, lastPaymentId:d.lastPaymentId||"",
           diagMonth:d.diagMonth||"", diagCount:d.diagCount||0,
           firstReadiness:(typeof d.firstReadiness==="number"?d.firstReadiness:undefined) };
@@ -1207,12 +1212,50 @@ function renderPlanCard(){
   el.innerHTML=html;
 }
 
+/* ---------- profile photo ---------- */
+function paintAvatar(){
+  var p=currentProfile||{}; var av=document.getElementById("sb_av"); if(!av) return;
+  if(p.photo){ av.innerHTML='<img src="'+p.photo+'" alt="">'; }
+  else { av.textContent=(p.name||"S").charAt(0).toUpperCase(); }
+}
+function pickPhoto(){ var i=document.getElementById("photoInput"); if(i){ i.value=""; i.click(); } }
+function photoPicked(input){
+  var f=input.files&&input.files[0]; if(!f) return;
+  if(!/^image\//.test(f.type||"")){ try{payToast("Please choose an image file.");}catch(e){} return; }
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var S=256, c=document.createElement("canvas"); c.width=S; c.height=S;
+      var ctx=c.getContext("2d");
+      var side=Math.min(img.width,img.height);
+      var sx=(img.width-side)/2, sy=(img.height-side)/2;
+      ctx.drawImage(img, sx,sy, side,side, 0,0, S,S);
+      var data=c.toDataURL("image/jpeg",0.82);
+      savePhoto(data);
+    };
+    img.onerror=function(){ try{payToast("Couldn't read that image. Try another one.");}catch(e){} };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(f);
+}
+function savePhoto(dataUrl){
+  if(!currentProfile) return;
+  currentProfile.photo=dataUrl;
+  paintAvatar();
+  if(USE_FIREBASE && fbDB && currentUser){
+    fbDB.collection("users").doc(currentUser).set({photo:dataUrl},{merge:true})
+      .then(function(){ try{payToast("Profile photo updated ✓");}catch(e){} })
+      .catch(function(err){ console.error(err); try{payToast("Photo saved on this device (couldn't sync).");}catch(e){} });
+  } else { try{ persistDB(); }catch(e){} try{payToast("Profile photo updated ✓");}catch(e){} }
+}
+
 /* ---------- enter app ---------- */
 function enterApp(){
   var p=currentProfile; if(!p){ view("authScreen"); showSignup(); return; }
   document.getElementById("dash_name").textContent=p.name;
   document.getElementById("sb_name").textContent=p.name;
-  document.getElementById("sb_av").textContent=(p.name||"S").charAt(0).toUpperCase();
+  paintAvatar();
   document.getElementById("set_name").textContent=p.name;
   document.getElementById("set_email").textContent=p.email||"—";
   var si=document.getElementById("set_insta"); if(si) si.textContent=p.instagram||"—";
