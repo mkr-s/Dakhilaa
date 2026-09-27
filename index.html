@@ -193,7 +193,8 @@
 
   /* FOOTER */
   footer{ border-top:1px solid var(--border); padding:50px 0 30px; margin-top:20px; }
-  .foot-grid{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:30px; margin-bottom:34px; }
+  .foot-grid{ display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:30px; margin-bottom:34px; }
+  @media(max-width:900px){ .foot-grid{ grid-template-columns:1fr 1fr; gap:28px 24px; } }
   @media(max-width:640px){ .foot-grid{ grid-template-columns:1fr; gap:24px; } }
   .foot-grid h4{ font-size:13px; letter-spacing:1px; text-transform:uppercase; color:var(--dim); margin-bottom:14px; }
   .foot-grid a{ display:block; color:var(--muted); font-size:14px; margin-bottom:9px; }
