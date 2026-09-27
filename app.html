@@ -238,6 +238,7 @@
   .palette .pq.cur{ outline:2px solid var(--orange); outline-offset:1px; }
   .palette .pq.ans{ background:rgba(34,197,94,.18); color:var(--green); border-color:rgba(34,197,94,.4); }
   .palette .pq.na{ background:rgba(239,68,68,.16); color:#fca5a5; border-color:rgba(239,68,68,.4); }
+  .palette .pq.mr{ background:rgba(168,85,247,.2); color:#c4b5fd; border-color:rgba(168,85,247,.5); }
   .palette .pq.mr{ background:rgba(168,85,247,.20); color:#c4b5fd; border-color:rgba(168,85,247,.45); }
   .palette .pq.ma{ background:rgba(168,85,247,.20); color:#c4b5fd; border-color:rgba(168,85,247,.45); position:relative; }
   .palette .pq.ma::after{ content:""; position:absolute; right:-3px; bottom:-3px; width:9px; height:9px; border-radius:50%; background:var(--green); border:1px solid var(--bg); }
@@ -817,14 +818,19 @@
       </div>
       <div class="exam-btns" id="mn_btns">
         <button class="b primary" id="mn_revealBtn" onclick="mnReveal()">Check Answer &amp; View Solution</button>
-        <button class="b" onclick="mnNext()">Next →</button>
+        <button class="b" onclick="mnNext()">Save &amp; Next →</button>
+      </div>
+      <div class="exam-btns" style="margin-top:8px">
+        <button class="b" onclick="mnClear()">Clear Response</button>
+        <button class="b" id="mn_markBtn" onclick="mnMark()">🚩 Mark for Review</button>
       </div>
       <div class="nav-row"><button class="btn btn-outline" onclick="mnPrev()">← Previous</button></div>
     </div>
     <div class="exam-side">
       <div class="legend">
+        <div class="lg"><span class="dot na"></span> Answered</div>
+        <div class="lg"><span class="dot mr"></span> Marked for review</div>
         <div class="lg"><span class="dot ans"></span> Solution viewed</div>
-        <div class="lg"><span class="dot na"></span> Option chosen</div>
         <div class="lg"><span class="dot nv"></span> Not visited</div>
       </div>
       <div id="mn_palette"></div>
@@ -1578,12 +1584,14 @@ function mnStartMock(i){
 function mnBegin(name, qs, isMock){
   liveDisarmTimer();
   var scored = !!isMock && qs.length>0 && qs.every(function(q){ return q.answer; });
-  mnS={ name:name, qs:qs, isMock:isMock, scored:scored, cur:0, picks:qs.map(function(){return null;}), seen:qs.map(function(){return false;}), visited:qs.map(function(){return false;}), conf:qs.map(function(){return null;}) };
+  mnS={ name:name, qs:qs, isMock:isMock, scored:scored, cur:0, picks:qs.map(function(){return null;}), seen:qs.map(function(){return false;}), visited:qs.map(function(){return false;}), conf:qs.map(function(){return null;}), marked:qs.map(function(){return false;}) };
   document.getElementById("mn_title").textContent=name;
   document.getElementById("mn_total").textContent=qs.length;
   var fb=document.getElementById("mn_finishBtn"); if(fb) fb.textContent=scored?"Submit Test":"Finish";
-  var hint=document.getElementById("mn_hint"); if(hint) hint.textContent=scored?"Choose your answer (1–4). You can view the solution anytime. Submit at the end for your score & estimated rank.":"Choose the option you think is correct, then reveal the full solution.";
+  var hint=document.getElementById("mn_hint"); if(hint) hint.textContent=scored?"Choose your answer (1–4). Use Mark for Review to flag a question. Submit at the end for your score & estimated rank.":"Choose the option you think is correct, then reveal the full solution.";
   mnBuildPalette(); view("mainsScreen"); mnGoto(0);
+  /* Scored mocks are timed like the real exam (3 hours). Live test re-arms its own timer after this. */
+  if(scored) liveArmTimer(Date.now()+180*60000);
 }
 function mnBuildPalette(){
   var el=document.getElementById("mn_palette"); if(!el) return;
@@ -1597,13 +1605,17 @@ function mnBuildPalette(){
   }
 }
 function mnPaint(){ mnS.qs.forEach(function(q,i){ var c=document.getElementById("mnpq"+i); if(!c) return;
-  c.className="pq"+(i===mnS.cur?" cur":"")+(mnS.seen[i]?" ans":(mnS.picks[i]!=null?" na":"")); }); }
+  var mk=(mnS.marked&&mnS.marked[i]);
+  c.className="pq"+(i===mnS.cur?" cur":"")+(mk?" mr":(mnS.seen[i]?" ans":(mnS.picks[i]!=null?" na":""))); }); }
+function mnClear(){ if(!mnS) return; mnS.picks[mnS.cur]=null; mnRenderOpts(); mnPaint(); }
+function mnMark(){ if(!mnS) return; if(!mnS.marked) mnS.marked=mnS.qs.map(function(){return false;}); mnS.marked[mnS.cur]=!mnS.marked[mnS.cur]; mnUpdMarkBtn(); mnPaint(); }
+function mnUpdMarkBtn(){ var b=document.getElementById("mn_markBtn"); if(!b) return; var on=(mnS.marked&&mnS.marked[mnS.cur]); b.textContent=on?"🚩 Marked ✓":"🚩 Mark for Review"; b.classList.toggle("primary",!!on); }
 function mnGoto(i){ if(!mnS||i<0||i>=mnS.qs.length) return; mnS.cur=i; var q=mnS.qs[i]; mnS.visited[i]=true;
   document.getElementById("mn_now").textContent=i+1;
   document.getElementById("mn_prog").textContent=(i+1)+" / "+mnS.qs.length;
   document.getElementById("mn_secname").textContent=q.topic?("· "+q.subject+" · Q"+q.qno):("· "+q.subject);
   document.getElementById("mn_imgwrap").innerHTML='<img src="'+q.img+'" alt="Question '+(i+1)+'">';
-  mnRenderOpts(); mnRenderConf();
+  mnRenderOpts(); mnRenderConf(); mnUpdMarkBtn();
   var sb=document.getElementById("mn_solbox"), rb=document.getElementById("mn_revealBtn");
   if(!q.sol){ rb.style.display="none"; sb.classList.add("hidden"); document.getElementById("mn_solwrap").innerHTML=""; }
   else { rb.style.display="";
@@ -1761,6 +1773,7 @@ function mnRenderSmart(r,an){
   host.innerHTML='<div class="sr-card"><div class="sr-head">🧠 Smart Report</div>'+items+'</div>';
 }
 function mnSubmit(){
+  liveDisarmTimer();
   var r=mnScore(); var maxM=mnS.qs.length*4; var pct=Math.max(0, r.marks)/maxM*100;
   var pctile=mnEstPercentile(pct); var estRank=Math.max(1, Math.round((100-pctile)/100*1100000));
   document.getElementById("mnr_title").textContent=mnS.name+" — Result";
@@ -1845,7 +1858,7 @@ function liveArmTimer(endMs){
   liveTimerId=setInterval(function(){
     var left=endMs-Date.now();
     var e=document.getElementById("mn_livetimer");
-    if(left<=0){ liveDisarmTimer(); if(mnS&&mnS.live){ payToast("Time up — submitting your live test."); mnSubmit(); } return; }
+    if(left<=0){ liveDisarmTimer(); if(mnS&&mnS.scored){ payToast("Time up — submitting your test."); mnSubmit(); } return; }
     if(e) e.textContent="⏱ "+fmtClock(left);
   },1000);
 }
