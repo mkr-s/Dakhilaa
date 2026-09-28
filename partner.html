@@ -276,6 +276,9 @@ function fbErr(err){ var c=(err&&err.code)?err.code:"";
   if(c.indexOf("user-not-found")>=0) return "No partner account found. Please sign up first.";
   if(c.indexOf("too-many-requests")>=0) return "Too many attempts. Please wait a bit and try again.";
   if(c.indexOf("network")>=0) return "Network error. Please check your connection.";
+  if(c.indexOf("operation-not-allowed")>=0) return "Email/Password sign-in is not enabled yet. Owner: enable it in Firebase → Authentication → Sign-in method.";
+  if(c.indexOf("configuration-not-found")>=0) return "Sign-in is not configured yet. Owner: enable Email/Password in Firebase Authentication.";
+  if(c.indexOf("permission-denied")>=0) return "Couldn't save your application. Owner: make sure the latest Firestore rules are published.";
   return "Something went wrong. Please try again."; }
 
 /* ---------- tabs ---------- */
@@ -322,6 +325,7 @@ function doSignup(){
   if(pw!==pw2){ msg.textContent="Passwords do not match."; return; }
   if(!FB_OK){ msg.textContent="Service unavailable right now. Please try again later."; return; }
   busy("s_btn",true,"Creating account…");
+  signingUp=true;
   var isOwner=(email===OWNER_EMAIL.toLowerCase());
   var newUid=null, newCode=null;
   fbAuth.createUserWithEmailAndPassword(email,pw).then(function(cred){
@@ -346,7 +350,11 @@ function doSignup(){
     else{ showStatus("pending"); }
     // clear form
     ["s_name","s_phone","s_email","s_pw","s_pw2","s_insta","s_fb","s_yt"].forEach(function(id){ document.getElementById(id).value=""; });
+    // keep the guard up briefly so the trailing sign-out auth callback doesn't bounce
+    // the user off the "under review" / login screen we just showed
+    setTimeout(function(){ signingUp=false; }, 900);
   }).catch(function(err){
+    signingUp=false;
     busy("s_btn",false);
     console.error("signup:",err);
     // if auth user got created but doc failed, surface a clear message
@@ -356,6 +364,7 @@ function doSignup(){
 
 /* ---------- login ---------- */
 function doLogin(){
+  signingUp=false; // any pending signup guard is done once the user starts a login
   var msg=document.getElementById("l_msg"); msg.className="msg";
   var id=document.getElementById("l_id").value.trim();
   var pw=document.getElementById("l_pw").value;
@@ -393,8 +402,10 @@ function showStatus(kind){
 
 /* ---------- auth state routing ---------- */
 var CUR=null; // {uid, doc}
+var signingUp=false; // true while doSignup runs, so auth-state routing doesn't sign the new user out mid-signup
 function initAuth(){
   fbAuth.onAuthStateChanged(function(user){
+    if(signingUp) return; // signup is writing the partner doc; don't route/sign-out yet
     if(!user){ CUR=null; show("authView"); return; }
     fbDB.collection("partners").doc(user.uid).get().then(function(doc){
       if(!doc.exists){ // authed but no partner profile (edge case) — sign out
