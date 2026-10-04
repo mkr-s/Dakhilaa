@@ -1891,15 +1891,15 @@ function mnSubmit(){
   if(currentProfile){ var pctInt=Math.round(pct);
     var he={ type:mnS.name, score:pctInt, marks:r.marks, correct:r.correct, total:mnS.qs.length, subjects:{}, date:Date.now() };
     Object.keys(r.perSub).forEach(function(s){ he.subjects[s]=r.perSub[s].m; });
-    he.review=mnS.qs.map(function(q,i){ return { img:q.img, sub:q.subject, you:(mnS.picks[i]==null?null:mnS.picks[i]), corr:q.answer, sol:q.sol||"", type:q.type }; });
+    he.review=mnS.qs.map(function(q,i){ return { img:(q.img||""), sub:(q.subject||""), you:(mnS.picks[i]==null?null:mnS.picks[i]), corr:(q.answer==null?"":q.answer), sol:(q.sol||""), type:(q.type||"single") }; });
     currentProfile.history=(currentProfile.history||[]).concat([he]); trimHistory();
     if(currentProfile.stats) currentProfile.stats.testsTaken=(currentProfile.stats.testsTaken||0)+1;
     // feed the growth matrix (same readiness scale as the diagnostic/full mock)
     var _weak=null,_worst=2; Object.keys(r.perSub).forEach(function(s){ var d=r.perSub[s]; var tot=d.c+d.w+d.b; var a=tot>0?d.c/tot:0; if(a<_worst){ _worst=a; _weak=s; } });
     currentProfile.last={ readiness:pctInt, weakest:(_weak||""), est:r.marks, per:(currentProfile.last&&currentProfile.last.per)||null };
-    if(USE_FIREBASE && fbDB && currentUser){ fbDB.collection("users").doc(currentUser).set({ testsTaken:firebase.firestore.FieldValue.increment(1), history:currentProfile.history },{merge:true}).catch(function(){}); }
+    if(USE_FIREBASE && fbDB && currentUser){ try{ fbDB.collection("users").doc(currentUser).set({ testsTaken:firebase.firestore.FieldValue.increment(1), history:currentProfile.history },{merge:true}).catch(function(){}); }catch(e){ console.error("mock save failed (non-blocking)", e); } }
     else { persistDB(); }
-    upsertGrowth();
+    try{ upsertGrowth(); }catch(e){ console.error("growth update failed (non-blocking)", e); }
   }
   var lv=document.getElementById("mnr_live");
   if(mnS && mnS.live){ liveOnSubmit(r); } else if(lv){ lv.classList.add("hidden"); lv.innerHTML=""; }
