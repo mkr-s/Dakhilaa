@@ -894,7 +894,7 @@
   <h2 id="sr_title" style="text-align:center;margin-bottom:4px">Your attempt</h2>
   <div style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:16px" id="sr_sub"></div>
   <div class="adv-review" id="sr_review"></div>
-  <div class="nav-row" style="margin-top:20px"><button class="btn btn-outline" onclick="view('shell');go('mytests')">← Back to My Tests</button></div>
+  <div class="nav-row" style="margin-top:20px"><button class="btn btn-outline" id="sr_backBtn" onclick="view('shell');go(srBackSec)">← Back</button></div>
 </div></div>
 
 <!-- RATE MODAL -->
@@ -1616,8 +1616,8 @@ function mnRenderMocks(){
   var g=document.getElementById("mnMockGrid"); if(!g||!mnMocks) return; var paid=hasPaid();
   g.innerHTML=mnMocks.map(function(m,i){
     var locked=(!paid && i>=MN_FREE_MOCK);
-    if(locked) return '<div class="mk locked"><span class="pat">Scored + Solutions</span><h4>'+m.title+' 🔒</h4><div class="meta">75 Questions · +4/−1 · score, rank &amp; full solutions</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
-    return '<div class="mk"><span class="pat">Scored + Solutions</span><h4>'+m.title+'</h4><div class="meta">75 Questions · +4/−1 · score, rank &amp; full solutions</div><button class="btn btn-block" onclick="mnStartMock('+i+')">Start Test</button></div>';
+    if(locked) return '<div class="mk locked"><span class="pat">Scored + Solutions</span><h4>'+m.title+' 🔒</h4><div class="meta">'+m.qs.length+' Questions · +4/−1 · score, rank &amp; full solutions</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
+    return '<div class="mk"><span class="pat">Scored + Solutions</span><h4>'+m.title+'</h4><div class="meta">'+m.qs.length+' Questions · +4/−1 · score, rank &amp; full solutions</div><button class="btn btn-block" onclick="mnStartMock('+i+')">Start Test</button></div>';
   }).join("");
 }
 function mnChap(el){ var c=el.parentElement.querySelectorAll(".chip"); for(var i=0;i<c.length;i++) c[i].classList.remove("active"); el.classList.add("active"); mnCurSub=el.getAttribute("data-s"); mnRenderChap(); }
@@ -1712,9 +1712,23 @@ function mnNext(){ if(mnS.cur<mnS.qs.length-1) mnGoto(mnS.cur+1); else mnFinish(
 function mnPrev(){ if(mnS.cur>0) mnGoto(mnS.cur-1); }
 function mnFinish(){
   if(mnS.scored){ if(confirm("Submit this mock and see your score?")) mnSubmit(); return; }
-  var seen=mnS.seen.filter(Boolean).length, pk=mnS.picks.filter(function(x){return x!=null;}).length; var tot=mnS.qs.length;
-  view("shell"); go("tests");
-  payToast("Practice saved. You attempted "+pk+" and viewed "+seen+" solutions out of "+tot+".", false); }
+  if(!confirm("Finish this practice and see your summary?")) return;
+  mnFinishPractice();
+}
+/* Practice (chapter/topic) tests have no answer key — show a summary + your answers + solutions, not a silent redirect. */
+function mnFinishPractice(){
+  var seen=mnS.seen.filter(Boolean).length, pk=mnS.picks.filter(function(x){return x!=null;}).length, tot=mnS.qs.length;
+  document.getElementById("sr_title").textContent=mnS.name+" — practice summary";
+  document.getElementById("sr_sub").textContent="You attempted "+pk+" of "+tot+" · viewed "+seen+" solutions. Review every question with its full solution below.";
+  document.getElementById("sr_review").innerHTML=mnS.qs.map(function(q,i){
+    var p=mnS.picks[i]; var you=(p==null)?"—":("Option "+p);
+    var sol=q.sol?('<details class="adv-sol"><summary>Show detailed solution</summary><img src="'+q.sol+'" alt="solution" loading="lazy"></details>'):'';
+    return '<div class="adv-rq"><div class="rqtop"><span>'+(q.subject||"")+' · Q'+(i+1)+'</span></div><img src="'+q.img+'" alt="" loading="lazy">'+
+      '<div class="rqans">Your answer: <span>'+you+'</span></div>'+sol+'</div>';
+  }).join("");
+  srBackSec="tests"; var _bb=document.getElementById("sr_backBtn"); if(_bb) _bb.textContent="← Back to Tests";
+  view("savedReviewScreen");
+}
 function mnExit(){ var live=mnS&&mnS.live; if(confirm(live?"Exit the LIVE test? Your progress will be lost and you can't re-enter this week.":"Exit this practice? Your progress in this session will be lost.")){ liveDisarmTimer(); if(mnS) mnS.live=false; view("shell"); go(live?"live":"tests"); } }
 /* ----- Mains mock scoring (JEE Main: +4 correct, -1 wrong, 0 blank) ----- */
 function mnEstPercentile(pct){ // pct = marks/maxMarks*100 ; approximate JEE Main percentile curve (based on recent NTA marks-vs-percentile trends)
@@ -2363,11 +2377,13 @@ function trimHistory(){
   var h=currentProfile.history; if(h.length>30){ h=currentProfile.history=h.slice(-30); }
   var seen=0; for(var i=h.length-1;i>=0;i--){ if(h[i] && h[i].review){ seen++; if(seen>8) delete h[i].review; } }
 }
+var srBackSec="mytests";
 /* reopen a past attempt's answers + solutions from My Tests */
 function openSavedReview(idx){
   var h=currentProfile&&currentProfile.history;
   if(!h||!h[idx]||!h[idx].review||!h[idx].review.length){ payToast("Answers for this attempt weren't saved.", true); return; }
   var e=h[idx];
+  srBackSec="mytests"; var _bb=document.getElementById("sr_backBtn"); if(_bb) _bb.textContent="← Back to My Tests";
   document.getElementById("sr_title").textContent=e.type+" — your answers";
   document.getElementById("sr_sub").textContent=fmtDate(e.date)+" · "+e.correct+"/"+e.total+" correct"+(e.marks!=null?(" · "+e.marks+" marks"):"");
   document.getElementById("sr_review").innerHTML=e.review.map(function(q,i){
