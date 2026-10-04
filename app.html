@@ -1606,7 +1606,7 @@ var MN_FREE_CHAP=1, MN_FREE_MOCK=1; /* first chapter per subject + first mock fr
 function mnEnsure(cb){
   if(mnChapters && mnMocks){ cb(); return; }
   var need=0, fail=false;
-  function done(){ need--; if(need<=0){ if(fail) payToast("Couldn't load Mains tests. Please refresh.", true); else cb(); } }
+  function done(){ need--; if(need<=0){ if(fail) payToast("Couldn't load Main tests. Please refresh.", true); else cb(); } }
   if(!mnChapters){ need++; fetch(MN_DIR+"mains_chapters.json").then(function(r){ if(!r.ok)throw 0; return r.json(); }).then(function(d){ mnChapters=d; done(); }).catch(function(){ fail=true; done(); }); }
   if(!mnMocks){ need++; fetch(MN_DIR+"mains_mocks.json").then(function(r){ if(!r.ok)throw 0; return r.json(); }).then(function(d){ mnMocks=d; done(); }).catch(function(){ fail=true; done(); }); }
   if(need===0) cb();
