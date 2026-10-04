@@ -45,6 +45,22 @@
   .section-sub{ color:var(--muted); text-align:center; max-width:640px; margin:0 auto 40px; font-size:16px; }
   section{ padding:70px 0; }
 
+  /* --- section monotony breakers: tinted bands + accent divider --- */
+  .band{ position:relative; }
+  .band::before{ content:""; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,rgba(249,115,22,.55),transparent); }
+  .band-growth{ background:
+    radial-gradient(900px 300px at 15% 0%, rgba(167,139,250,.12), transparent 60%),
+    radial-gradient(900px 320px at 88% 100%, rgba(56,189,248,.09), transparent 60%),
+    var(--bg-2); }
+  .band-reviews{ background:
+    radial-gradient(1000px 340px at 50% 0%, rgba(249,115,22,.11), transparent 62%),
+    var(--card); }
+  .band-pricing{ background:
+    radial-gradient(820px 340px at 18% 0%, rgba(249,115,22,.14), transparent 55%),
+    radial-gradient(820px 360px at 82% 12%, rgba(167,139,250,.12), transparent 55%),
+    var(--bg-2); }
+
   /* NAV */
   header{ position:sticky; top:0; z-index:50; background:rgba(10,14,23,.82); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
   .nav{ display:flex; align-items:center; justify-content:space-between; height:64px; }
@@ -340,15 +356,16 @@
 </section>
 
 <!-- STUDENT GROWTH MATRIX -->
-<section>
+<section class="band band-growth">
   <div class="wrap">
     <div class="eyebrow">Student Growth</div>
     <h2 class="section-title">Real Prep, Real Percentile Jumps</h2>
     <p class="section-sub">What focused, weak-area-first practice does to a JEE percentile over a few months.</p>
     <div class="growth" id="growthGrid"></div>
-    <div id="growthEmpty" class="g-disc hidden">Top student growth journeys will appear here automatically as students train on Dakhilaa. Only the highest-growth students are featured.</div>
+    <div id="growthEmpty" class="g-disc hidden">Every student's <b>first</b> diagnostic is their baseline. Each mock after that updates their readiness — and once someone jumps far enough, their <b>Before → Now</b> journey is featured here automatically. Take two tests and you could be the first. 🚀</div>
     <div class="g-disc">★ Auto-updated from real student progress — only top-growth students are shown.</div>
-  </section>
+  </div>
+</section>
 
 <!-- COLLEGE PREDICTOR -->
 <section id="predictor" style="background:var(--bg-2);">
@@ -376,7 +393,7 @@
 </section>
 
 <!-- TESTIMONIALS -->
-<section id="testimonials">
+<section id="testimonials" class="band band-reviews">
   <div class="wrap">
     <div class="eyebrow reveal">Loved by students</div>
     <h2 class="section-title reveal">What Students Say</h2>
@@ -389,7 +406,7 @@
 </section>
 
 <!-- PRICING -->
-<section id="pricing" style="background:var(--bg-2);">
+<section id="pricing" class="band band-pricing">
   <div class="wrap">
     <div class="eyebrow reveal">Pricing</div>
     <h2 class="section-title reveal" style="font-size:clamp(21px,3.4vw,30px);max-width:860px;margin:0 auto;line-height:1.35;"><span style="color:var(--orange)">30%</span> of our serious students crack JEE. <span style="color:var(--orange)">65%</span> of droppers who stay 4+ months score <span style="color:var(--orange)">90+</span>. This isn't luck — it's proven strategy.</h2>
@@ -767,7 +784,7 @@ function loadTestimonials(){
 })();
 
 /* ---- Student growth matrix (real, top-growth students from Firestore) ---- */
-var GROWTH_MIN=12, GROWTH_MAX=8;
+var GROWTH_MIN=6, GROWTH_MAX=8;
 function gCard(g){
   var nm=g.name||"Student", initial=nm.charAt(0).toUpperCase();
   var before=Math.round(g.before||0), after=Math.round(g.after||0), delta=Math.round((typeof g.delta==="number")?g.delta:(after-before));

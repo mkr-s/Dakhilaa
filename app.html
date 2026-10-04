@@ -431,6 +431,14 @@
   .mnr-band > div{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 20px; text-align:center; min-width:160px; }
   .mnr-band .k{ font-size:12px; color:var(--muted); }
   .mnr-band .v{ font-size:22px; font-weight:900; color:var(--orange-l); margin-top:2px; }
+  .rt-card{ background:linear-gradient(180deg,rgba(249,115,22,.07),transparent 60%),var(--card); border:1px solid rgba(249,115,22,.3); border-radius:14px; padding:16px 18px; margin-top:14px; }
+  .rt-head{ font-weight:800; font-size:15px; margin-bottom:10px; }
+  .rt-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 0; border-top:1px solid var(--border); font-size:14px; }
+  .rt-row:first-of-type{ border-top:none; }
+  .rt-air{ font-weight:800; }
+  .rt-need{ color:var(--muted); }
+  .rt-gap{ font-weight:800; color:var(--orange-l); }
+  .rt-note{ font-size:11px; color:var(--dim); margin-top:8px; }
   .mn-num{ margin-bottom:16px; }
   .mn-num input{ width:100%; box-sizing:border-box; background:var(--card); border:2px solid var(--border); color:var(--text); font-size:20px; font-weight:800; padding:14px 16px; border-radius:12px; outline:none; }
   .mn-num input:focus{ border-color:var(--orange); }
@@ -869,6 +877,7 @@
     <div class="est-line"><span id="r_estlabel">Estimated JEE Main score</span>: <b id="r_est">0</b> / 300</div>
     <div class="est-note" id="r_estnote">An indicator based on this test — not an official score.</div>
   </div>
+  <div id="r_rank" style="margin:16px 0"></div>
   <div id="r_subjects"></div>
   <div id="r_weak"></div>
   <div id="r_path"></div>
@@ -878,6 +887,14 @@
     <button class="btn btn-outline" onclick="backToDash()">Dashboard</button>
     <button class="btn" id="r_again" onclick="startDiagnostic()">Retake</button>
   </div>
+</div></div>
+
+<!-- SAVED ATTEMPT REVIEW (reopened later from My Tests) -->
+<div id="savedReviewScreen" class="hidden"><div class="fullpage">
+  <h2 id="sr_title" style="text-align:center;margin-bottom:4px">Your attempt</h2>
+  <div style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:16px" id="sr_sub"></div>
+  <div class="adv-review" id="sr_review"></div>
+  <div class="nav-row" style="margin-top:20px"><button class="btn btn-outline" onclick="view('shell');go('mytests')">← Back to My Tests</button></div>
 </div></div>
 
 <!-- RATE MODAL -->
@@ -960,7 +977,7 @@ function readCurrent(){ try{ return localStorage.getItem("dakhilaaCurrent"); }ca
 function clearCurrentStore(){ try{ localStorage.removeItem("dakhilaaCurrent"); }catch(e){} }
 
 /* ---------- top-level views ---------- */
-function view(id){ ["loadingScreen","authScreen","shell","testScreen","resultsScreen","advScreen","advResults","mainsScreen","mnResults"].forEach(function(s){ var el=document.getElementById(s); if(el) el.classList.add("hidden"); }); document.getElementById(id).classList.remove("hidden"); window.scrollTo(0,0); }
+function view(id){ ["loadingScreen","authScreen","shell","testScreen","resultsScreen","advScreen","advResults","mainsScreen","mnResults","savedReviewScreen"].forEach(function(s){ var el=document.getElementById(s); if(el) el.classList.add("hidden"); }); document.getElementById(id).classList.remove("hidden"); window.scrollTo(0,0); }
 function showAuthStep1(){ document.getElementById("authStep1").classList.remove("hidden"); document.getElementById("authStep2").classList.add("hidden"); }
 function showAuthStep2(){ document.getElementById("authStep2").classList.remove("hidden"); document.getElementById("authStep1").classList.add("hidden"); }
 function showSignup(){ showAuthStep1(); }
@@ -1403,9 +1420,10 @@ function startDiagnostic(){
   }
   beginTest(pickDiag(), "diagnostic", false);
 }
-/* ---- growth matrix (writes only high-growth students to public 'growth' collection) ---- */
-var GROWTH_MIN=12;
+/* ---- growth matrix (writes only improving students to public 'growth' collection) ---- */
+var GROWTH_MIN=6;
 function growthTag(){ var p=currentProfile; if(p&&p.plan==="grade11")return "Class 11"; if(p&&p.plan==="grade12")return "Class 12"; if(p&&p.plan==="dropper")return "Dropper"; return "JEE aspirant"; }
+function growthShortName(n){ n=(n||"Student").trim(); var parts=n.split(/\s+/); return parts[0]+(parts[1]?(" "+parts[1].charAt(0).toUpperCase()+"."):""); }
 function upsertGrowth(){
   var p=currentProfile; if(!p||!p.last) return;
   var cur=Math.round(p.last.readiness||0);
@@ -1414,7 +1432,7 @@ function upsertGrowth(){
   if(USE_FIREBASE && fbDB && currentUser){
     fbDB.collection("users").doc(currentUser).set({ firstReadiness:p.firstReadiness },{merge:true}).catch(function(){});
     if(delta>=GROWTH_MIN){
-      fbDB.collection("growth").doc(currentUser).set({ name:(p.name||"Student"), tag:growthTag(), before:p.firstReadiness, after:cur, delta:delta, updated:Date.now() }).catch(function(e){ console.error("growth write", e); });
+      fbDB.collection("growth").doc(currentUser).set({ name:growthShortName(p.name), tag:growthTag(), before:p.firstReadiness, after:cur, delta:delta, updated:Date.now() }).catch(function(e){ console.error("growth write", e); });
     }
   } else { persistDB(); }
 }
@@ -1699,8 +1717,8 @@ function mnFinish(){
   payToast("Practice saved. You attempted "+pk+" and viewed "+seen+" solutions out of "+tot+".", false); }
 function mnExit(){ var live=mnS&&mnS.live; if(confirm(live?"Exit the LIVE test? Your progress will be lost and you can't re-enter this week.":"Exit this practice? Your progress in this session will be lost.")){ liveDisarmTimer(); if(mnS) mnS.live=false; view("shell"); go(live?"live":"tests"); } }
 /* ----- Mains mock scoring (JEE Main: +4 correct, -1 wrong, 0 blank) ----- */
-function mnEstPercentile(pct){ // pct = marks/300*100 ; approximate JEE Main percentile curve
-  var pts=[[0,0],[7,8],[13,20],[20,35],[27,50],[33,62],[40,72],[50,83],[60,90],[70,95],[80,98],[90,99.4],[100,100]];
+function mnEstPercentile(pct){ // pct = marks/maxMarks*100 ; approximate JEE Main percentile curve (based on recent NTA marks-vs-percentile trends)
+  var pts=[[0,0],[3.3,5],[6.7,15],[10,28],[14.3,45],[16.7,55],[20,65],[24,75],[29.3,85],[33.3,90],[40,94.6],[46.7,96.9],[53.3,98.2],[66.7,99.42],[83.3,99.9],[95.3,99.99],[100,100]];
   for(var i=0;i<pts.length-1;i++){ if(pct<=pts[i+1][0]){ var a=pts[i],b=pts[i+1]; var t=(pct-a[0])/(b[0]-a[0]); return a[1]+t*(b[1]-a[1]); } }
   return 100;
 }
@@ -1752,6 +1770,34 @@ function mnRankFromMarks(marks){
   var maxM=mnS.qs.length*4; var pct=Math.max(0,marks)/maxM*100;
   var pctile=mnEstPercentile(pct); var rank=Math.max(1, Math.round((100-pctile)/100*1100000));
   return {pctile:pctile, rank:rank};
+}
+/* ---- shared rank + "how to climb" target guide (marks are out of 300) ---- */
+function rankFrom300(marks){
+  var pct=Math.max(0,Math.min(300,marks))/300*100;
+  var pctile=mnEstPercentile(pct);
+  var rank=Math.max(1, Math.round((100-pctile)/100*1100000));
+  return {pctile:pctile, rank:rank};
+}
+function marksForRank(targetRank){ // smallest /300 marks whose estimated rank is at least as good as targetRank
+  for(var m=0;m<=300;m++){ if(rankFrom300(m).rank<=targetRank){ return m; } }
+  return 300;
+}
+function rankBandHTML(rk){
+  return '<div class="mnr-band"><div><div class="k">Estimated percentile</div><div class="v">'+rk.pctile.toFixed(2)+'</div></div>'+
+    '<div><div class="k">Estimated All-India Rank</div><div class="v">~'+rk.rank.toLocaleString("en-IN")+'</div></div></div>'+
+    '<div style="font-size:11px;color:var(--dim);margin-top:6px;text-align:center">Approximate indicator based on this test — not an official NTA score/rank.</div>';
+}
+function rankTargetHTML(curMarks){
+  var cur=rankFrom300(curMarks);
+  var targets=[{air:1000,label:"Top 1,000"},{air:10000,label:"AIR 10,000"},{air:50000,label:"AIR 50,000"},{air:100000,label:"AIR 1 lakh"}];
+  var shown=targets.filter(function(t){ return t.air<cur.rank; }).slice(0,3);
+  var rows=shown.map(function(t){
+    var need=marksForRank(t.air); var gap=Math.max(0,need-curMarks);
+    return '<div class="rt-row"><span class="rt-air">'+t.label+'</span><span class="rt-need">~'+need+'/300</span><span class="rt-gap">'+(gap>0?("+"+gap+" marks"):"reached ✓")+'</span></div>';
+  }).join("");
+  if(!rows){ rows='<div class="rt-row" style="justify-content:center;color:var(--green)">You\'re already in the top rank band — keep it up! 🔥</div>'; }
+  return '<div class="rt-card"><div class="rt-head">🪜 How to climb — marks needed for a better rank</div>'+rows+
+    '<div class="rt-note">Approximate (JEE Main trend). Near the top, a few marks move your rank a lot — start with your weakest subject.</div></div>';
 }
 var mnWhatIfState=null;
 function mnRenderWhatIf(r,an){
@@ -1828,7 +1874,8 @@ function mnSubmit(){
   document.getElementById("mnr_rank").innerHTML=
     '<div class="mnr-band"><div><div class="k">Estimated percentile</div><div class="v">'+pctile.toFixed(2)+'</div></div>'+
     '<div><div class="k">Estimated All-India Rank</div><div class="v">~'+estRank.toLocaleString('en-IN')+'</div></div></div>'+
-    '<div style="font-size:11px;color:var(--dim);margin-top:6px;text-align:center">Approximate indicator based on this mock — not an official NTA score/rank.</div>';
+    '<div style="font-size:11px;color:var(--dim);margin-top:6px;text-align:center">Approximate indicator based on this mock — not an official NTA score/rank.</div>'+
+    rankTargetHTML(r.marks);
   var subs=Object.keys(r.perSub);
   document.getElementById("mnr_subjects").innerHTML=subs.map(function(s){ var d=r.perSub[s]; var mx=(d.c+d.w+d.b)*4;
     return '<div class="subj-row"><div class="top"><span>'+s+'</span><span class="sc">'+d.m+' / '+mx+' marks · '+d.c+'✓ '+d.w+'✗</span></div><div class="bar"><div class="f" style="width:'+Math.max(0,Math.min(100,d.m/mx*100))+'%;background:'+(subColor(s)||"var(--orange)")+'"></div></div></div>'; }).join("");
@@ -1844,10 +1891,16 @@ function mnSubmit(){
   if(currentProfile){ var pctInt=Math.round(pct);
     var he={ type:mnS.name, score:pctInt, marks:r.marks, correct:r.correct, total:mnS.qs.length, subjects:{}, date:Date.now() };
     Object.keys(r.perSub).forEach(function(s){ he.subjects[s]=r.perSub[s].m; });
-    currentProfile.history=(currentProfile.history||[]).concat([he]); if(currentProfile.history.length>30) currentProfile.history=currentProfile.history.slice(-30);
+    he.review=mnS.qs.map(function(q,i){ return { img:q.img, sub:q.subject, you:(mnS.picks[i]==null?null:mnS.picks[i]), corr:q.answer, sol:q.sol||"", type:q.type }; });
+    currentProfile.history=(currentProfile.history||[]).concat([he]); trimHistory();
     if(currentProfile.stats) currentProfile.stats.testsTaken=(currentProfile.stats.testsTaken||0)+1;
+    // feed the growth matrix (same readiness scale as the diagnostic/full mock)
+    var _weak=null,_worst=2; Object.keys(r.perSub).forEach(function(s){ var d=r.perSub[s]; var tot=d.c+d.w+d.b; var a=tot>0?d.c/tot:0; if(a<_worst){ _worst=a; _weak=s; } });
+    currentProfile.last={ readiness:pctInt, weakest:(_weak||""), est:r.marks, per:(currentProfile.last&&currentProfile.last.per)||null };
     if(USE_FIREBASE && fbDB && currentUser){ fbDB.collection("users").doc(currentUser).set({ testsTaken:firebase.firestore.FieldValue.increment(1), history:currentProfile.history },{merge:true}).catch(function(){}); }
-    else { persistDB(); } }
+    else { persistDB(); }
+    upsertGrowth();
+  }
   var lv=document.getElementById("mnr_live");
   if(mnS && mnS.live){ liveOnSubmit(r); } else if(lv){ lv.classList.add("hidden"); lv.innerHTML=""; }
   view("mnResults");
@@ -2204,7 +2257,8 @@ function submitTest(){
   var subjTags={}; qs.forEach(function(q){ subjTags[q.subject]=(subjTags[q.subject]||0)+1; });
   currentProfile.stats.testsTaken+=1; currentProfile.stats.questionsSolved+=total; currentProfile.stats.correctAnswers+=correct;
   var histEntry={ type:(isMock?(testState.mockName||"Mock Test"):modeLabel(testState.mode)), score:scorePct, marks:(isMock?marks:null), correct:correct, total:total, subjects:subjTags, date:Date.now() };
-  currentProfile.history=(currentProfile.history||[]).concat([histEntry]); if(currentProfile.history.length>30) currentProfile.history=currentProfile.history.slice(-30);
+  histEntry.review=qs.map(function(q,i){ return { img:q.img, sub:q.subject, you:(ans[i]==null?null:ans[i]), corr:q.correct, sol:q.sol||"", opt:true }; });
+  currentProfile.history=(currentProfile.history||[]).concat([histEntry]); trimHistory();
   if(isMock) renderMockReport(per, correct, wrong, total, marks, scorePct, qs, ans);
   else if(diag) renderDiagnosticReport(per, correct, total, scorePct, qs, ans);
   else renderPracticeResult(correct, total, scorePct, qs, ans);
@@ -2224,6 +2278,7 @@ function renderMockReport(per, correct, wrong, total, marks, scorePct, qs, ans){
   document.getElementById("r_estlabel").textContent="Score";
   document.getElementById("r_est").textContent=marks;
   document.getElementById("r_estnote").textContent="+4 correct, −1 wrong · "+correct+" correct · "+wrong+" wrong · "+(total-correct-wrong)+" unattempted.";
+  var _rk=rankFrom300(marks); document.getElementById("r_rank").innerHTML=rankBandHTML(_rk)+rankTargetHTML(marks);
   var accBy={}, sc=document.getElementById("r_subjects"); sc.innerHTML="";
   SUBJECTS.forEach(function(s){ var d=per[s]; var m=4*d.c-1*d.w; var a=d.t>0?Math.round(100*d.c/d.t):0; accBy[s]=d.t>0?(d.c/d.t):0; sc.innerHTML+='<div class="subj-row"><div class="top"><span>'+s+'</span><span class="sc">'+m+'/100 · '+a+'%</span></div><div class="bar"><div class="f" style="width:'+a+'%;background:'+subColor(s)+'"></div></div></div>'; });
   var weakest=SUBJECTS[0]; SUBJECTS.forEach(function(s){ if(accBy[s]<accBy[weakest]) weakest=s; });
@@ -2248,6 +2303,7 @@ function renderDiagnosticReport(per, correct, total, score, qs, ans){
   document.getElementById("r_ring").style.border="8px solid "+ringColor(score);
   var est=0, accBy={}; SUBJECTS.forEach(function(s){ var a=per[s].t>0?(per[s].c/per[s].t):0; accBy[s]=a; est+=a*100; }); est=Math.round(est);
   document.getElementById("r_est").textContent=est;
+  var _rk=rankFrom300(est); document.getElementById("r_rank").innerHTML=rankBandHTML(_rk)+rankTargetHTML(est);
   var sc=document.getElementById("r_subjects"); sc.innerHTML="";
   SUBJECTS.forEach(function(s){ var a=Math.round(accBy[s]*100); sc.innerHTML+='<div class="subj-row"><div class="top"><span>'+s+'</span><span class="sc">'+per[s].c+'/'+per[s].t+' ('+a+'%)</span></div><div class="bar"><div class="f" style="width:'+a+'%;background:'+subColor(s)+'"></div></div></div>'; });
   var weakest=SUBJECTS[0]; SUBJECTS.forEach(function(s){ if(accBy[s]<accBy[weakest]) weakest=s; });
@@ -2265,6 +2321,7 @@ function renderDiagnosticReport(per, correct, total, score, qs, ans){
 }
 function renderPracticeResult(correct, total, score, qs, ans){
   document.getElementById("r_title").textContent=modeLabel(testState.mode)+" Complete 🎉";
+  document.getElementById("r_rank").innerHTML="";
   document.getElementById("r_estwrap").classList.add("hidden");
   document.getElementById("r_again").classList.add("hidden");
   document.getElementById("r_pct").textContent=score+"%";
@@ -2287,14 +2344,42 @@ function backToDash(){ view("shell"); go("overview"); }
 
 /* ---------- my tests ---------- */
 function renderMyTests(){
-  var h=(currentProfile.history||[]).slice().reverse();
+  var hist=(currentProfile.history||[]);
   var list=document.getElementById("mt_list"), empty=document.getElementById("mt_empty");
-  if(!h.length){ list.innerHTML=""; empty.classList.remove("hidden"); return; }
+  if(!hist.length){ list.innerHTML=""; empty.classList.remove("hidden"); return; }
   empty.classList.add("hidden");
-  list.innerHTML=h.map(function(e){
-    var tags=Object.keys(e.subjects||{}).map(function(k){ return '<span class="t">'+k+' ('+e.subjects[k]+')</span>'; }).join("");
-    return '<div class="htcard"><div class="hh"><span class="type">'+e.type+'</span><span>'+fmtDate(e.date)+'</span></div><div class="score">'+e.score+'% <span>'+e.correct+'/'+e.total+' correct</span></div><div class="tags">'+tags+'</div></div>';
+  var out=[];
+  for(var k=hist.length-1;k>=0;k--){ var e=hist[k];
+    var tags=Object.keys(e.subjects||{}).map(function(key){ return '<span class="t">'+key+' ('+e.subjects[key]+')</span>'; }).join("");
+    var marks=(e.marks!=null)?(' · '+e.marks+' marks'):'';
+    var btn=(e.review&&e.review.length)?('<div style="margin-top:10px"><button class="btn btn-outline" style="padding:7px 14px;font-size:13px" onclick="openSavedReview('+k+')">👁 View my answers &amp; solutions</button></div>'):'';
+    out.push('<div class="htcard"><div class="hh"><span class="type">'+e.type+'</span><span>'+fmtDate(e.date)+'</span></div><div class="score">'+e.score+'% <span>'+e.correct+'/'+e.total+' correct'+marks+'</span></div><div class="tags">'+tags+'</div>'+btn+'</div>');
+  }
+  list.innerHTML=out.join("");
+}
+/* keep history small: cap to 30 attempts, keep per-question answers only for the most recent 8 */
+function trimHistory(){
+  if(!currentProfile||!currentProfile.history) return;
+  var h=currentProfile.history; if(h.length>30){ h=currentProfile.history=h.slice(-30); }
+  var seen=0; for(var i=h.length-1;i>=0;i--){ if(h[i] && h[i].review){ seen++; if(seen>8) delete h[i].review; } }
+}
+/* reopen a past attempt's answers + solutions from My Tests */
+function openSavedReview(idx){
+  var h=currentProfile&&currentProfile.history;
+  if(!h||!h[idx]||!h[idx].review||!h[idx].review.length){ payToast("Answers for this attempt weren't saved.", true); return; }
+  var e=h[idx];
+  document.getElementById("sr_title").textContent=e.type+" — your answers";
+  document.getElementById("sr_sub").textContent=fmtDate(e.date)+" · "+e.correct+"/"+e.total+" correct"+(e.marks!=null?(" · "+e.marks+" marks"):"");
+  document.getElementById("sr_review").innerHTML=e.review.map(function(q,i){
+    var ok, youTxt, corrTxt;
+    if(q.opt){ ok=(q.you!=null&&q.you===q.corr); youTxt=(q.you==null)?"—":("Option "+(q.you+1)); corrTxt="Option "+(q.corr+1); }
+    else { ok=(q.you!=null&&String(q.you)===String(q.corr)); youTxt=(q.you==null)?"—":String(q.you); corrTxt=String(q.corr); }
+    var cls=(q.you==null)?"zero":(ok?"pos":"neg"); var mk=(q.you==null)?"0":(ok?"+4":(q.type==="numerical"?"0":"−1"));
+    var sol=q.sol?('<details class="adv-sol"><summary>Show detailed solution</summary><img src="'+q.sol+'" alt="solution" loading="lazy"></details>'):'';
+    return '<div class="adv-rq"><div class="rqtop"><span>'+(q.sub||"")+' · Q'+(i+1)+'</span><span class="mk '+cls+'">'+mk+'</span></div><img src="'+q.img+'" alt="" loading="lazy">'+
+      '<div class="rqans">Your answer: <span class="'+(ok?"ok":(q.you==null?"":"bad"))+'">'+youTxt+'</span> &nbsp;·&nbsp; Correct: <span class="yr">'+corrTxt+'</span></div>'+sol+'</div>';
   }).join("");
+  view("savedReviewScreen");
 }
 function fmtDate(ts){ try{ var d=new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){ return ""; } }
 
