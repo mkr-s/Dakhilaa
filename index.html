@@ -21,7 +21,7 @@
     --font-body:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     --font-display:'Anton','Bebas Neue',Impact,sans-serif;
   }
-  html{ scroll-behavior:smooth; }
+  html{ scroll-behavior:smooth; overflow-x:clip; }
   .hidden{ display:none !important; }
   body{
     font-family:var(--font-body);
@@ -81,7 +81,7 @@
   /* HERO */
   .hero{ text-align:center; padding:64px 0 48px; position:relative; }
   .hero::before{ content:""; position:absolute; top:-40px; left:50%; transform:translateX(-50%);
-    width:520px; height:320px; background:radial-gradient(ellipse,rgba(249,115,22,.18),transparent 70%); filter:blur(10px); z-index:0; }
+    width:min(520px,88vw); height:320px; background:radial-gradient(ellipse,rgba(249,115,22,.18),transparent 70%); filter:blur(10px); z-index:0; }
   .hero>*{ position:relative; z-index:1; }
   .badge{ display:inline-flex; align-items:center; gap:6px; background:rgba(249,115,22,.12); color:var(--orange-l);
     border:1px solid rgba(249,115,22,.3); padding:7px 16px; border-radius:30px; font-size:13px; font-weight:700; margin-bottom:22px; }
@@ -219,9 +219,39 @@
   .foot-bottom{ text-align:center; color:var(--dim); font-size:13px; border-top:1px solid var(--border); padding-top:22px; line-height:2; }
 
   /* scroll reveal animation */
-  .reveal{ opacity:0; transform:translateY(34px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal{ opacity:0; transform:translateY(34px); transition:opacity .7s ease, transform .7s cubic-bezier(.22,1,.36,1); }
   .reveal.in{ opacity:1; transform:translateY(0); }
-  @media(prefers-reduced-motion:reduce){ .reveal{ opacity:1; transform:none; transition:none; } }
+
+  /* --- ambient landing animations (all transform/opacity; guarded for reduced-motion) --- */
+  /* hero glow slowly breathes */
+  .hero::before{ animation:heroGlow 7s ease-in-out infinite; }
+  @keyframes heroGlow{ 0%,100%{ opacity:.7; transform:translateX(-50%) scale(1); } 50%{ opacity:1; transform:translateX(-50%) scale(1.08); } }
+  /* highlighted hero words get a moving orange shimmer */
+  .hero h1 .hl{ background:linear-gradient(100deg,var(--orange) 20%,#ffd7a8 45%,var(--orange-l) 60%,var(--orange) 85%);
+    background-size:220% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:var(--orange);
+    animation:hlShimmer 5.5s linear infinite; }
+  @keyframes hlShimmer{ 0%{ background-position:200% 0; } 100%{ background-position:-20% 0; } }
+  /* subject pills gently float, each offset so they don't move in lockstep */
+  .pills .pill{ animation:floaty 4.5s ease-in-out infinite; }
+  .pills .pill:nth-child(2){ animation-delay:.6s; } .pills .pill:nth-child(3){ animation-delay:1.2s; }
+  @keyframes floaty{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
+  /* the orange accent line on each band section shimmers across */
+  .band::before{ background:linear-gradient(90deg,transparent,rgba(249,115,22,.55),rgba(255,210,160,.9),rgba(249,115,22,.55),transparent);
+    background-size:220% 100%; animation:bandShine 6s linear infinite; }
+  @keyframes bandShine{ 0%{ background-position:200% 0; } 100%{ background-position:-20% 0; } }
+  /* primary call-to-action has a soft pulsing halo */
+  .hero-btns .btn-primary{ animation:ctaPulse 3.2s ease-in-out infinite; }
+  @keyframes ctaPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(249,115,22,.0); } 50%{ box-shadow:0 0 0 10px rgba(249,115,22,.10); } }
+  /* growth card top bar gets a travelling sheen */
+  .gcard::before{ background:linear-gradient(90deg,var(--orange),#ffd7a8,var(--orange-l),var(--orange)); background-size:220% 100%; animation:bandShine 4.5s linear infinite; }
+  /* staggered cascade: JS sets --d; children fade up one after another */
+  .reveal[style*="--d"]{ transition-delay:var(--d); }
+
+  @media(prefers-reduced-motion:reduce){
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .hero::before,.hero h1 .hl,.pills .pill,.band::before,.hero-btns .btn-primary,.gcard::before{ animation:none; }
+    .hero h1 .hl{ -webkit-text-fill-color:var(--orange); }
+  }
 
   /* TESTIMONIALS marquee */
   .tm-viewport{ overflow:hidden; position:relative; -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); }
@@ -765,6 +795,14 @@ function loadTestimonials(){
   var sels = ".eyebrow,.section-title,.section-sub,.fcard,.step,.gcard,.bcard,.qa,.price-card,.stat,.pills,.hero-btns,.checks,.predictor,.cta,.partner,.tm-viewport,.foot-grid,.hero h1,.hero p.lead,.badge";
   var picked = [].slice.call(document.querySelectorAll(sels));
   picked.forEach(function(el){ el.classList.add("reveal"); });
+  /* staggered cascade: items in the same grid fade up one after another */
+  var stagSel = ".fcard,.gcard,.bcard,.price-card,.step,.stat";
+  [].slice.call(document.querySelectorAll(stagSel)).forEach(function(el){
+    if(!el.parentNode) return;
+    var sibs = [].slice.call(el.parentNode.children).filter(function(c){ return c.matches && c.matches(stagSel); });
+    var idx = sibs.indexOf(el);
+    if(idx>0) el.style.setProperty("--d", Math.min(idx*0.08, 0.48)+"s");
+  });
   var all = [].slice.call(document.querySelectorAll(".reveal"));
   if(!("IntersectionObserver" in window)){ all.forEach(function(e){ e.classList.add("in"); }); }
   else {
