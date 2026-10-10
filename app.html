@@ -951,7 +951,7 @@ var firebaseConfig = {
 var USE_FIREBASE = firebaseConfig.apiKey.indexOf("PASTE") === -1 && typeof firebase !== "undefined";
 /* OTP is disabled for now — students sign in with just name + mobile (no OTP).
    To bring OTP back later, set this to true (Firebase Phone Auth must be enabled). */
-var OTP_ENABLED = false;
+var OTP_ENABLED = true;
 /* Owner login: this mobile + this password unlock everything. Password is required
    for this number, so knowing the number alone is not enough. */
 var OWNER_MOBILE = "9599105264";
@@ -1626,14 +1626,14 @@ function mnRenderChap(){
   var list=mnChapters[mnCurSub]||[];
   g.innerHTML=list.map(function(ch,i){
     var locked=(!paid && i>=MN_FREE_CHAP);
-    if(locked) return '<div class="mk mn-chapcard locked"><span class="pat">'+mnCurSub+'</span><h4>'+ch.topic+' 🔒</h4><div class="meta">'+ch.count+' questions · with solutions</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
-    return '<div class="mk mn-chapcard"><span class="pat">'+mnCurSub+'</span><h4>'+ch.topic+'</h4><div class="meta">'+ch.count+' questions · with solutions</div><button class="btn btn-block" onclick="mnStartChap(\''+mnCurSub+'\','+i+')">Start Practice</button></div>';
+    if(locked) return '<div class="mk mn-chapcard locked"><span class="pat">'+mnCurSub+'</span><h4>'+ch.topic+' 🔒</h4><div class="meta">'+ch.count+' questions · scored + solutions</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
+    return '<div class="mk mn-chapcard"><span class="pat">'+mnCurSub+'</span><h4>'+ch.topic+'</h4><div class="meta">'+ch.count+' questions · scored + solutions</div><button class="btn btn-block" onclick="mnStartChap(\''+mnCurSub+'\','+i+')">Start Practice</button></div>';
   }).join("");
 }
 function mnStartChap(sub,i){
   if(!hasPaid() && i>=MN_FREE_CHAP){ go("settings"); payToast("This chapter test is part of a plan. Choose a plan to unlock all chapter-wise tests.", true); return; }
   var ch=(mnChapters[sub]||[])[i]; if(!ch) return;
-  var qs=ch.qs.map(function(q){ return {img:MN_DIR+q.img, sol:MN_DIR+q.sol, subject:sub, topic:ch.topic, qno:q.qno}; });
+  var qs=ch.qs.map(function(q){ return {img:MN_DIR+q.img, sol:MN_DIR+q.sol, subject:sub, topic:ch.topic, qno:q.qno, answer:(q.answer||""), type:(q.type||"single")}; });
   mnBegin(sub+" · "+ch.topic, qs, false);
 }
 function mnStartMock(i){
@@ -1715,17 +1715,46 @@ function mnFinish(){
   if(!confirm("Finish this practice and see your summary?")) return;
   mnFinishPractice();
 }
-/* Practice (chapter/topic) tests have no answer key — show a summary + your answers + solutions, not a silent redirect. */
+/* Chapter/topic tests: score the questions that have an answer key, show every
+   question with your answer, the correct option (when known) and full solution. */
 function mnFinishPractice(){
-  var seen=mnS.seen.filter(Boolean).length, pk=mnS.picks.filter(function(x){return x!=null;}).length, tot=mnS.qs.length;
-  document.getElementById("sr_title").textContent=mnS.name+" — practice summary";
-  document.getElementById("sr_sub").textContent="You attempted "+pk+" of "+tot+" · viewed "+seen+" solutions. Review every question with its full solution below.";
-  document.getElementById("sr_review").innerHTML=mnS.qs.map(function(q,i){
-    var p=mnS.picks[i]; var you=(p==null)?"—":("Option "+p);
+  var tot=mnS.qs.length, pk=mnS.picks.filter(function(x){return x!=null;}).length, seen=mnS.seen.filter(Boolean).length;
+  var graded=0, correct=0, wrong=0;
+  mnS.qs.forEach(function(q,i){ if(q.answer){ graded++; var p=mnS.picks[i];
+    if(p!=null){ if(mnIsCorrect(q,p)) correct++; else wrong++; } } });
+  var marks=correct*4 - wrong*1;
+  document.getElementById("sr_title").textContent=mnS.name+" — summary";
+  var scoreHtml="";
+  if(graded>0){
+    scoreHtml='<div class="mnr-band" style="margin:4px 0 14px">'+
+      '<div><div class="k">Score (+4/−1)</div><div class="v">'+marks+'</div></div>'+
+      '<div><div class="k">Correct</div><div class="v" style="color:var(--green)">'+correct+'</div></div>'+
+      '<div><div class="k">Wrong</div><div class="v" style="color:#f87171">'+wrong+'</div></div></div>';
+    document.getElementById("sr_sub").textContent="Scored on "+graded+" of "+tot+" questions · you attempted "+pk+". Correct answers & full solutions below.";
+  } else {
+    document.getElementById("sr_sub").textContent="You attempted "+pk+" of "+tot+" · viewed "+seen+" solutions. Full solutions below.";
+  }
+  var rev=mnS.qs.map(function(q,i){
+    var p=mnS.picks[i], hasKey=!!q.answer, ok=hasKey && p!=null && mnIsCorrect(q,p);
+    var you=(p==null)?"—":("Option "+p);
+    var cls=!hasKey?"":(p==null?"zero":(ok?"pos":"neg"));
+    var mkHtml=hasKey?('<span class="mk '+cls+'">'+(p==null?"0":(ok?"+4":"−1"))+'</span>'):'';
+    var corrHtml=hasKey?(' &nbsp;·&nbsp; Correct: <span class="yr">Option '+q.answer+'</span>'):' &nbsp;·&nbsp; <span style="color:var(--dim)">answer in solution</span>';
     var sol=q.sol?('<details class="adv-sol"><summary>Show detailed solution</summary><img src="'+q.sol+'" alt="solution" loading="lazy"></details>'):'';
-    return '<div class="adv-rq"><div class="rqtop"><span>'+(q.subject||"")+' · Q'+(i+1)+'</span></div><img src="'+q.img+'" alt="" loading="lazy">'+
-      '<div class="rqans">Your answer: <span>'+you+'</span></div>'+sol+'</div>';
+    return '<div class="adv-rq"><div class="rqtop"><span>'+(q.subject||"")+' · Q'+(i+1)+'</span>'+mkHtml+'</div><img src="'+q.img+'" alt="" loading="lazy">'+
+      '<div class="rqans">Your answer: <span class="'+(ok?"ok":(p==null?"":(hasKey?"bad":"")))+'">'+you+'</span>'+corrHtml+'</div>'+sol+'</div>';
   }).join("");
+  document.getElementById("sr_review").innerHTML=scoreHtml+rev;
+  // save to My Tests (graded chapter attempts)
+  if(currentProfile && graded>0){
+    var he={ type:mnS.name, score:Math.round(correct/graded*100), marks:marks, correct:correct, total:graded, subjects:{}, date:Date.now() };
+    he.subjects[mnS.qs[0]&&mnS.qs[0].subject||"Practice"]=marks;
+    he.review=mnS.qs.map(function(q,i){ return { img:(q.img||""), sub:(q.subject||""), you:(mnS.picks[i]==null?null:mnS.picks[i]), corr:(q.answer||""), sol:(q.sol||""), type:(q.type||"single") }; });
+    currentProfile.history=(currentProfile.history||[]).concat([he]); trimHistory();
+    if(currentProfile.stats) currentProfile.stats.testsTaken=(currentProfile.stats.testsTaken||0)+1;
+    if(USE_FIREBASE && fbDB && currentUser){ try{ fbDB.collection("users").doc(currentUser).set({ testsTaken:firebase.firestore.FieldValue.increment(1), history:currentProfile.history },{merge:true}).catch(function(){}); }catch(e){ console.error(e); } }
+    else { try{ persistDB(); }catch(e){} }
+  }
   srBackSec="tests"; var _bb=document.getElementById("sr_backBtn"); if(_bb) _bb.textContent="← Back to Tests";
   view("savedReviewScreen");
 }
