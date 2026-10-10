@@ -1061,7 +1061,7 @@ function localCreateOrLogin(){
   else { usersDB[key].name=pendingSignup.name; usersDB[key].instagram=pendingSignup.instagram; }
   persistDB(); currentUser=key; currentEmail=""; currentProfile=usersDB[key]; persistCurrent(key); enterApp();
 }
-function logout(){ if(USE_FIREBASE){ fbAuth.signOut(); } else { clearCurrentStore(); currentUser=null; currentProfile=null; view("authScreen"); showAuthStep1(); } confirmationResult=null; }
+function logout(){ detachUserSync(); if(USE_FIREBASE){ fbAuth.signOut(); } else { clearCurrentStore(); currentUser=null; currentProfile=null; view("authScreen"); showAuthStep1(); } confirmationResult=null; }
 function initFirebaseAuth(){
   fbAuth.onAuthStateChanged(function(user){
     setBtnBusy("otp_send_btn",false); setBtnBusy("otp_verify_btn",false);
@@ -1084,9 +1084,61 @@ function initFirebaseAuth(){
           firstReadiness:(typeof d.firstReadiness==="number"?d.firstReadiness:undefined) };
         pendingSignup=null;
         enterApp();
-      }).catch(function(){ var mob=(user.phoneNumber||"").replace("+91",""); currentUser=user.uid; currentEmail=mob; currentProfile={ name:(pendingSignup&&pendingSignup.name)||"Student", email:(mob?("+91 "+mob):""), mobile:mob, instagram:"", stats:{testsTaken:0,questionsSolved:0,correctAnswers:0}, last:null, history:[], plan:null }; enterApp(); });
-    } else { currentUser=null; currentProfile=null; view("authScreen"); if(pendingPlan){ showPlanIntent(); } else { showAuthStep1(); } }
+        attachUserSync(user.uid);
+      }).catch(function(){ var mob=(user.phoneNumber||"").replace("+91",""); currentUser=user.uid; currentEmail=mob; currentProfile={ name:(pendingSignup&&pendingSignup.name)||"Student", email:(mob?("+91 "+mob):""), mobile:mob, instagram:"", stats:{testsTaken:0,questionsSolved:0,correctAnswers:0}, last:null, history:[], plan:null }; enterApp(); attachUserSync(user.uid); });
+    } else { detachUserSync(); currentUser=null; currentProfile=null; view("authScreen"); if(pendingPlan){ showPlanIntent(); } else { showAuthStep1(); } }
   });
+}
+
+/* ---------- live cross-device sync ----------
+   One real-time listener on the student's own user doc. When the same account
+   is used on another device (a test taken, a plan unlocked, photo changed), the
+   open device updates on its own — no reload. Guarded so it never disturbs an
+   active test, never moves the scroll, and never lets stale/shorter data clobber
+   fresher local data. */
+var userUnsub=null, curSec="overview";
+function attachUserSync(uid){
+  if(!(USE_FIREBASE && fbDB && uid)) return;
+  detachUserSync();
+  var first=true;
+  try{
+    userUnsub=fbDB.collection("users").doc(uid).onSnapshot(function(doc){
+      if(first){ first=false; return; }                 // initial data already applied on login
+      if(doc.metadata && doc.metadata.hasPendingWrites) return; // ignore this device's own just-made writes
+      if(!doc.exists || !currentProfile) return;
+      var d=doc.data(), cur=currentProfile, changed=false;
+      if(d.name && d.name!==cur.name){ cur.name=d.name; changed=true; }
+      if(typeof d.instagram==="string" && d.instagram!==cur.instagram){ cur.instagram=d.instagram; changed=true; }
+      if(d.photo && d.photo!==cur.photo){ cur.photo=d.photo; changed=true; }
+      var s=cur.stats||{testsTaken:0,questionsSolved:0,correctAnswers:0};
+      var nt=Math.max(s.testsTaken||0, d.testsTaken||0), nq=Math.max(s.questionsSolved||0, d.questionsSolved||0), nc=Math.max(s.correctAnswers||0, d.correctAnswers||0);
+      if(nt!==s.testsTaken||nq!==s.questionsSolved||nc!==s.correctAnswers){ cur.stats={ testsTaken:nt, questionsSolved:nq, correctAnswers:nc }; changed=true; }
+      if(Array.isArray(d.history) && d.history.length>=((cur.history&&cur.history.length)||0)){ cur.history=d.history; changed=true; }
+      if(d.plan){ if(d.plan!==cur.plan){ changed=true; } cur.plan=d.plan; cur.planName=d.planName||cur.planName; cur.planSince=d.planSince||cur.planSince; cur.lastPaymentId=d.lastPaymentId||cur.lastPaymentId; }
+      if(typeof d.lastReadiness==="number"){ cur.last={ readiness:d.lastReadiness, weakest:d.weakestSubject||"", est:d.lastEst||0, per:d.lastPer||null }; changed=true; }
+      if(typeof d.firstReadiness==="number") cur.firstReadiness=d.firstReadiness;
+      if(d.diagMonth) cur.diagMonth=d.diagMonth; if(typeof d.diagCount==="number") cur.diagCount=d.diagCount;
+      if(changed) refreshLiveUI();
+    }, function(err){ console.error("sync listener:", err); });
+  }catch(e){ console.error("attachUserSync:", e); }
+}
+function detachUserSync(){ if(userUnsub){ try{ userUnsub(); }catch(e){} userUnsub=null; } }
+function refreshLiveUI(){
+  var shell=document.getElementById("shell");
+  if(!shell || shell.classList.contains("hidden")) return;  // mid-test / results: don't touch
+  var y=window.scrollY||window.pageYOffset||0;
+  try{
+    var dn=document.getElementById("dash_name"); if(dn) dn.textContent=currentProfile.name;
+    var sn=document.getElementById("sb_name"); if(sn) sn.textContent=currentProfile.name;
+    paintAvatar(); applyPlanUI();
+    var sec=curSec||"overview";
+    if(sec==="overview") renderOverview();
+    else if(sec==="mytests") renderMyTests();
+    else if(sec==="progress") renderProgress();
+    else if(sec==="weak") renderWeak();
+    else if(sec==="settings"){ var st=document.getElementById("set_tests"); if(st) st.textContent=currentProfile.stats.testsTaken; }
+  }catch(e){ console.error("refreshLiveUI:", e); }
+  window.scrollTo(0,y);
 }
 
 /* ---------- payments (Razorpay) ---------- */
@@ -1295,6 +1347,7 @@ function enterApp(){
 
 /* ---------- navigation ---------- */
 function go(sec){
+  curSec=sec;
   var navs=document.querySelectorAll(".sb-nav .navi"); for(var i=0;i<navs.length;i++){ navs[i].classList.toggle("active", navs[i].getAttribute("data-sec")===sec); }
   ["overview","qbank","tests","mytests","daily","weak","progress","ai","predictor","live","settings"].forEach(function(s){
     var el=document.getElementById("sec-"+s); if(el) el.classList.toggle("hidden", s!==sec);
