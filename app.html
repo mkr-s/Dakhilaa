@@ -983,16 +983,17 @@ function showAuthStep2(){ document.getElementById("authStep2").classList.remove(
 function showSignup(){ showAuthStep1(); }
 function showSignin(){ showAuthStep1(); }
 function setBtnBusy(id,b,t){ var x=document.getElementById(id); if(!x)return; x.disabled=b; if(b){ x.dataset.l=x.textContent; x.textContent=t||"Please wait…"; } else if(x.dataset.l){ x.textContent=x.dataset.l; } }
-function fbError(err){ var c=(err&&err.code)?err.code:"";
+function fbError(err){ var c=(err&&err.code)?err.code:""; try{ console.error("auth error:", err&&err.code, err&&err.message, err); }catch(e){}
   if(c.indexOf("invalid-phone-number")>=0||c.indexOf("missing-phone-number")>=0) return "Please enter a valid mobile number.";
   if(c.indexOf("invalid-verification-code")>=0) return "Incorrect OTP. Please check and try again.";
   if(c.indexOf("code-expired")>=0) return "This OTP expired. Please resend a new one.";
-  if(c.indexOf("captcha-check-failed")>=0||c.indexOf("captcha")>=0) return "Verification check failed. Please reload and try again.";
+  if(c.indexOf("billing-not-enabled")>=0) return "Phone OTP needs the Blaze (billing) plan enabled in Firebase. (Admin)";
+  if(c.indexOf("invalid-app-credential")>=0||c.indexOf("missing-app-credential")>=0||c.indexOf("captcha-check-failed")>=0||c.indexOf("captcha")>=0) return "Verification failed — add this website to Firebase → Authentication → Settings → Authorized domains, then reload. (Admin)";
   if(c.indexOf("quota-exceeded")>=0) return "SMS limit reached for now. Please try again later.";
   if(c.indexOf("network")>=0) return "Network error. Please check your connection.";
   if(c.indexOf("too-many-requests")>=0) return "Too many attempts. Please wait and try again.";
-  if(c.indexOf("operation-not-allowed")>=0) return "Phone sign-in isn't enabled yet. (Admin: enable Phone in Firebase Authentication.)";
-  return "Something went wrong. Please try again."; }
+  if(c.indexOf("operation-not-allowed")>=0) return "Phone sign-in blocked. Admin: in Firebase enable Phone, enable Blaze billing, and add this domain under Authorized domains, then wait a few minutes. ("+c+")";
+  return "Couldn't send OTP. Please try again."+(c?(" ["+c+"]"):""); }
 
 /* ---------- auth: mobile OTP ---------- */
 var pendingSignup=null, confirmationResult=null, recaptcha=null;
