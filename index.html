@@ -1104,5 +1104,115 @@ function loadGrowth(){
 loadGrowth();
 loadTestimonials();
 </script>
+<!-- ===== Free Guide lead magnet ===== -->
+<style>
+  #guideFab{ position:fixed; right:22px; bottom:22px; z-index:900; display:flex; align-items:center; gap:9px;
+    background:linear-gradient(135deg,#bef264,#84cc16); color:#15230a; border:none; cursor:pointer;
+    font-family:var(--font-head,'Sora',sans-serif); font-weight:800; font-size:15.5px; letter-spacing:-.2px;
+    padding:15px 22px; border-radius:16px; box-shadow:0 10px 30px rgba(132,204,22,.5);
+    animation:gfPulse 2.2s ease-in-out infinite; transition:transform .15s; }
+  #guideFab:hover{ transform:translateY(-3px) scale(1.03); }
+  #guideFab .gf-ic{ font-size:19px; }
+  @keyframes gfPulse{ 0%,100%{ box-shadow:0 10px 30px rgba(132,204,22,.45); } 50%{ box-shadow:0 10px 42px rgba(132,204,22,.85); } }
+  @media(max-width:560px){ #guideFab{ right:14px; bottom:14px; padding:13px 18px; font-size:14.5px; } #guideFab .gf-tx{ display:inline; } }
+
+  .g-ov{ position:fixed; inset:0; z-index:1000; display:none; align-items:center; justify-content:center;
+    background:rgba(4,7,14,.78); backdrop-filter:blur(5px); padding:18px; }
+  .g-ov.open{ display:flex; }
+  .g-modal{ position:relative; width:min(430px,94vw); background:linear-gradient(180deg,#151c2d,#0f1421);
+    border:1px solid #2a3550; border-top:3px solid #84cc16; border-radius:20px; padding:30px 26px 24px;
+    box-shadow:0 30px 80px rgba(0,0,0,.6); text-align:center; }
+  .g-x{ position:absolute; top:12px; right:14px; background:none; border:none; color:var(--muted); font-size:26px; cursor:pointer; line-height:1; }
+  .g-badge{ display:inline-block; background:rgba(132,204,22,.15); color:#a3e635; font-weight:800; font-size:12px;
+    letter-spacing:1.2px; padding:6px 13px; border-radius:999px; margin-bottom:14px; }
+  .g-h{ font-family:var(--font-head,'Sora',sans-serif); font-size:22px; font-weight:800; line-height:1.25; color:#f8fafc; margin-bottom:8px; }
+  .g-sub{ color:var(--muted); font-size:14.5px; margin-bottom:20px; }
+  .g-modal input, .g-modal select{ width:100%; background:#0b1220; border:1px solid #2a3550; border-radius:11px;
+    color:#f8fafc; font-size:15px; padding:13px 14px; margin-bottom:11px; outline:none; font-family:inherit; }
+  .g-modal input:focus, .g-modal select:focus{ border-color:#84cc16; }
+  .g-modal select{ appearance:none; }
+  .g-hp{ display:none !important; }
+  .g-btn{ display:block; width:100%; background:linear-gradient(135deg,#bef264,#84cc16); color:#15230a;
+    font-family:var(--font-head,'Sora',sans-serif); font-weight:800; font-size:16px; border:none; cursor:pointer;
+    padding:15px; border-radius:12px; margin-top:4px; box-shadow:0 8px 24px rgba(132,204,22,.4); transition:.15s; text-decoration:none; }
+  .g-btn:hover{ filter:brightness(1.05); transform:translateY(-1px); }
+  .g-msg{ color:#f87171; font-size:13.5px; margin-top:10px; min-height:16px; }
+  .g-consent{ color:var(--dim); font-size:12px; margin-top:14px; line-height:1.5; }
+  .g-consent a{ color:var(--orange-l,#fb923c); }
+  .g-check{ width:64px; height:64px; margin:4px auto 14px; border-radius:50%; background:rgba(132,204,22,.15);
+    color:#84cc16; font-size:34px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  .g-dl{ margin-top:8px; }
+</style>
+
+<button id="guideFab" onclick="openGuide()" aria-label="Download free JEE guide">
+  <span class="gf-ic">📘</span><span class="gf-tx">Get My Free Guide</span>
+</button>
+
+<div id="guideOverlay" class="g-ov" onclick="if(event.target===this)closeGuide()">
+  <div class="g-modal" role="dialog" aria-modal="true" aria-label="Free JEE guide">
+    <button class="g-x" onclick="closeGuide()" aria-label="Close">&times;</button>
+    <div id="gStep1">
+      <div class="g-badge">📘 FREE DOWNLOAD</div>
+      <h3 class="g-h">JEE Main Chapter Weightage<br>+ 60-Day Revision Planner</h3>
+      <p class="g-sub">Enter your details and download the PDF instantly.</p>
+      <form onsubmit="submitGuide(event)" autocomplete="on">
+        <input id="gName" type="text" placeholder="Your name" required>
+        <input id="gMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="Mobile number" required>
+        <select id="gClass" required>
+          <option value="" disabled selected>I'm in…</option>
+          <option value="Class 11">Class 11</option>
+          <option value="Class 12">Class 12</option>
+          <option value="Dropper">Dropper</option>
+        </select>
+        <input id="gHp" class="g-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit" class="g-btn" id="gSubmit">Get My Free Guide &rarr;</button>
+        <div id="gMsg" class="g-msg"></div>
+      </form>
+      <p class="g-consent">We'll only use your number to share JEE prep help &mdash; no spam. <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a></p>
+    </div>
+    <div id="gStep2" style="display:none">
+      <div class="g-check">&#10003;</div>
+      <h3 class="g-h">Your guide is ready!</h3>
+      <p class="g-sub">Tap below to download your free JEE guide.</p>
+      <a href="jee-weightage-planner.pdf" download class="g-btn g-dl" onclick="guideDownloaded()">&#11015; Download your guide</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function openGuide(){
+  var done=false; try{ done=localStorage.getItem('dk_guide')==='1'; }catch(e){}
+  showGuideStep(done?2:1);
+  document.getElementById('guideOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeGuide(){ document.getElementById('guideOverlay').classList.remove('open'); document.body.style.overflow=''; }
+function showGuideStep(n){
+  document.getElementById('gStep1').style.display = n===1?'block':'none';
+  document.getElementById('gStep2').style.display = n===2?'block':'none';
+}
+function submitGuide(e){
+  e.preventDefault();
+  if(document.getElementById('gHp').value){ return; } /* honeypot: silently drop bots */
+  var name=document.getElementById('gName').value.trim();
+  var mob=(document.getElementById('gMobile').value||'').replace(/\D/g,'');
+  var cls=document.getElementById('gClass').value;
+  var msg=document.getElementById('gMsg');
+  if(!name){ msg.textContent='Please enter your name.'; return; }
+  if(!/^[6-9]\d{9}$/.test(mob)){ msg.textContent='Please enter a valid 10-digit mobile number.'; return; }
+  if(!cls){ msg.textContent='Please select your class.'; return; }
+  msg.textContent='';
+  var btn=document.getElementById('gSubmit'); btn.disabled=true; btn.textContent='Please wait…';
+  function done(){ try{ localStorage.setItem('dk_guide','1'); }catch(e){} btn.disabled=false; btn.textContent='Get My Free Guide →'; showGuideStep(2); }
+  try{
+    if(typeof tmDB!=='undefined' && tmDB){
+      tmDB.collection('leads').add({ name:name, mobile:mob, cls:cls, source:'guide',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp() }).then(done).catch(function(){ done(); });
+    } else { done(); }
+  }catch(err){ done(); }
+}
+function guideDownloaded(){ setTimeout(closeGuide, 1500); }
+</script>
+
 </body>
 </html>
