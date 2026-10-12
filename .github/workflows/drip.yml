@@ -1,0 +1,39 @@
+name: Auto-publish blog posts
+
+# Runs daily; the go-live dates in queue.json control the alternate-day cadence,
+# so a post only goes live on its scheduled day. You can also trigger it manually
+# from the Actions tab (Run workflow).
+on:
+  schedule:
+    - cron: '0 4 * * *'      # 04:00 UTC daily (~09:30 IST)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write             # lets the workflow commit the published post back
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Publish any due posts
+        run: python scripts/publish_next.py
+
+      - name: Commit & push if something was published
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "Auto-publish scheduled blog post(s)"
+            git push
+          else
+            echo "Nothing to publish today."
+          fi
