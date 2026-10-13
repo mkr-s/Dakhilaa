@@ -11,6 +11,12 @@ var PLANS = {
   dropper: { name: "Dropper Focused",       amount: 199900 }  // Rs 1,999
 };
 
+// Flat-discount coupons, in paise. A code is honoured server-side so it can't be
+// tampered with. The website only reveals FRIEND200 after a student's referral is
+// verified. MIN_AMOUNT is a floor so a coupon can never make the price absurdly low.
+var COUPONS = { FRIEND200: 20000 }; // Rs 200 off
+var MIN_AMOUNT = 49900;             // never charge below Rs 499
+
 module.exports = async function (req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -29,16 +35,25 @@ module.exports = async function (req, res) {
   var plan = PLANS[body.plan];
   if (!plan) { res.status(400).json({ error: "Invalid plan." }); return; }
 
+  // Apply a valid coupon (optional). Unknown/empty coupon = full price, unchanged.
+  var amount = plan.amount, couponCode = "", discount = 0;
+  var code = (body.coupon || "").toString().trim().toUpperCase();
+  if (code && COUPONS[code]) {
+    discount = COUPONS[code];
+    amount = Math.max(plan.amount - discount, MIN_AMOUNT);
+    couponCode = code;
+  }
+
   var auth = Buffer.from(KEY_ID + ":" + KEY_SECRET).toString("base64");
   try {
     var r = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",
       headers: { "Authorization": "Basic " + auth, "Content-Type": "application/json" },
       body: JSON.stringify({
-        amount: plan.amount,
+        amount: amount,
         currency: "INR",
         receipt: "dak_" + Date.now(),
-        notes: { plan: body.plan, email: (body.email || ""), name: (body.name || "") }
+        notes: { plan: body.plan, email: (body.email || ""), name: (body.name || ""), coupon: couponCode }
       })
     });
     var data = await r.json();
@@ -48,10 +63,12 @@ module.exports = async function (req, res) {
     }
     res.status(200).json({
       order_id: data.id,
-      amount: plan.amount,
+      amount: amount,
       currency: "INR",
       key_id: KEY_ID,
-      plan_name: plan.name
+      plan_name: plan.name,
+      coupon: couponCode,
+      discount: discount
     });
   } catch (e) {
     res.status(500).json({ error: "Server error while creating the order." });

@@ -938,6 +938,45 @@
     <div class="lc-hint">Tip: share to your WhatsApp status or Instagram story 🚀</div>
   </div>
 </div>
+
+<style>
+  #rewardModal .lc-box{ position:relative; max-width:380px; text-align:center; }
+  .rw-x{ position:absolute; top:10px; right:12px; background:none; border:none; color:var(--muted); font-size:22px; cursor:pointer; }
+  #rw_img{ width:100%; max-width:280px; border-radius:14px; border:1px solid var(--border); display:block; margin:2px auto 14px; }
+  .rw-card{ background:var(--card-2,#151c2c); border:1px solid var(--border); border-radius:12px; padding:12px 13px; margin-bottom:10px; text-align:left; }
+  .rw-top{ display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:14.5px; color:var(--text); gap:8px; }
+  .rw-p{ color:var(--muted); font-size:12.5px; margin:5px 0 9px; line-height:1.45; }
+  .rw-badge{ font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; background:rgba(148,163,184,.15); color:#94a3b8; white-space:nowrap; }
+  .rw-badge.ok{ background:rgba(132,204,22,.18); color:#a3e635; }
+  .rw-code{ background:#0b1220; border:1px dashed #84cc16; border-radius:10px; padding:11px; text-align:center; font-weight:800; font-size:18px; letter-spacing:3px; color:#a3e635; }
+  .rw-green{ background:linear-gradient(135deg,#bef264,#84cc16)!important; color:#15230a!important; }
+</style>
+<div id="rewardModal" class="lc-modal hidden">
+  <div class="lc-box">
+    <button class="rw-x" onclick="rwClose()" aria-label="Close">&times;</button>
+    <h3 style="font-size:19px;font-weight:800;margin:2px 0 12px">Share &amp; unlock rewards 🎁</h3>
+    <img id="rw_img" alt="Your readiness card">
+    <div class="rw-card">
+      <div class="rw-top"><span>📘 Free JEE Guide</span><span id="rw_g_badge" class="rw-badge">Share to unlock</span></div>
+      <p class="rw-p">Chapter Weightage + 60-Day Planner PDF — yours the moment you share.</p>
+      <button class="btn rw-green" style="width:100%" id="rw_share" onclick="rwShare()">📲 Share my result</button>
+      <a id="rw_guide" href="jee-weightage-planner.pdf" download class="btn rw-green" style="width:100%;display:none;margin-top:8px">⬇ Download your guide</a>
+    </div>
+    <div class="rw-card">
+      <div class="rw-top"><span>💸 ₹200 OFF Premium</span><span id="rw_c_badge" class="rw-badge">Locked</span></div>
+      <p class="rw-p" id="rw_c_status">Unlocks when 1 friend takes the test via your link below.</p>
+      <div id="rw_coupon" class="rw-code" style="display:none">FRIEND200</div>
+    </div>
+    <div class="rw-card">
+      <div class="rw-top"><span>🔗 Your invite link</span></div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input id="rw_link" readonly style="flex:1;min-width:0;background:#0b1220;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;padding:9px">
+        <button class="btn" onclick="rwCopy()">Copy</button>
+      </div>
+    </div>
+    <button class="btn btn-outline" style="width:100%" onclick="rwClose()">Close</button>
+  </div>
+</div>
 <script>
 "use strict";
 
@@ -1166,7 +1205,8 @@ function beginPayment(planKey){
   var plan=PLANS[planKey]; if(!plan) return;
   if(typeof Razorpay==="undefined"){ payToast("Payment system is still loading — please try again in a moment.", true); return; }
   payToast("Starting secure checkout…");
-  fetch("/api/create-order",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ plan:planKey, email:currentProfile.email, name:currentProfile.name }) })
+  var _cpn=""; try{ _cpn=localStorage.getItem("dk_coupon")||""; }catch(e){}
+  fetch("/api/create-order",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ plan:planKey, email:currentProfile.email, name:currentProfile.name, coupon:_cpn }) })
     .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
     .then(function(res){
       if(!res.ok){ payToast((res.d&&res.d.error)||"Could not start payment. Please try again.", true); return; }
@@ -1486,6 +1526,7 @@ function upsertGrowth(){
   var delta=cur - p.firstReadiness;
   if(USE_FIREBASE && fbDB && currentUser){
     fbDB.collection("users").doc(currentUser).set({ firstReadiness:p.firstReadiness },{merge:true}).catch(function(){});
+    creditReferrer();  /* if this user came via a friend's invite link, credit the friend */
     if(delta>=GROWTH_MIN){
       fbDB.collection("growth").doc(currentUser).set({ name:growthShortName(p.name), tag:growthTag(), before:p.firstReadiness, after:cur, delta:delta, updated:Date.now() }).catch(function(e){ console.error("growth write", e); });
     }
@@ -2196,7 +2237,28 @@ function liveDoShare(){
   }catch(e){ liveDownloadCard(); }
 }
 
-/* ---- shareable READINESS card (diagnostic/mock result → viral image) ---- */
+/* ---- student referral (invite link → verified reward) ---- */
+var refCount=0, couponEarned=false;
+function captureInv(){ try{ var m=(location.search||"").match(/[?&]inv=([A-Za-z0-9_-]{6,})/); if(m && m[1]){ if(!localStorage.getItem("dk_inv")) localStorage.setItem("dk_inv", m[1]); } }catch(e){} }
+function inviteLink(){ return "https://www.dakhilaa.com/app.html?inv="+(currentUser||""); }
+function creditReferrer(){
+  try{
+    if(!(USE_FIREBASE && fbDB && currentUser)) return;
+    var inv=localStorage.getItem("dk_inv"); if(!inv || inv===currentUser) return;
+    fbDB.collection("referrals").doc(currentUser).set({ referrer:inv, at:firebase.firestore.FieldValue.serverTimestamp() })
+      .then(function(){ try{ localStorage.removeItem("dk_inv"); }catch(e){} }).catch(function(){});
+  }catch(e){}
+}
+function checkReferralReward(cb){
+  if(!(USE_FIREBASE && fbDB && currentUser)){ if(cb)cb(); return; }
+  fbDB.collection("referrals").where("referrer","==",currentUser).get().then(function(q){
+    refCount=q.size; couponEarned=(refCount>=1);
+    if(couponEarned){ try{ localStorage.setItem("dk_coupon","FRIEND200"); }catch(e){} }
+    if(cb)cb();
+  }).catch(function(){ if(cb)cb(); });
+}
+
+/* ---- shareable READINESS card + reward modal (viral + coupon) ---- */
 function shareReadiness(){
   var p=currentProfile;
   if(!p || !p.last || typeof p.last.readiness!=="number"){ payToast("Take the diagnostic first to get your result card.", true); return; }
@@ -2226,10 +2288,38 @@ function shareReadiness(){
   cx("Check yours FREE → www.dakhilaa.com",H-84,"700 32px Sora, sans-serif","#fb923c");
   cardShareText="I'm "+pct+"% ready for JEE Main 💪 (weakest: "+weak+"). Find YOUR weak topics free in 15 min 👉 www.dakhilaa.com";
   c.toBlob(function(blob){ liveCardBlob=blob; var url=URL.createObjectURL(blob);
-    var im=document.getElementById("lc_img"); im.onload=function(){ try{ URL.revokeObjectURL(url); }catch(e){} }; im.src=url;
-    document.getElementById("liveCardModal").classList.remove("hidden");
-    var sb=document.getElementById("lc_share"); if(sb) sb.style.display=(navigator.canShare)?"":"none";
+    var im=document.getElementById("rw_img"); if(im){ im.onload=function(){ try{ URL.revokeObjectURL(url); }catch(e){} }; im.src=url; }
+    var gb=document.getElementById("rw_g_badge"); if(gb){ gb.textContent="Share to unlock"; gb.classList.remove("ok"); }
+    var gd=document.getElementById("rw_guide"); if(gd) gd.style.display="none";
+    var lk=document.getElementById("rw_link"); if(lk) lk.value=inviteLink();
+    rwRefreshCoupon();
+    document.getElementById("rewardModal").classList.remove("hidden");
   }, "image/png");
+}
+function rwClose(){ document.getElementById("rewardModal").classList.add("hidden"); }
+function rwCopy(){ var i=document.getElementById("rw_link"); try{ i.select(); }catch(e){} try{ document.execCommand("copy"); }catch(e){} try{ navigator.clipboard.writeText(i.value); }catch(e){} payToast("Invite link copied — share it with friends!"); }
+function rwUnlockGuide(){ var b=document.getElementById("rw_g_badge"); if(b){ b.textContent="Unlocked ✓"; b.classList.add("ok"); } var g=document.getElementById("rw_guide"); if(g) g.style.display=""; }
+function rwShare(){
+  if(!liveCardBlob){ rwUnlockGuide(); return; }
+  var txt=cardShareText+"\n\nTry it free: "+inviteLink();
+  try{
+    var file=new File([liveCardBlob],"dakhilaa-card.png",{type:"image/png"});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      navigator.share({ files:[file], title:"My Dakhilaa result", text:txt }).then(rwUnlockGuide).catch(function(){});
+    } else {
+      /* desktop / no file-share: download the card so they can post it, then unlock */
+      var url=URL.createObjectURL(liveCardBlob); var a=document.createElement("a"); a.href=url; a.download="dakhilaa-card.png"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(url); },1000);
+      rwUnlockGuide();
+    }
+  }catch(e){ rwUnlockGuide(); }
+}
+function rwRefreshCoupon(){
+  var badge=document.getElementById("rw_c_badge"), cp=document.getElementById("rw_coupon"), st=document.getElementById("rw_c_status");
+  checkReferralReward(function(){
+    if(!badge) return;
+    if(couponEarned){ badge.textContent="Unlocked ✓"; badge.classList.add("ok"); if(cp) cp.style.display=""; if(st) st.textContent="Use this code at checkout for ₹200 off:"; }
+    else { badge.textContent="Locked"; badge.classList.remove("ok"); if(cp) cp.style.display="none"; if(st) st.textContent=(refCount>0?("Almost there — "+refCount+" friend joined."):"Unlocks when 1 friend takes the test via your link below."); }
+  });
 }
 
 /* ============ CLASS 11 — scored chapter tests & mocks (answer key, no worked solution) ============ */
@@ -2660,7 +2750,7 @@ function submitRate(){
 
 /* ---------- init ---------- */
 function initApp(){
-  loadDB(); initPredictor(); captureRef(); applyAuthMode();
+  loadDB(); initPredictor(); captureRef(); captureInv(); applyAuthMode();
   try{ var up=new URLSearchParams(location.search).get("plan"); if(up && PLANS[up]) pendingPlan=up; }catch(e){}
   fetch("questions.json").then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); })
     .then(function(data){
