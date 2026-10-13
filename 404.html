@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page Not Found — Dakhilaa</title>
+<meta name="robots" content="noindex, follow">
+<link rel="icon" href="logo.png">
+<style>
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  :root{ --bg:#0a0e17; --card:#121826; --border:#1e2739; --text:#f8fafc; --muted:#94a3b8; --orange:#f97316; --orange-d:#ea580c; }
+  html,body{ height:100%; }
+  body{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text);
+    display:flex; align-items:center; justify-content:center; text-align:center; padding:24px; overflow-x:hidden; }
+  .wrap{ max-width:560px; position:relative; z-index:1; }
+  .glow{ position:fixed; top:-10%; left:50%; transform:translateX(-50%); width:min(680px,90vw); height:420px;
+    background:radial-gradient(circle, rgba(249,115,22,.22), transparent 70%); filter:blur(20px); z-index:0; }
+  a{ text-decoration:none; }
+  .brand{ display:inline-flex; align-items:center; gap:10px; font-weight:800; font-size:22px; margin-bottom:34px; color:var(--text); }
+  .brand img{ height:36px; }
+  .code{ font-size:clamp(84px,22vw,150px); font-weight:900; line-height:1; letter-spacing:-3px;
+    background:linear-gradient(135deg,#fb923c,#f97316); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  h1{ font-size:clamp(24px,5vw,34px); font-weight:800; margin:10px 0 12px; }
+  p{ color:var(--muted); font-size:16px; line-height:1.7; margin-bottom:28px; }
+  .btns{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .btn{ display:inline-flex; align-items:center; gap:8px; font-weight:700; font-size:15px; padding:13px 24px; border-radius:12px; text-decoration:none; transition:.15s; }
+  .btn.primary{ background:var(--orange); color:#fff; box-shadow:0 8px 24px rgba(249,115,22,.35); }
+  .btn.primary:hover{ background:var(--orange-d); transform:translateY(-2px); }
+  .btn.ghost{ background:var(--card); color:var(--text); border:1px solid var(--border); }
+  .btn.ghost:hover{ border-color:var(--orange); }
+  .links{ margin-top:30px; color:var(--muted); font-size:14px; }
+  .links a{ color:var(--orange); text-decoration:none; } .links a:hover{ text-decoration:underline; }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="wrap">
+  <a class="brand" href="/"><img src="logo.png" alt="Dakhilaa"> Dakhilaa</a>
+  <div class="code">404</div>
+  <h1>This page doesn't exist</h1>
+  <p>The page you're looking for may have been moved or removed — but your JEE prep doesn't have to stop here.</p>
+  <div class="btns">
+    <a class="btn primary" href="/">← Back to Home</a>
+    <a class="btn ghost" href="/app.html">Take the free diagnostic</a>
+  </div>
+  <div class="links">
+    Or explore: <a href="/blog.html">JEE Prep Blog</a> · <a href="/contact.html">Contact us</a>
+  </div>
+</div>
+</body>
+</html>

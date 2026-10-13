@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Contact Us — Dakhilaa</title><link rel="icon" href="logo.png">
+<meta name="description" content="Contact Dakhilaa — email support for help with your account, a test or a payment, and Partner Program queries.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.dakhilaa.com/contact.html">
+
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -25,7 +29,17 @@ ul{margin:0 0 14px 22px;color:#cbd5e1}li{margin-bottom:8px}
 .foot{border-top:1px solid var(--border);margin-top:44px;padding-top:22px;display:flex;gap:18px;flex-wrap:wrap;font-size:14px}
 .foot a{color:var(--muted)}
 strong{color:var(--text)}
-</style></head><body>
+.card input,.card textarea{width:100%;background:#0b1220;border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:inherit;font-size:15px;padding:12px 13px;margin-bottom:11px;outline:none}
+.card input:focus,.card textarea:focus{border-color:var(--orange)}
+.card textarea{resize:vertical}
+.hp{display:none!important}
+.submit{background:var(--orange);color:#fff;font-weight:700;font-size:15px;border:none;border-radius:11px;padding:13px 24px;cursor:pointer}
+.submit:hover{background:#ea580c}.submit:disabled{opacity:.6}
+.cstatus{font-size:14px;margin-top:10px;min-height:18px}
+</style><!-- Google Analytics (GA4) — replace G-XXXXXXXXXX with your real Measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
+</head><body>
 <header><div class="nav"><a class="brand" href="index.html"><img src="logo.png" alt="Dakhilaa"> Dakhilaa</a><a class="home" href="index.html">← Back to site</a></div></header>
 <div class="wrap">
 <div class="eyebrow">Get in touch</div>
@@ -33,6 +47,20 @@ strong{color:var(--text)}
 <div class="updated">Last updated: 27 September 2026</div>
 
 <p>We'd love to hear from you — whether you're a student, a parent, or an educator interested in our partner program.</p>
+
+<div class="card">
+<h2 style="margin-top:0">Send us a message</h2>
+<form id="cform" onsubmit="return cSubmit(event)">
+  <input id="c_name" type="text" placeholder="Your name" required>
+  <input id="c_mobile" type="tel" inputmode="numeric" maxlength="10" placeholder="Mobile number" required>
+  <input id="c_email" type="email" placeholder="Email (optional)">
+  <textarea id="c_msg" rows="4" placeholder="How can we help? (account, test, payment, partner…)" required></textarea>
+  <input id="c_hp" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+  <button type="submit" id="c_btn" class="submit">Send message</button>
+  <div id="c_status" class="cstatus"></div>
+</form>
+</div>
+
 <div class="card">
 <p><strong>Dakhilaa Private Limited</strong></p>
 <p>📧 Email: <a href="mailto:support@dakhilaa.com">support@dakhilaa.com</a><br>
@@ -48,4 +76,35 @@ strong{color:var(--text)}
 
 <div class="note">⚖️ This document is provided as a general template for Dakhilaa. Please have it reviewed by a qualified legal professional and update the business details in brackets before relying on it.</div>
 <div class="foot"><a href="terms.html">Terms &amp; Conditions</a><a href="privacy.html">Privacy Policy</a><a href="refund.html">Refund &amp; Cancellation</a><a href="contact.html">Contact Us</a></div>
-</div></body></html>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script>
+var _cfg={apiKey:"AIzaSyA-W_3VSzsTujSYWV0HtwUkWc7OBLqpQxc",authDomain:"dakhilaa-cb41a.firebaseapp.com",projectId:"dakhilaa-cb41a",appId:"1:1055517618428:web:b6dcd8d696ccb94b7a6779"};
+var cDB=null; try{ if(typeof firebase!=="undefined"){ firebase.initializeApp(_cfg); cDB=firebase.firestore(); } }catch(e){ cDB=null; }
+function cSubmit(e){
+  e.preventDefault();
+  if(document.getElementById("c_hp").value) return false;
+  var name=document.getElementById("c_name").value.trim();
+  var mob=(document.getElementById("c_mobile").value||"").replace(/\D/g,"");
+  var email=document.getElementById("c_email").value.trim();
+  var msg=document.getElementById("c_msg").value.trim();
+  var st=document.getElementById("c_status");
+  if(!name){ st.style.color="#f87171"; st.textContent="Please enter your name."; return false; }
+  if(!/^[6-9]\d{9}$/.test(mob)){ st.style.color="#f87171"; st.textContent="Please enter a valid 10-digit mobile number."; return false; }
+  if(!msg){ st.style.color="#f87171"; st.textContent="Please type your message."; return false; }
+  var btn=document.getElementById("c_btn"); btn.disabled=true; btn.textContent="Sending…"; st.textContent="";
+  function done(ok){
+    btn.disabled=false; btn.textContent="Send message";
+    st.style.color= ok?"#4ade80":"#fb923c";
+    st.textContent= ok?"✓ Thanks! We'll reply within 1–2 working days.":"Couldn't send just now — please email support@dakhilaa.com.";
+    if(ok){ document.getElementById("cform").reset(); }
+  }
+  try{
+    if(cDB){ cDB.collection("messages").add({ name:name, mobile:mob, email:email, message:msg, source:"contact", createdAt:(firebase.firestore.FieldValue.serverTimestamp()) }).then(function(){ done(true); }).catch(function(){ done(false); }); }
+    else { done(false); }
+  }catch(err){ done(false); }
+  return false;
+}
+</script>
+</body></html>

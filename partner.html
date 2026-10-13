@@ -6,6 +6,7 @@
 <title>Partner Portal — Dakhilaa</title>
 <meta name="description" content="Dakhilaa Partner Program — sign in to your partner dashboard, track referrals and earnings.">
 <link rel="icon" href="logo.png">
+<link rel="canonical" href="https://www.dakhilaa.com/partner.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -97,6 +98,9 @@
   .toast.err{ border-color:rgba(239,68,68,.5); color:#fecaca; }
   .spin{ text-align:center; color:var(--muted); padding:40px; font-size:14px; }
 </style>
+<!-- Google Analytics (GA4) — replace G-XXXXXXXXXX with your real Measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
 </head>
 <body>
 <header>
@@ -156,7 +160,7 @@
 <div class="wrap" id="statusView">
   <div class="card" style="text-align:center">
     <div class="status-ic wait" id="st_ic">⏳</div>
-    <h1 id="st_title" style="font-size:24px">Application under review</h1>
+    <h2 id="st_title" style="font-size:24px">Application under review</h2>
     <p class="sub" id="st_text" style="margin-bottom:20px">Thanks for signing up! Your partner application is being reviewed. You'll be able to log in and access your dashboard once it's approved.</p>
     <button class="btn gray sm" style="margin:0 auto" onclick="pLogout()">Back to login</button>
   </div>
