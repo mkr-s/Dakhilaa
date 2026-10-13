@@ -883,6 +883,7 @@
   <div id="r_path"></div>
   <h3 class="sec-h" style="font-size:16px;margin:18px 0 10px">Review</h3>
   <div id="r_review"></div>
+  <button onclick="shareReadiness()" style="width:100%;background:linear-gradient(135deg,#bef264,#84cc16);color:#15230a;font-weight:800;border:none;padding:14px;border-radius:12px;cursor:pointer;font-size:15px;margin-top:16px;box-shadow:0 8px 24px rgba(132,204,22,.35)">📲 Share my result — challenge your friends</button>
   <div class="nav-row" style="margin-top:8px">
     <button class="btn btn-outline" onclick="backToDash()">Dashboard</button>
     <button class="btn" id="r_again" onclick="startDiagnostic()">Retake</button>
@@ -1374,7 +1375,7 @@ function renderOverview(){
   var latest=(p.history&&p.history.length)?p.history[p.history.length-1].score:0;
   var wb=document.getElementById("ov_weak");
   if(p.last){
-    wb.innerHTML='<div><div class="lbl">Your weak area</div><h3>Focus on '+p.last.weakest+'</h3><p>Your accuracy here is the lowest. Fixing it gives the fastest score gain.</p></div><button class="btn" onclick="startDiagnostic()">Retake diagnostic</button>';
+    wb.innerHTML='<div><div class="lbl">Your weak area</div><h3>Focus on '+p.last.weakest+'</h3><p>Your accuracy here is the lowest. Fixing it gives the fastest score gain.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="startDiagnostic()">Retake diagnostic</button><button onclick="shareReadiness()" style="background:linear-gradient(135deg,#bef264,#84cc16);color:#15230a;font-weight:700;border:none;padding:10px 16px;border-radius:10px;cursor:pointer">📲 Share my result</button></div>';
     wb.classList.remove("hidden");
   } else {
     wb.innerHTML='<div><div class="lbl">Get started</div><h3>Take your first diagnostic</h3><p>15 questions to find exactly where you\'re losing marks.</p></div><button class="btn" onclick="startDiagnostic()">Start diagnostic</button>';
@@ -2144,6 +2145,7 @@ function liveStartTicker(){
 function liveStopTicker(){ if(liveTicker){ clearInterval(liveTicker); liveTicker=null; } }
 
 /* ---- shareable rank card (Canvas) ---- */
+var cardShareText="Find your JEE weak areas free 👉 www.dakhilaa.com";
 function liveWeekLabel(weekId){ try{ var p=weekId.split("-"); var d=new Date(+p[0],+p[1]-1,+p[2]); return d.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}); }catch(e){ return weekId; } }
 function liveShareCard(){
   var m=liveMyResult; if(!m){ payToast("Take the live test first to get your rank card.", true); return; }
@@ -2174,6 +2176,7 @@ function liveShareCard(){
   // footer
   x.fillStyle="rgba(249,115,22,0.12)"; if(x.roundRect){ x.beginPath(); x.roundRect(70,H-130,W-140,72,16); x.fill(); }
   cx("Beat my rank → www.dakhilaa.com", H-84, "700 32px Sora, sans-serif", "#fb923c");
+  cardShareText="I ranked #"+m.rank+" in the Dakhilaa live JEE test! Beat me 👉 www.dakhilaa.com";
   // to blob + preview
   c.toBlob(function(blob){ liveCardBlob=blob; var url=URL.createObjectURL(blob);
     var im=document.getElementById("lc_img"); im.onload=function(){ try{ URL.revokeObjectURL(url); }catch(e){} }; im.src=url;
@@ -2188,9 +2191,45 @@ function liveDoShare(){
   try{
     var file=new File([liveCardBlob],"dakhilaa-rank.png",{type:"image/png"});
     if(navigator.canShare && navigator.canShare({files:[file]})){
-      navigator.share({ files:[file], title:"My Dakhilaa Rank", text:"I ranked #"+(liveMyResult?liveMyResult.rank:"")+" in the Dakhilaa live JEE test! Beat me 👉 www.dakhilaa.com" }).catch(function(){});
+      navigator.share({ files:[file], title:"My Dakhilaa result", text:cardShareText }).catch(function(){});
     } else { liveDownloadCard(); }
   }catch(e){ liveDownloadCard(); }
+}
+
+/* ---- shareable READINESS card (diagnostic/mock result → viral image) ---- */
+function shareReadiness(){
+  var p=currentProfile;
+  if(!p || !p.last || typeof p.last.readiness!=="number"){ payToast("Take the diagnostic first to get your result card.", true); return; }
+  var pct=Math.round(p.last.readiness||0);
+  var weak=p.last.weakest||"—";
+  var est=p.last.est||0;
+  var nm=(p.name||"JEE Aspirant");
+  var col = pct>=75?"#22c55e":(pct>=45?"#f97316":"#fb7185");
+  var W=1080,H=1080; var c=document.createElement("canvas"); c.width=W; c.height=H; var x=c.getContext("2d");
+  x.fillStyle="#0a0e17"; x.fillRect(0,0,W,H);
+  var g=x.createRadialGradient(W*0.5,H*0.2,60,W*0.5,H*0.2,W*0.9);
+  g.addColorStop(0,"rgba(249,115,22,0.26)"); g.addColorStop(1,"rgba(10,14,23,0)");
+  x.fillStyle=g; x.fillRect(0,0,W,H);
+  x.strokeStyle="rgba(249,115,22,0.5)"; x.lineWidth=6; x.strokeRect(24,24,W-48,H-48);
+  function cx(t,y,f,c2,align){ x.fillStyle=c2; x.font=f; x.textAlign=align||"center"; x.fillText(t,align==="left"?70:(align==="right"?W-70:W/2),y); }
+  cx("DAKHILAA",130,"800 54px Sora, sans-serif","#f8fafc");
+  x.fillStyle="rgba(249,115,22,0.16)"; var pw=460,ph=56,px=(W-pw)/2,py=170; if(x.roundRect){ x.beginPath(); x.roundRect(px,py,pw,ph,28); x.fill(); }
+  cx("● JEE READINESS CHECK",208,"700 26px Inter, sans-serif","#fdba74");
+  cx("MY JEE READINESS",330,"700 34px Inter, sans-serif","#94a3b8");
+  cx(pct+"%",520,"800 210px Sora, sans-serif",col);
+  x.strokeStyle="rgba(255,255,255,0.08)"; x.lineWidth=2; x.beginPath(); x.moveTo(120,640); x.lineTo(W-120,640); x.stroke();
+  cx("Weakest area",712,"600 30px Inter, sans-serif","#64748b");
+  cx(weak,766,"800 58px Sora, sans-serif","#f8fafc");
+  cx("~"+est+" / 300 projected",824,"600 30px Inter, sans-serif","#94a3b8");
+  cx(nm,902,"700 40px Sora, sans-serif","#f8fafc");
+  x.fillStyle="rgba(249,115,22,0.12)"; if(x.roundRect){ x.beginPath(); x.roundRect(70,H-130,W-140,72,16); x.fill(); }
+  cx("Check yours FREE → www.dakhilaa.com",H-84,"700 32px Sora, sans-serif","#fb923c");
+  cardShareText="I'm "+pct+"% ready for JEE Main 💪 (weakest: "+weak+"). Find YOUR weak topics free in 15 min 👉 www.dakhilaa.com";
+  c.toBlob(function(blob){ liveCardBlob=blob; var url=URL.createObjectURL(blob);
+    var im=document.getElementById("lc_img"); im.onload=function(){ try{ URL.revokeObjectURL(url); }catch(e){} }; im.src=url;
+    document.getElementById("liveCardModal").classList.remove("hidden");
+    var sb=document.getElementById("lc_share"); if(sb) sb.style.display=(navigator.canShare)?"":"none";
+  }, "image/png");
 }
 
 /* ============ CLASS 11 — scored chapter tests & mocks (answer key, no worked solution) ============ */
