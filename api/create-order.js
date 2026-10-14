@@ -44,6 +44,19 @@ module.exports = async function (req, res) {
     couponCode = code;
   }
 
+  // Owner-only Rs 1 LIVE test. Gated by a server secret (Vercel env TEST_SECRET)
+  // that is NEVER in the website code, so a student can never trigger a cheap
+  // order. When authorised, it overrides the amount to Rs 1 and the MIN floor.
+  if (body.test === true) {
+    if (!process.env.TEST_SECRET || body.test_secret !== process.env.TEST_SECRET) {
+      res.status(403).json({ error: "Test payment not authorized." });
+      return;
+    }
+    amount = 100;        // Rs 1 (100 paise)
+    couponCode = "TEST1";
+    discount = 0;
+  }
+
   var auth = Buffer.from(KEY_ID + ":" + KEY_SECRET).toString("base64");
   try {
     var r = await fetch("https://api.razorpay.com/v1/orders", {
