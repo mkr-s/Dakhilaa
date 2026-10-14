@@ -1009,6 +1009,7 @@ var OTP_ENABLED = true;
    for this number, so knowing the number alone is not enough. */
 var OWNER_MOBILE = "9599105264";
 var OWNER_PASSWORD = "Turulobi0110@";
+var OWNER_EMAIL = "mukeshit3043@gmail.com";   // owner's Google account — always exempt
 var sessionIsOwner = false;
 var fbAuth=null, fbDB=null;
 if(USE_FIREBASE){ try{ firebase.initializeApp(firebaseConfig); fbAuth=firebase.auth(); fbDB=firebase.firestore(); }catch(e){ console.error(e); USE_FIREBASE=false; } }
@@ -1293,6 +1294,61 @@ function activatePlan(planKey,paymentId){
   payToast("🎉 "+plan.name+" activated! Full access unlocked.");
 }
 
+/* ---------- owner: always-exempt + Rs 1 live test ----------
+   Owner is recognised by any of their login methods: the mobile+password path
+   (sessionIsOwner), the ?unlock= link, their Google email, or their mobile.
+   The Rs 1 test is gated server-side by a secret (env TEST_SECRET), so no
+   student can ever trigger a cheap order — this button only asks for it. */
+function isOwnerUser(){
+  if(sessionIsOwner) return true;
+  try{ if(new URLSearchParams(location.search).get("unlock")==="DAKHILAA-OWNER-2026") return true; }catch(e){}
+  var p=currentProfile; if(!p) return false;
+  return (String(p.email||"").trim().toLowerCase()===OWNER_EMAIL) || (p.mobile===OWNER_MOBILE);
+}
+var _testSecret="";
+function ownerTestPay(){
+  if(!isOwnerUser()){ return; }
+  if(typeof Razorpay==="undefined"){ payToast("Payment system is still loading — try again in a moment.", true); return; }
+  if(!_testSecret){ _testSecret=(prompt("Owner test secret:")||"").trim(); }
+  if(!_testSecret){ return; }
+  payToast("Starting ₹1 live test…");
+  fetch("/api/create-order",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ plan:"grade11", test:true, test_secret:_testSecret, email:currentProfile.email, name:currentProfile.name }) })
+    .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
+    .then(function(res){
+      if(!res.ok){ _testSecret=""; payToast((res.d&&res.d.error)||"Test not authorized.", true); return; }
+      var d=res.d;
+      var rz=new Razorpay({
+        key:d.key_id, order_id:d.order_id, amount:d.amount, currency:d.currency||"INR",
+        name:"Dakhilaa — ₹1 TEST", description:"Live payment pipeline test",
+        prefill:{ name:currentProfile.name, email:currentProfile.email }, theme:{ color:"#f97316" },
+        handler:function(resp){ verifyTestPayment(resp); },
+        modal:{ ondismiss:function(){ payToast("Test cancelled.", true); } }
+      });
+      rz.on("payment.failed", function(e){ payToast((e&&e.error&&e.error.description)||"Test payment failed.", true); });
+      rz.open();
+    })
+    .catch(function(){ payToast("Network error starting the test.", true); });
+}
+function verifyTestPayment(resp){
+  payToast("Verifying ₹1 test…");
+  fetch("/api/verify-payment",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ razorpay_order_id:resp.razorpay_order_id, razorpay_payment_id:resp.razorpay_payment_id, razorpay_signature:resp.razorpay_signature }) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d && d.valid){ payToast("✅ Live test OK — payment verified. Payment id "+(resp.razorpay_payment_id||"")); }
+      else { payToast("❌ Test verify failed — check keys/signature.", true); }
+    })
+    .catch(function(){ payToast("Couldn't verify the test payment.", true); });
+}
+function addOwnerTestBtn(el){
+  if(!el || !isOwnerUser()) return;
+  var b=document.createElement("button");
+  b.type="button";
+  b.style.cssText="margin-top:12px;width:100%;padding:11px;border-radius:10px;border:1px dashed var(--border-2);background:transparent;color:var(--muted);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer";
+  b.textContent="🔧 Owner: run a ₹1 live payment test";
+  b.onclick=ownerTestPay;
+  el.appendChild(b);
+}
+
 /* ---------- referral / partner commission ---------- */
 var REF_RE=/^DAK[A-Z0-9]{7}$/;
 function captureRef(){
@@ -1362,6 +1418,7 @@ function renderPlanCard(){
   if(p && p.plan && PLANS[p.plan]){
     var since=p.planSince?new Date(p.planSince).toLocaleDateString():"";
     el.innerHTML='<div class="plan-active"><span class="pa-badge">✓ ACTIVE</span><div class="pa-name">'+PLANS[p.plan].name+'</div><div class="pa-sub">Yearly plan · Full access unlocked'+(since?(' · since '+since):'')+'</div></div>';
+    addOwnerTestBtn(el);
     return;
   }
   var keys=["grade11","grade12","dropper"];
@@ -1369,6 +1426,7 @@ function renderPlanCard(){
   keys.forEach(function(k){ var pl=PLANS[k]; html+='<button class="plan-opt" onclick="startCheckout(\''+k+'\')"><span class="po-name">'+pl.name+'</span><span class="po-price">'+pl.price+'<small>/yr</small></span><span class="po-cta">Choose →</span></button>'; });
   html+='</div>';
   el.innerHTML=html;
+  addOwnerTestBtn(el);
 }
 
 /* ---------- profile photo ---------- */
@@ -1422,12 +1480,13 @@ function enterApp(){
   /* Owner full-access: unlocked only when the owner logged in with the correct
      mobile + password this session (sessionIsOwner), or via ?unlock=DAKHILAA-OWNER-2026.
      Once unlocked, the account's plan is saved, so it stays unlocked on reload. */
-  try{ var _ul=new URLSearchParams(location.search).get("unlock");
-    var _isOwner=sessionIsOwner || _ul==="DAKHILAA-OWNER-2026";
-    if(_isOwner && p.plan!=="dropper"){
-      p.plan="dropper"; p.planName="Owner Access"; p.planSince=Date.now();
-      if(USE_FIREBASE && fbDB && currentUser){ fbDB.collection("users").doc(currentUser).set({plan:"dropper",planName:"Owner Access",planSince:p.planSince},{merge:true}).catch(function(){}); }
-      else { persistDB(); }
+  try{
+    if(isOwnerUser()){ sessionIsOwner=true;
+      if(p.plan!=="dropper"){
+        p.plan="dropper"; p.planName="Owner Access"; p.planSince=Date.now();
+        if(USE_FIREBASE && fbDB && currentUser){ fbDB.collection("users").doc(currentUser).set({plan:"dropper",planName:"Owner Access",planSince:p.planSince},{merge:true}).catch(function(){}); }
+        else { persistDB(); }
+      }
     } }catch(e){}
   applyPlanUI();
   view("shell"); go("overview");
