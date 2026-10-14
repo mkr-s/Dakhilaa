@@ -35,6 +35,11 @@
   .auth-brand{ display:flex; align-items:center; gap:10px; justify-content:center; font-weight:800; font-size:20px; margin-bottom:6px; }
   .auth-brand img{ height:34px; }
   .tagline{ text-align:center; color:var(--muted); font-size:14px; margin-bottom:22px; }
+  .or-div{ display:flex; align-items:center; gap:12px; color:var(--dim); font-size:12px; margin:14px 0; }
+  .or-div:before,.or-div:after{ content:""; flex:1; height:1px; background:var(--border-2); }
+  .btn-google{ width:100%; display:flex; align-items:center; justify-content:center; gap:10px; background:#fff; color:#1f1f1f; font-family:inherit; font-weight:700; font-size:15px; border:1px solid #dadce0; border-radius:9px; padding:12px; cursor:pointer; transition:box-shadow .15s,background .15s; }
+  .btn-google:hover{ background:#f7f8f8; box-shadow:0 1px 3px rgba(0,0,0,.25); }
+  .btn-google:disabled{ opacity:.6; cursor:default; }
   .field{ margin-bottom:15px; }
   .field label{ display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
   .field input{ width:100%; padding:12px 14px; background:var(--bg); border:1px solid var(--border-2); border-radius:9px; color:var(--text); font-size:15px; }
@@ -470,7 +475,12 @@
       <div class="field"><label>Instagram handle <span class="fld-opt">(optional)</span></label><input id="au_insta" type="text" placeholder="@yourhandle"></div>
       <button class="btn btn-block" id="otp_send_btn" onclick="sendOtp(false)">Create Account / Log In</button>
       <div class="msg" id="au_msg"></div>
-      <div class="switch" id="au_help" style="font-size:12px;color:var(--dim)">New here or returning — just enter your details to continue.</div>
+      <div class="or-div"><span>or</span></div>
+      <button class="btn-google" id="google_btn" type="button" onclick="googleSignIn()">
+        <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C39.9 40 44 33 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
+        Continue with Google
+      </button>
+      <div class="switch" id="au_help" style="font-size:12px;color:var(--dim);margin-top:12px">New here or returning — just enter your details to continue.</div>
     </div>
     <!-- Step 2: OTP -->
     <div id="authStep2" class="hidden">
@@ -1021,7 +1031,7 @@ function clearCurrentStore(){ try{ localStorage.removeItem("dakhilaaCurrent"); }
 
 /* ---------- top-level views ---------- */
 function view(id){ ["loadingScreen","authScreen","shell","testScreen","resultsScreen","advScreen","advResults","mainsScreen","mnResults","savedReviewScreen"].forEach(function(s){ var el=document.getElementById(s); if(el) el.classList.add("hidden"); }); document.getElementById(id).classList.remove("hidden"); window.scrollTo(0,0); }
-function showAuthStep1(){ document.getElementById("authStep1").classList.remove("hidden"); document.getElementById("authStep2").classList.add("hidden"); }
+function showAuthStep1(){ document.getElementById("authStep1").classList.remove("hidden"); document.getElementById("authStep2").classList.add("hidden"); var g=document.getElementById("google_btn"); if(g) g.disabled=false; }
 function showAuthStep2(){ document.getElementById("authStep2").classList.remove("hidden"); document.getElementById("authStep1").classList.add("hidden"); }
 function showSignup(){ showAuthStep1(); }
 function showSignin(){ showAuthStep1(); }
@@ -1037,6 +1047,37 @@ function fbError(err){ var c=(err&&err.code)?err.code:""; var dbg=(err&&err.mess
   if(c.indexOf("too-many-requests")>=0) return "Too many attempts. Please wait and try again.";
   if(c.indexOf("operation-not-allowed")>=0) return "Phone sign-in blocked. Admin: in Firebase enable Phone, enable Blaze billing, and add this domain under Authorized domains, then wait a few minutes. ("+c+")"+dbg;
   return "Couldn't send OTP. Please try again."+(c?(" ["+c+"]"):"")+dbg; }
+
+/* ---------- auth: Google sign-in ---------- */
+function googleSignIn(){
+  var gbtn=document.getElementById("google_btn");
+  var msg=document.getElementById("au_msg");
+  if(msg){ msg.style.color="var(--muted)"; msg.textContent=""; }
+  if(!window.firebase || !firebase.auth){ if(msg){ msg.style.color="#f87171"; msg.textContent="Sign-in is loading, please try again in a moment."; } return; }
+  if(gbtn){ gbtn.disabled=true; }
+  // carry over the optional details the student may have typed
+  var nm=(document.getElementById("au_name")||{}).value||"";
+  var mb=((document.getElementById("au_mobile")||{}).value||"").replace(/\D/g,'');
+  var ig=(document.getElementById("au_insta")||{}).value||"";
+  pendingSignup={ name:nm.trim(), mobile:(validMobile(mb)?mb:""), instagram:ig.trim(), _google:true };
+  var provider=new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt:"select_account" });
+  fbAuth.signInWithPopup(provider).then(function(){
+    /* onAuthStateChanged handles the rest */
+  }).catch(function(err){
+    if(gbtn){ gbtn.disabled=false; }
+    var c=(err&&err.code)?err.code:"";
+    if(c.indexOf("popup-closed-by-user")>=0||c.indexOf("cancelled-popup")>=0){ if(msg){ msg.textContent=""; } return; }
+    if(msg){
+      msg.style.color="#f87171";
+      if(c.indexOf("popup-blocked")>=0){ msg.textContent="Please allow pop-ups for this site, then tap Continue with Google again."; }
+      else if(c.indexOf("unauthorized-domain")>=0){ msg.textContent="This domain isn't authorized for Google sign-in yet. (Admin: add it in Firebase → Authentication → Settings → Authorized domains.)"; }
+      else if(c.indexOf("operation-not-allowed")>=0){ msg.textContent="Google sign-in isn't enabled. (Admin: enable Google in Firebase → Authentication → Sign-in method.)"; }
+      else if(c.indexOf("account-exists-with-different-credential")>=0){ msg.textContent="You've signed in before with a different method. Please use that one."; }
+      else { msg.textContent="Google sign-in failed"+(c?(" ["+c+"]"):"")+". Please try again."; }
+    }
+  });
+}
 
 /* ---------- auth: mobile OTP ---------- */
 var pendingSignup=null, confirmationResult=null, recaptcha=null;
@@ -1111,24 +1152,28 @@ function initFirebaseAuth(){
     if(user){
       fbDB.collection("users").doc(user.uid).get().then(function(doc){
         var isNew=!doc.exists; var d=doc.exists?doc.data():{};
-        if(isNew && pendingSignup){
-          d={ name:pendingSignup.name, mobile:pendingSignup.mobile, instagram:pendingSignup.instagram, testsTaken:0, questionsSolved:0, correctAnswers:0, history:[] };
+        if(isNew){
+          var ps=pendingSignup||{};
+          d={ name:(ps.name||user.displayName||"Student"), mobile:(ps.mobile||""), instagram:(ps.instagram||""), testsTaken:0, questionsSolved:0, correctAnswers:0, history:[] };
+          if(user.email) d.email=user.email;
+          if(user.photoURL) d.photo=user.photoURL;
           fbDB.collection("users").doc(user.uid).set(d).catch(function(e){ console.error(e); });
         }
         var mob=d.mobile||(user.phoneNumber||"").replace("+91","");
-        currentUser=user.uid; currentEmail=mob;
-        currentProfile={ name:d.name||(pendingSignup&&pendingSignup.name)||"Student", email:(mob?("+91 "+mob):""), mobile:mob, instagram:d.instagram||(pendingSignup&&pendingSignup.instagram)||"",
+        var eml=d.email||(user.email||"");
+        currentUser=user.uid; currentEmail=mob||eml;
+        currentProfile={ name:d.name||(pendingSignup&&pendingSignup.name)||user.displayName||"Student", email:(mob?("+91 "+mob):(eml||"")), mobile:mob, instagram:d.instagram||(pendingSignup&&pendingSignup.instagram)||"",
           stats:{ testsTaken:d.testsTaken||0, questionsSolved:d.questionsSolved||0, correctAnswers:d.correctAnswers||0 },
           last:(typeof d.lastReadiness==="number")?{ readiness:d.lastReadiness, weakest:d.weakestSubject||"", est:d.lastEst||0, per:d.lastPer||null }:null,
           history:Array.isArray(d.history)?d.history:[],
-          photo:d.photo||"",
+          photo:d.photo||(user.photoURL||""),
           plan:d.plan||null, planName:d.planName||"", planSince:d.planSince||0, lastPaymentId:d.lastPaymentId||"",
           diagMonth:d.diagMonth||"", diagCount:d.diagCount||0,
           firstReadiness:(typeof d.firstReadiness==="number"?d.firstReadiness:undefined) };
         pendingSignup=null;
         enterApp();
         attachUserSync(user.uid);
-      }).catch(function(){ var mob=(user.phoneNumber||"").replace("+91",""); currentUser=user.uid; currentEmail=mob; currentProfile={ name:(pendingSignup&&pendingSignup.name)||"Student", email:(mob?("+91 "+mob):""), mobile:mob, instagram:"", stats:{testsTaken:0,questionsSolved:0,correctAnswers:0}, last:null, history:[], plan:null }; enterApp(); attachUserSync(user.uid); });
+      }).catch(function(){ var mob=(user.phoneNumber||"").replace("+91",""); var eml=user.email||""; currentUser=user.uid; currentEmail=mob||eml; currentProfile={ name:(pendingSignup&&pendingSignup.name)||user.displayName||"Student", email:(mob?("+91 "+mob):(eml||"")), mobile:mob, instagram:"", photo:(user.photoURL||""), stats:{testsTaken:0,questionsSolved:0,correctAnswers:0}, last:null, history:[], plan:null }; enterApp(); attachUserSync(user.uid); });
     } else { detachUserSync(); currentUser=null; currentProfile=null; view("authScreen"); if(pendingPlan){ showPlanIntent(); } else { showAuthStep1(); } }
   });
 }

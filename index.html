@@ -1002,10 +1002,10 @@ function renderTestimonials(list){
 }
 function loadTestimonials(){
   if(!tmDB){ renderTestimonials([]); return; }
-  tmDB.collection("feedback").where("approved","==",true).limit(40).get().then(function(snap){
+  tmDB.collection("feedback").where("approved","==",true).limit(30).get().then(function(snap){
     var arr=[]; snap.forEach(function(d){ var v=d.data(); if((v.rating||0)>=4) arr.push(v); });
     arr.sort(function(a,b){ return (b.date||0)-(a.date||0); });
-    renderTestimonials(arr.slice(0,20));
+    renderTestimonials(arr.slice(0,10));
   }).catch(function(e){ console.warn("testimonials load failed", e); renderTestimonials([]); });
 }
 
@@ -1080,7 +1080,7 @@ function loadTestimonials(){
 })();
 
 /* ---- Student growth matrix (real, top-growth students from Firestore) ---- */
-var GROWTH_MIN=6, GROWTH_MAX=8;
+var GROWTH_MIN=6, GROWTH_MAX=10;
 function gCard(g){
   var nm=g.name||"Student", initial=nm.charAt(0).toUpperCase();
   var before=Math.round(g.before||0), after=Math.round(g.after||0), delta=Math.round((typeof g.delta==="number")?g.delta:(after-before));
