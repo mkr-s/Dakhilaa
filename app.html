@@ -151,6 +151,13 @@
   .mockrow{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:24px; }
   @media(max-width:700px){ .mockrow{ grid-template-columns:1fr; } }
   .mock-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; margin-bottom:26px; }
+  /* Tests page: grouped by class. 11th sees Class 11 only; 12th & dropper see Class 11 + Class 12. */
+  .tgroup{ display:none; }
+  .tgroup.show{ display:block; }
+  .tgroup.show ~ .tgroup.show{ margin-top:34px; padding-top:30px; border-top:1px solid var(--border); }
+  .tgroup-head{ display:inline-block; font-weight:800; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange-l); background:rgba(249,115,22,.14); padding:6px 14px; border-radius:999px; margin-bottom:18px; }
+  .tblk .sec-h{ font-size:18px; }
+  .tblk + .tblk{ margin-top:26px; }
   .mk{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; }
   .mk .pat{ display:inline-block; background:rgba(45,212,191,.14); color:var(--teal); font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; margin-bottom:8px; }
   .mk h4{ font-size:16px; margin-bottom:6px; }
@@ -582,45 +589,65 @@
 
       <!-- TESTS -->
       <section id="sec-tests" class="hidden">
-        <h3 class="sec-h">Full Mock Tests</h3>
-        <div class="sec-sub">JEE Main pattern — 75 questions (25 each subject), 3 hours, +4 / −1 marking. Real exam-style interface.</div>
-        <div class="mock-grid" id="mockGrid"></div>
+        <div id="testsWrap" class="tests-wrap">
 
-        <h3 class="sec-h" style="font-size:18px;margin-top:26px">JEE Advanced Mocks</h3>
-        <div class="sec-sub">Real JEE Advanced papers — full pattern: single-correct, multiple-correct (partial marks), numerical, and matching. 3 hours each.</div>
-        <div class="mock-grid" id="advGrid"></div>
+          <!-- ===================== CLASS 11 GROUP ===================== -->
+          <div class="tgroup" data-cls="11">
+            <div class="tgroup-head">Class 11</div>
 
-        <h3 class="sec-h" style="font-size:18px;margin-top:26px">JEE Main PYQ Mocks — scored, with solutions</h3>
-        <div class="sec-sub">Full 75-question papers from past JEE Main questions. Attempt, submit, and get your score, estimated percentile &amp; rank — plus the complete step-by-step solution for every question.</div>
-        <div class="mock-grid" id="mnMockGrid"></div>
+            <div class="tblk">
+              <h3 class="sec-h">Mock Tests</h3>
+              <div class="sec-sub">Full 75-question papers on the Class 11 syllabus, JEE Main pattern — 3 hours, +4 / −1. Submit to get your score, estimated percentile &amp; rank, with the correct answer for every question.</div>
+              <div class="mock-grid" id="mn11MockGrid"></div>
+            </div>
 
-        <h3 class="sec-h" style="font-size:18px">Chapter-wise Tests</h3>
-        <div class="sec-sub">Practice one chapter at a time — every question comes with a full worked solution.</div>
-        <div class="chips" id="mn_chips">
-          <div class="chip active" data-s="Physics" onclick="mnChap(this)">Physics</div>
-          <div class="chip" data-s="Chemistry" onclick="mnChap(this)">Chemistry</div>
-          <div class="chip" data-s="Mathematics" onclick="mnChap(this)">Maths</div>
+            <div class="tblk">
+              <h3 class="sec-h">JEE Advanced Mocks</h3>
+              <div class="sec-sub">Full JEE Advanced pattern papers on the Class 11 syllabus — one-or-more-correct, numerical &amp; match-the-column, with Advanced marking, score, rank and full solutions.</div>
+              <div class="mock-grid" id="adv11Grid"></div>
+            </div>
+
+            <div class="tblk">
+              <h3 class="sec-h">Chapter-wise Tests</h3>
+              <div class="sec-sub">One Class 11 chapter at a time — attempt and get scored, with the correct answer for each question.</div>
+              <div class="chips" id="mn11_chips">
+                <div class="chip active" data-s="Physics" onclick="mn11Chap(this)">Physics</div>
+                <div class="chip" data-s="Chemistry" onclick="mn11Chap(this)">Chemistry</div>
+                <div class="chip" data-s="Mathematics" onclick="mn11Chap(this)">Maths</div>
+              </div>
+              <div class="mock-grid" id="mn11ChapGrid"></div>
+            </div>
+          </div>
+
+          <!-- ===================== CLASS 12 GROUP ===================== -->
+          <div class="tgroup" data-cls="12">
+            <div class="tgroup-head">Class 12</div>
+
+            <div class="tblk">
+              <h3 class="sec-h">Mock Tests</h3>
+              <div class="sec-sub">Full 75-question JEE Main papers (25 per subject) — 3 hours, +4 / −1. Submit to get your score, estimated percentile &amp; rank, plus a step-by-step solution for every question.</div>
+              <div class="mock-grid" id="mnMockGrid"></div>
+            </div>
+
+            <div class="tblk">
+              <h3 class="sec-h">JEE Advanced Mocks</h3>
+              <div class="sec-sub">Real JEE Advanced papers — single-correct, multiple-correct (partial marks), numerical and matching. 3 hours each.</div>
+              <div class="mock-grid" id="advGrid"></div>
+            </div>
+
+            <div class="tblk">
+              <h3 class="sec-h">Chapter-wise Tests</h3>
+              <div class="sec-sub">Practice one chapter at a time — every question comes with a full worked solution.</div>
+              <div class="chips" id="mn_chips">
+                <div class="chip active" data-s="Physics" onclick="mnChap(this)">Physics</div>
+                <div class="chip" data-s="Chemistry" onclick="mnChap(this)">Chemistry</div>
+                <div class="chip" data-s="Mathematics" onclick="mnChap(this)">Maths</div>
+              </div>
+              <div class="mock-grid" id="mnChapGrid"></div>
+            </div>
+          </div>
+
         </div>
-        <div class="mock-grid" id="mnChapGrid"></div>
-
-        <div style="height:1px;background:var(--border);margin:30px 0 26px"></div>
-        <div style="display:inline-block;background:rgba(249,115,22,.14);color:var(--orange-l);font-weight:800;font-size:12px;padding:5px 12px;border-radius:999px;margin-bottom:12px">CLASS 11</div>
-        <h3 class="sec-h" style="font-size:18px">Class 11 — Mock Tests (scored)</h3>
-        <div class="sec-sub">75-question papers on Class 11 syllabus, JEE Main pattern. Attempt, submit, and get your score, estimated percentile &amp; rank. Correct answer shown for every question.</div>
-        <div class="mock-grid" id="mn11MockGrid"></div>
-
-        <h3 class="sec-h" style="font-size:18px">Class 11 — Chapter-wise Tests (scored)</h3>
-        <div class="sec-sub">One Class 11 chapter at a time — attempt and get scored with the correct answer for each question.</div>
-        <div class="chips" id="mn11_chips">
-          <div class="chip active" data-s="Physics" onclick="mn11Chap(this)">Physics</div>
-          <div class="chip" data-s="Chemistry" onclick="mn11Chap(this)">Chemistry</div>
-          <div class="chip" data-s="Mathematics" onclick="mn11Chap(this)">Maths</div>
-        </div>
-        <div class="mock-grid" id="mn11ChapGrid"></div>
-
-        <h3 class="sec-h" style="font-size:18px">Class 11 — JEE Advanced Mocks</h3>
-        <div class="sec-sub">25 full JEE Advanced pattern papers on Class 11 syllabus — single-correct, one-or-more-correct, numerical &amp; match-the-column, with Advanced marking, auto score, rank and full solutions.</div>
-        <div class="mock-grid" id="adv11Grid"></div>
       </section>
 
       <!-- MY TESTS -->
@@ -1566,7 +1593,7 @@ function go(sec){
   closeSidebar();
   if(sec==="overview") renderOverview();
   if(sec==="qbank") qbLoad();
-  if(sec==="tests"){ renderMocks(); renderAdvGrid(); mnRenderTests(); mn11RenderTests(); renderAdv11Grid(); }
+  if(sec==="tests"){ renderAdvGrid(); mnRenderTests(); mn11RenderTests(); renderAdv11Grid(); layoutTests(); }
   if(sec==="mytests") renderMyTests();
   if(sec==="weak") renderWeak();
   if(sec==="progress") renderProgress();
@@ -1879,12 +1906,25 @@ function mnEnsure(cb){
 }
 function mnRenderTests(){ mnEnsure(function(){ mnRenderMocks(); mnRenderChap(); }); }
 function mnRenderMocks(){
-  var g=document.getElementById("mnMockGrid"); if(!g||!mnMocks) return; var paid=hasPaid();
-  g.innerHTML=mnMocks.map(function(m,i){
-    var locked=(!paid && i>=MN_FREE_MOCK);
-    if(locked) return '<div class="mk locked"><span class="pat">Scored + Solutions</span><h4>'+m.title+' 🔒</h4><div class="meta">'+m.qs.length+' Questions · +4/−1 · score, rank &amp; full solutions</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
-    return '<div class="mk"><span class="pat">Scored + Solutions</span><h4>'+m.title+'</h4><div class="meta">'+m.qs.length+' Questions · +4/−1 · score, rank &amp; full solutions</div><button class="btn btn-block" onclick="mnStartMock('+i+')">Start Test</button></div>';
+  var g=document.getElementById("mnMockGrid"); if(!g) return; var paid=hasPaid();
+  var html="";
+  // 1) PYQ mocks (scored + full solutions)
+  if(mnMocks){
+    html += mnMocks.map(function(m,i){
+      var locked=(!paid && i>=MN_FREE_MOCK);
+      if(locked) return '<div class="mk locked"><span class="pat">Scored + Solutions</span><h4>'+m.title+' 🔒</h4><div class="meta">'+m.qs.length+' Questions · +4/−1 · score, rank &amp; full solutions</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
+      return '<div class="mk"><span class="pat">Scored + Solutions</span><h4>'+m.title+'</h4><div class="meta">'+m.qs.length+' Questions · +4/−1 · score, rank &amp; full solutions</div><button class="btn btn-block" onclick="mnStartMock('+i+')">Start Test</button></div>';
+    }).join("");
+  }
+  // 2) Generated JEE Main mocks — merged into the same list so there are MORE tests, numbered on after the PYQ set.
+  var base=mnMocks?mnMocks.length:0;
+  html += MOCKS.map(function(m,i){
+    var locked=(!paid && i>=FREE_MOCKS);
+    var label="Mock Test "+(base+i+1);
+    if(locked) return '<div class="mk locked"><span class="pat">JEE Main Pattern</span><h4>'+label+' 🔒</h4><div class="meta">75 Questions · 180 min · +4 / −1</div><button class="btn btn-block btn-outline" onclick="go(\'settings\')">Unlock with a plan</button></div>';
+    return '<div class="mk"><span class="pat">JEE Main Pattern</span><h4>'+label+'</h4><div class="meta">75 Questions · 180 min · +4 / −1</div><button class="btn btn-block" onclick="startMock('+i+')">Start Test</button></div>';
   }).join("");
+  g.innerHTML=html;
 }
 function mnChap(el){ var c=el.parentElement.querySelectorAll(".chip"); for(var i=0;i<c.length;i++) c[i].classList.remove("active"); el.classList.add("active"); mnCurSub=el.getAttribute("data-s"); mnRenderChap(); }
 function mnRenderChap(){
@@ -2227,6 +2267,15 @@ function fmtMMSS(sec){ sec=sec||0; var m=Math.floor(sec/60),s=sec%60; return pad
 function fmtDur(ms){ if(ms<0)ms=0; var s=Math.floor(ms/1000); var d=Math.floor(s/86400),h=Math.floor((s%86400)/3600),m=Math.floor((s%3600)/60),ss=s%60; return (d>0?(d+"d "):"")+pad2(h)+":"+pad2(m)+":"+pad2(ss); }
 function escLive(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 function liveCategory(){ var p=currentProfile&&currentProfile.plan; if(p==="grade11") return "11"; if(p==="grade12"||p==="dropper") return "12"; return null; }
+/* Tests page: grouped by class. 11th → Class 11 only. 12th / dropper (and unpaid preview) → Class 11 + Class 12. */
+function layoutTests(){
+  var p=currentProfile&&currentProfile.plan;
+  var show12=(p!=="grade11");   // 11th sees only Class 11; everyone else also sees Class 12
+  var g11=document.querySelector('#testsWrap .tgroup[data-cls="11"]');
+  var g12=document.querySelector('#testsWrap .tgroup[data-cls="12"]');
+  if(g11) g11.classList.add("show");
+  if(g12) g12.classList.toggle("show", show12);
+}
 function liveCatLabel(c){ return c==="11"?"Class 11":"Class 12 & Dropper"; }
 function liveBucket(weekId,cat){ return weekId+"_"+cat; }
 
