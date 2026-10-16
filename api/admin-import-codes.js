@@ -4,6 +4,7 @@
 var _fb = require("./_firebase");
 
 var OWNER_EMAIL = "mukeshit3043@gmail.com";
+var OWNER_PHONE = "+919599105264";   // owner also logs in with this mobile (token has no email)
 var VALID_PLANS = { grade11: 1, grade12: 1, dropper: 1 };
 
 module.exports = async function (req, res) {
@@ -21,10 +22,10 @@ module.exports = async function (req, res) {
   var token = authH.indexOf("Bearer ") === 0 ? authH.slice(7) : "";
   if (!token) { res.status(401).json({ ok: false, error: "Please sign in as the owner." }); return; }
 
-  var email = "";
-  try { var dec = await admin.auth().verifyIdToken(token); email = (dec.email || "").toLowerCase(); }
+  var email = "", phone = "";
+  try { var dec = await admin.auth().verifyIdToken(token); email = (dec.email || "").toLowerCase(); phone = dec.phone_number || ""; }
   catch (e) { res.status(401).json({ ok: false, error: "Session expired. Sign in again." }); return; }
-  if (email !== OWNER_EMAIL) { res.status(403).json({ ok: false, error: "Owner only." }); return; }
+  if (email !== OWNER_EMAIL && phone !== OWNER_PHONE) { res.status(403).json({ ok: false, error: "Owner only." }); return; }
 
   var body = req.body;
   if (typeof body === "string") { try { body = JSON.parse(body); } catch (e) { body = {}; } }
