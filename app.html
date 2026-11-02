@@ -919,6 +919,7 @@
   <h2 style="text-align:center;margin-bottom:4px" id="r_title">Your Report</h2>
   <div class="report-ring" id="r_ring"><div class="pct" id="r_pct">0%</div><div class="subx">Score</div></div>
   <div id="errtag_panel" class="hidden" style="max-width:640px;margin:14px auto;padding:12px 14px;background:#0f1d33;border:1px solid #1b2a40;border-radius:12px"></div>
+  <div id="strategy_panel" class="hidden" style="max-width:640px;margin:14px auto;padding:12px 14px;background:#0f1d33;border:1px solid #1b2a40;border-radius:12px"></div>
   <div id="r_estwrap">
     <div class="est-line"><span id="r_estlabel">Estimated JEE Main score</span>: <b id="r_est">0</b> / 300</div>
     <div class="est-note" id="r_estnote">An indicator based on this test — not an official score.</div>
@@ -2064,7 +2065,7 @@ function mnFinishPractice(){
     var he={ type:mnS.name, score:Math.round(correct/graded*100), marks:marks, correct:correct, total:graded, subjects:{}, date:Date.now() };
     he.subjects[mnS.qs[0]&&mnS.qs[0].subject||"Practice"]=marks;
     he.review=mnS.qs.map(function(q,i){ return { img:(q.img||""), sub:(q.subject||""), you:(mnS.picks[i]==null?null:mnS.picks[i]), corr:(q.answer||""), sol:(q.sol||""), type:(q.type||"single") }; });
-    try{ logAttempt({ mode:"mains", name:mnS.name, score:Math.round(correct/graded*100), marks:marks, correct:correct, total:graded, order:[] }, mnS.qs.map(function(q,i){ var p=mnS.picks[i], sk=(p==null); return { qid:(q.img||null), sub:(q.subject||""), you:null, corr:null, ok:(!sk&&mnIsCorrect(q,p)), skipped:sk, t:0 }; })); }catch(e){ console.error("mn log", e); }
+    try{ logAttempt({ mode:"mains", name:mnS.name, score:Math.round(correct/graded*100), marks:marks, correct:correct, total:graded, order:[] }, mnS.qs.map(function(q,i){ var p=mnS.picks[i], sk=(p==null); return { qid:(q.img||null), sub:(q.subject||""), you:null, corr:null, ok:(!sk&&mnIsCorrect(q,p)), skipped:sk, t:0, topic:(q.topic||"") }; })); }catch(e){ console.error("mn log", e); }
     currentProfile.history=(currentProfile.history||[]).concat([he]); trimHistory();
     if(currentProfile.stats) currentProfile.stats.testsTaken=(currentProfile.stats.testsTaken||0)+1;
     if(USE_FIREBASE && fbDB && currentUser){ try{ fbDB.collection("users").doc(currentUser).set({ testsTaken:firebase.firestore.FieldValue.increment(1), history:currentProfile.history },{merge:true}).catch(function(){}); }catch(e){ console.error(e); } }
@@ -2250,7 +2251,7 @@ function mnSubmit(){
     var he={ type:mnS.name, score:pctInt, marks:r.marks, correct:r.correct, total:mnS.qs.length, subjects:{}, date:Date.now() };
     Object.keys(r.perSub).forEach(function(s){ he.subjects[s]=r.perSub[s].m; });
     he.review=mnS.qs.map(function(q,i){ return { img:(q.img||""), sub:(q.subject||""), you:(mnS.picks[i]==null?null:mnS.picks[i]), corr:(q.answer==null?"":q.answer), sol:(q.sol||""), type:(q.type||"single") }; });
-    try{ logAttempt({ mode:"mains", name:mnS.name, score:pctInt, marks:r.marks, correct:r.correct, total:mnS.qs.length, order:[] }, mnS.qs.map(function(q,i){ var p=mnS.picks[i], sk=(p==null); return { qid:(q.img||null), sub:(q.subject||""), you:null, corr:null, ok:(!sk&&mnIsCorrect(q,p)), skipped:sk, t:0 }; })); }catch(e){ console.error("mn log", e); }
+    try{ logAttempt({ mode:"mains", name:mnS.name, score:pctInt, marks:r.marks, correct:r.correct, total:mnS.qs.length, order:[] }, mnS.qs.map(function(q,i){ var p=mnS.picks[i], sk=(p==null); return { qid:(q.img||null), sub:(q.subject||""), you:null, corr:null, ok:(!sk&&mnIsCorrect(q,p)), skipped:sk, t:0, topic:(q.topic||"") }; })); }catch(e){ console.error("mn log", e); }
     currentProfile.history=(currentProfile.history||[]).concat([he]); trimHistory();
     if(currentProfile.stats) currentProfile.stats.testsTaken=(currentProfile.stats.testsTaken||0)+1;
     // feed the growth matrix (same readiness scale as the diagnostic/full mock)
@@ -2718,10 +2719,20 @@ function logAttempt(meta, rev){
     rev.forEach(function(r){ if(r.qid==null) return;
       var ref=fbDB.collection("question_stats").doc(String(r.qid));
       var u={ subject:(r.sub||""), attempts:inc(1), timeMsSum:inc(r.t||0) };
+      if(r.topic){ u.topic=r.topic; }
       if(r.skipped){ u.skipped=inc(1); } else if(r.ok){ u.correct=inc(1); } else { u.wrong=inc(1); if(r.you!=null){ u["opt_"+r.you]=inc(1); } }
       batch.set(ref,u,{merge:true});
     });
     batch.commit().catch(function(e){ console.error("qstats", e); });
+    // per-user aggregates: subject accuracy + chapter accuracy (chapter only when the question carries a topic)
+    var sub={}, chap={};
+    rev.forEach(function(r){ var s=r.sub||"";
+      if(s){ var o=sub[s]||(sub[s]={c:0,w:0,t:0}); o.t++; if(r.ok) o.c++; else if(!r.skipped) o.w++; }
+      if(r.topic){ var ck=(s+" · "+r.topic).replace(/[.\/~*\[\]#$]/g,"_").slice(0,120); var cc=chap[ck]||(chap[ck]={c:0,w:0,t:0}); cc.t++; if(r.ok) cc.c++; else if(!r.skipped) cc.w++; }
+    });
+    function incObj(o){ var out={}; Object.keys(o).forEach(function(k){ out[k]={ c:inc(o[k].c), w:inc(o[k].w), t:inc(o[k].t) }; }); return out; }
+    var up={}; if(Object.keys(sub).length) up.aggSub=incObj(sub); if(Object.keys(chap).length) up.aggChap=incObj(chap);
+    if(Object.keys(up).length){ fbDB.collection("users").doc(currentUser).set(up,{merge:true}).catch(function(){}); }
   }catch(e){ console.error("logAttempt", e); }
 }
 function errTag(qid, sub, tag, el){
@@ -2749,12 +2760,33 @@ function renderErrTagPanel(rev){
   });
   host.innerHTML=html; host.classList.remove("hidden");
 }
+function renderStrategy(rev, meta){
+  var host=document.getElementById("strategy_panel"); if(!host) return;
+  host.innerHTML=""; host.classList.add("hidden");
+  if(!rev || !rev.length) return;
+  var wrong=rev.filter(function(r){ return !r.ok && !r.skipped; });
+  var skip=rev.filter(function(r){ return r.skipped; });
+  var totalMs=rev.reduce(function(a,r){ return a+(r.t||0); },0);
+  var mins=Math.floor(totalMs/60000), secs=Math.round((totalMs%60000)/1000), avgSec=rev.length?Math.round(totalMs/rev.length/1000):0;
+  var hog=rev.slice().filter(function(r){ return r.t>0; }).sort(function(a,b){ return (b.t||0)-(a.t||0); })[0];
+  var rows=[];
+  rows.push('<div style="display:flex;justify-content:space-between;font-size:13px;margin:4px 0"><span>Total time</span><b>'+(totalMs>1500?(mins+"m "+secs+"s · ~"+avgSec+"s/question"):"—")+'</b></div>');
+  if(meta && meta.isMock){
+    rows.push('<div style="display:flex;justify-content:space-between;font-size:13px;margin:4px 0"><span>Negative marking me gaye</span><b style="color:#ef4444">−'+wrong.length+' marks</b></div>');
+    rows.push('<div style="font-size:12.5px;opacity:.75;margin:2px 0 6px">'+wrong.length+' galat × −1. Jo pakke nahi the unhe skip karte to score <b>+'+wrong.length+'</b> hota ('+((meta.marks||0)+wrong.length)+' tak).</div>');
+  }
+  rows.push('<div style="display:flex;justify-content:space-between;font-size:13px;margin:4px 0"><span>Attempt nahi kiye</span><b>'+skip.length+' questions</b></div>');
+  if(skip.length) rows.push('<div style="font-size:12.5px;opacity:.75;margin:2px 0 6px">Ye easy marks ho sakte the — next time inme se aasaan pehle attempt karo.</div>');
+  if(hog && hog.t>4000){ var hs=Math.round(hog.t/1000); rows.push('<div style="font-size:12.5px;opacity:.85;margin:6px 0 0;padding-top:6px;border-top:1px solid #1b2a40">⏱ Sabse zyada time ('+hs+'s) ek '+(hog.sub||"")+' question pe gaya'+((!hog.ok&&!hog.skipped)?' — aur wo galat bhi tha. Aise questions pehchaan ke skip karna seekho.':'.')+'</div>'); }
+  host.innerHTML='<div style="font-weight:700;margin-bottom:8px">📊 Attempt strategy</div>'+rows.join("");
+  host.classList.remove("hidden");
+}
 function renderInsights(){
   var host=document.getElementById("insights_body"); if(!host) return;
   host.innerHTML='<div style="opacity:.6">Loading…</div>';
   if(!(USE_FIREBASE && fbDB && currentUser)){ host.innerHTML='<div style="opacity:.7">Sync on karke sign in karo, phir yahan mistake insights dikhenge.</div>'; return; }
   fbDB.collection("users").doc(currentUser).get().then(function(doc){
-    var d=doc.exists?doc.data():{}, aggSub=d.aggSub||{}, aggErr=d.aggErr||{};
+    var d=doc.exists?doc.data():{}, aggSub=d.aggSub||{}, aggErr=d.aggErr||{}, aggChap=d.aggChap||{};
     var subHtml=Object.keys(aggSub).map(function(s){ var a=aggSub[s]||{}, t=a.t||0, c=a.c||0, acc=t?Math.round(100*c/t):0; var col=acc>=60?"#22c55e":(acc>=40?"#f5a524":"#ef4444");
       return '<div style="margin:10px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><b>'+s+'</b><span>'+acc+'% correct · '+(a.w||0)+' wrong</span></div><div style="height:8px;background:#13233b;border-radius:6px;overflow:hidden;margin-top:4px"><div style="height:100%;width:'+acc+'%;background:'+col+'"></div></div></div>'; }).join("");
     if(!subHtml) subHtml='<div style="opacity:.7">Abhi tak koi graded test nahi. Ek diagnostic ya mock do, phir yahan subject-wise breakdown aayega.</div>';
@@ -2762,7 +2794,12 @@ function renderInsights(){
     var tot=tags.reduce(function(x,t){ return x+(aggErr[t[0]]||0); },0);
     var errHtml= tot? tags.map(function(t){ var n=aggErr[t[0]]||0, p=tot?Math.round(100*n/tot):0; return '<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>'+t[1]+'</span><span>'+n+' ('+p+'%)</span></div><div style="height:8px;background:#13233b;border-radius:6px;overflow:hidden;margin-top:4px"><div style="height:100%;width:'+p+'%;background:#60a5fa"></div></div></div>'; }).join("")
       : '<div style="opacity:.7">Test ke result screen pe apni galtiyan tag karo — yahan dikhega kitni galti concept ki hai, kitni silly.</div>';
-    host.innerHTML='<h3 style="margin:0 0 6px">Subject-wise accuracy</h3>'+subHtml+'<h3 style="margin:20px 0 6px">Galti ka type</h3>'+errHtml;
+    var chapKeys=Object.keys(aggChap), chapHtml;
+    function accCol2(a){ return a>=60?"#22c55e":(a>=40?"#f5a524":"#ef4444"); }
+    if(chapKeys.length){ chapKeys.sort(function(a,b){ return ((aggChap[b].w||0)-(aggChap[a].w||0)); });
+      chapHtml=chapKeys.slice(0,20).map(function(k){ var a=aggChap[k]||{}, t=a.t||0, c=a.c||0, acc=t?Math.round(100*c/t):0; return '<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>'+k+'</span><span>'+acc+'% · '+(a.w||0)+' wrong</span></div><div style="height:8px;background:#13233b;border-radius:6px;overflow:hidden;margin-top:4px"><div style="height:100%;width:'+acc+'%;background:'+accCol2(acc)+'"></div></div></div>'; }).join("");
+    } else { chapHtml='<div style="opacity:.7">Mains ke chapter-wise tests do (Tests → chapter), phir yahan chapter-wise heatmap aayega — kaunse chapters marks kha rahe hain.</div>'; }
+    host.innerHTML='<h3 style="margin:0 0 6px">Subject-wise accuracy</h3>'+subHtml+'<h3 style="margin:20px 0 6px">Chapter-wise heatmap <span style="opacity:.55;font-size:12px;font-weight:400">(Mains chapter practice)</span></h3>'+chapHtml+'<h3 style="margin:20px 0 6px">Galti ka type</h3>'+errHtml;
   }).catch(function(e){ console.error(e); host.innerHTML='<div style="opacity:.7">Insights load nahi hue. Baad me try karo.</div>'; });
 }
 function submitTest(){
@@ -2790,8 +2827,8 @@ function submitTest(){
   try{ tsAccrue(testState.current);
     var richRev=qs.map(function(q,i){ var sk=(ans[i]==null); return { qid:(q.id!=null?q.id:(q.img||null)), sub:q.subject, you:(sk?null:ans[i]), corr:q.correct, ok:(ans[i]===q.correct), skipped:sk, t:((testState.timeMs&&testState.timeMs[i])||0) }; });
     logAttempt({ mode:testState.mode, name:testState.mockName, score:scorePct, marks:(isMock?marks:null), correct:correct, total:total, order:testState.order }, richRev);
-    if(USE_FIREBASE && fbDB && currentUser){ var _inc=firebase.firestore.FieldValue.increment, _ag={}; SUBJECTS.forEach(function(s){ if(per[s]&&per[s].t){ _ag[s]={ c:_inc(per[s].c), w:_inc(per[s].w), t:_inc(per[s].t) }; } }); if(Object.keys(_ag).length){ fbDB.collection("users").doc(currentUser).set({ aggSub:_ag },{merge:true}).catch(function(){}); } }
     try{ renderErrTagPanel(richRev); }catch(_e){}
+    try{ renderStrategy(richRev, { isMock:isMock, marks:(isMock?marks:0) }); }catch(_e){}
   }catch(e){ console.error("attempt capture", e); }
   testState.active=false; view("resultsScreen");
 }
