@@ -1,0 +1,197 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // The owner account that approves partners. MUST match OWNER_EMAIL in partner.html.
+    function ownerEmail() { return "mukeshit3043@gmail.com"; }
+    function ownerPhone() { return "+919599105264"; }
+    function isOwner() {
+      return request.auth != null && (
+        request.auth.token.email == ownerEmail()
+        || request.auth.token.phone_number == ownerPhone()
+      );
+    }
+
+    // ---------- Students (app.html) ----------
+    // A student may read and write their OWN doc, but NOT the paid-plan fields.
+    // Those are set only by the server (verify-payment / redeem-code, via the
+    // Admin SDK, which bypasses these rules) — so a student can't self-grant a plan.
+    // The owner account is exempt (its own access).
+    function planFieldsUnchanged() {
+      return request.resource.data.get('plan', '') == resource.data.get('plan', '')
+          && request.resource.data.get('planName', '') == resource.data.get('planName', '')
+          && request.resource.data.get('planSince', 0) == resource.data.get('planSince', 0)
+          && request.resource.data.get('lastPaymentId', '') == resource.data.get('lastPaymentId', '')
+          && request.resource.data.get('planSource', '') == resource.data.get('planSource', '')
+          && request.resource.data.get('lastCode', '') == resource.data.get('lastCode', '');
+    }
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      // A new doc may be created only without any plan field (no self-granting).
+      allow create: if request.auth != null && request.auth.uid == uid
+                    && !('plan' in request.resource.data);
+      // An update must leave the plan fields untouched — unless it's the owner.
+      allow update: if request.auth != null && request.auth.uid == uid
+                    && (planFieldsUnchanged() || isOwner());
+      allow delete: if false;
+    }
+
+    // ---------- Attempt logs (AI-tutor foundation) ----------
+    // One doc per test attempt (diagnostic / mock / mains / advanced). A student
+    // writes and reads only their OWN attempts; the owner can read all for analytics.
+    // Holds per-question review (chosen option, correct/wrong, time) + optional error tags.
+    match /attempts/{attemptId} {
+      allow create: if request.auth != null
+                    && request.resource.data.uid == request.auth.uid;
+      // owner may patch their own attempt (error-tag taps)
+      allow update: if request.auth != null
+                    && resource.data.uid == request.auth.uid;
+      allow read:   if isOwner() || (request.auth != null && resource.data.uid == request.auth.uid);
+      allow delete: if false;
+    }
+
+    // ---------- Per-question aggregate stats (shared) ----------
+    // Shared counters per question id: attempts, correct, wrong, per-option picks,
+    // error-type tallies, time sum. Written only as increments (set with merge) by
+    // any signed-in student. No PII and nothing security-critical lives here.
+    match /question_stats/{qid} {
+      allow read:  if request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    // ---------- Institute access codes (B2B) ----------
+    // Written only by the server (Admin SDK) or the owner-only import function.
+    // Students never read or write these; they redeem via /api/redeem-code.
+    match /access_codes/{code} {
+      allow read: if isOwner();
+      allow write: if false;
+    }
+
+    // ---------- Partners (partner.html) ----------
+    match /partners/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isOwner());
+      // A partner can create only their OWN doc, and only as a pending partner.
+      // The owner may create their own admin doc (status approved).
+      allow create: if request.auth != null && request.auth.uid == uid && (
+                      (request.resource.data.status == "pending" && request.resource.data.role == "partner")
+                      || isOwner()
+                    );
+      // Owner can change anything (e.g. approve/reject). A partner may edit their own
+      // profile but NOT their status, role or referral code.
+      allow update: if isOwner() || (
+                      request.auth != null && request.auth.uid == uid
+                      && request.resource.data.status == resource.data.status
+                      && request.resource.data.role == resource.data.role
+                      && request.resource.data.referralCode == resource.data.referralCode
+                    );
+      allow delete: if isOwner();
+    }
+
+    // ---------- Mobile -> email lookup (so partners can log in with their mobile) ----------
+    match /partner_index/{mobile} {
+      allow read: if true; // needed before login (user is not authenticated yet)
+      allow write: if request.auth != null
+                   && request.resource.data.uid == request.auth.uid
+                   && request.resource.data.email == request.auth.token.email;
+    }
+
+    // ---------- Referral codes (validated at checkout) ----------
+    match /refcodes/{code} {
+      allow read: if true; // public: maps a code to the partner's opaque uid only
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if false; // codes are permanent
+    }
+
+    // ---------- Commissions (written when a student buys with a referral code) ----------
+    match /commissions/{id} {
+      // A partner reads their own commissions; the owner reads all.
+      allow read: if isOwner() || (request.auth != null && resource.data.partnerUid == request.auth.uid);
+      // Only a logged-in student can create, only for their own purchase, only at a real
+      // plan price, with commission fixed at ~20% (19-21% allows for rounding).
+      // Update the amount list below if you change plan prices in /api/create-order.js.
+      allow create: if request.auth != null
+                    && request.resource.data.studentUid == request.auth.uid
+                    && request.resource.data.amount in [1499, 1799, 1999]
+                    && request.resource.data.commission is number
+                    && request.resource.data.commission >= request.resource.data.amount * 0.19
+                    && request.resource.data.commission <= request.resource.data.amount * 0.21
+                    && request.resource.data.partnerUid is string
+                    && request.resource.data.partnerUid != request.auth.uid;
+      allow update, delete: if false; // an audit trail — never edited from the app
+    }
+
+    // ---------- Feedback / ratings ----------
+    match /feedback/{id} {
+      allow create: if request.auth != null;    // any signed-in user can submit
+      // Owner reads everything (admin). The public landing page may read only
+      // reviews the owner has approved — it queries where("approved","==",true).
+      allow read: if isOwner() || resource.data.approved == true;
+      allow update, delete: if false;
+    }
+
+    // ---------- Lead-magnet captures (landing-page "Free Guide" form) ----------
+    // A visitor isn't logged in, so creation is public, but tightly shaped so it
+    // can only be a guide lead (name + mobile). Only the owner can read them.
+    match /leads/{id} {
+      allow create: if request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() < 80
+                    && request.resource.data.mobile is string
+                    && request.resource.data.mobile.matches('[6-9][0-9]{9}')
+                    && request.resource.data.source == 'guide';
+      allow read: if isOwner();
+      allow update, delete: if false;
+    }
+
+    // ---------- Contact form messages (public contact.html form) ----------
+    match /messages/{id} {
+      allow create: if request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() < 120
+                    && request.resource.data.mobile is string
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() < 4000
+                    && request.resource.data.source == 'contact';
+      allow read: if isOwner();
+      allow update, delete: if false;
+    }
+
+    // ---------- Student-to-student referrals (share-to-unlock coupon) ----------
+    // One doc per NEW student, id = their own uid, naming the friend who invited them.
+    // The new student writes it (once); the inviting friend reads their own count.
+    match /referrals/{newUid} {
+      allow create: if request.auth != null
+                    && request.auth.uid == newUid
+                    && request.resource.data.referrer is string
+                    && request.resource.data.referrer != request.auth.uid;
+      allow read: if request.auth != null
+                  && (resource.data.referrer == request.auth.uid || isOwner());
+      allow update, delete: if false;
+    }
+
+    // ---------- Student growth matrix (public social proof on the landing page) ----------
+    // Each student writes only their OWN growth doc; it holds just a short display name,
+    // a class tag, and before/after/delta readiness numbers (no email, mobile or answers).
+    match /growth/{uid} {
+      allow read: if true; // public: landing page reads improving students
+      allow create, update: if request.auth != null && request.auth.uid == uid
+                            && request.resource.data.delta is number
+                            && request.resource.data.before is number
+                            && request.resource.data.after is number;
+      allow delete: if false;
+    }
+
+    // ---------- Live weekly test leaderboard ----------
+    // Path: live_lb/{weekId_category}/entries/{uid}. One entry per student per week.
+    match /live_lb/{bucket}/entries/{uid} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+                    && request.auth.uid == uid
+                    && request.resource.data.score is int
+                    && request.resource.data.score >= -75   // 75 Q x -1
+                    && request.resource.data.score <= 300;   // 75 Q x +4
+      allow update, delete: if false; // locked after first submission — one attempt
+    }
+
+  }
+}

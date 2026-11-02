@@ -479,7 +479,6 @@
         <div class="phone-wrap"><span class="cc">+91</span><input id="au_mobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile"></div>
       </div>
       <div class="field"><label>Password <span class="fld-opt">(optional for students)</span></label><input id="au_pw" type="password" placeholder="Password" autocomplete="off"></div>
-      <div class="field"><label>Instagram handle <span class="fld-opt">(optional)</span></label><input id="au_insta" type="text" placeholder="@yourhandle"></div>
       <button class="btn btn-block" id="otp_send_btn" onclick="sendOtp(false)">Create Account / Log In</button>
       <div class="msg" id="au_msg"></div>
       <div class="or-div"><span>or</span></div>
@@ -513,6 +512,7 @@
       <div class="navi" data-sec="daily" onclick="go('daily')"><span class="ic">⚡</span> Daily Practice</div>
       <div class="navi" data-sec="weak" onclick="go('weak')"><span class="ic">🎯</span> Weak Topics</div>
       <div class="navi" data-sec="progress" onclick="go('progress')"><span class="ic">📈</span> Progress</div>
+      <div class="navi" data-sec="insights" onclick="go('insights')"><span class="ic">🧠</span> Mistake Insights</div>
       <div class="navi" data-sec="ai" onclick="go('ai')"><span class="ic">🤖</span> AI Planner</div>
       <div class="navi" data-sec="predictor" onclick="go('predictor')"><span class="ic">🏆</span> College Predictor</div>
       <div class="divider"></div>
@@ -729,6 +729,11 @@
       </section>
 
       <!-- SETTINGS -->
+      <section id="sec-insights" class="hidden">
+        <h2 style="margin:0 0 4px">🧠 Mistake Insights</h2>
+        <div class="sub" style="margin-bottom:14px">Kahan marks ja rahe hain, aur galti kis type ki hai.</div>
+        <div id="insights_body"></div>
+      </section>
       <section id="sec-settings" class="hidden">
         <h3 class="sec-h">Settings &amp; Profile</h3>
         <div class="sec-sub">Your account details.</div>
@@ -913,6 +918,7 @@
 <div id="resultsScreen" class="hidden"><div class="fullpage">
   <h2 style="text-align:center;margin-bottom:4px" id="r_title">Your Report</h2>
   <div class="report-ring" id="r_ring"><div class="pct" id="r_pct">0%</div><div class="subx">Score</div></div>
+  <div id="errtag_panel" class="hidden" style="max-width:640px;margin:14px auto;padding:12px 14px;background:#0f1d33;border:1px solid #1b2a40;border-radius:12px"></div>
   <div id="r_estwrap">
     <div class="est-line"><span id="r_estlabel">Estimated JEE Main score</span>: <b id="r_est">0</b> / 300</div>
     <div class="est-note" id="r_estnote">An indicator based on this test — not an official score.</div>
@@ -1119,7 +1125,7 @@ function ensureRecaptcha(){ if(recaptcha) return recaptcha; recaptcha=new fireba
 function sendOtp(isResend){
   var name=document.getElementById("au_name").value.trim();
   var mobile=(document.getElementById("au_mobile").value||"").replace(/\D/g,'');
-  var insta=document.getElementById("au_insta").value.trim();
+  var insta="";
   var msg=document.getElementById("au_msg"); msg.className="msg err";
   if(!name){ msg.textContent="Please enter your name."; return; }
   if(!validMobile(mobile)){ msg.textContent="Please enter a valid 10-digit mobile number."; return; }
@@ -1587,7 +1593,7 @@ function enterApp(){
 function go(sec){
   curSec=sec;
   var navs=document.querySelectorAll(".sb-nav .navi"); for(var i=0;i<navs.length;i++){ navs[i].classList.toggle("active", navs[i].getAttribute("data-sec")===sec); }
-  ["overview","qbank","tests","mytests","daily","weak","progress","ai","predictor","live","settings"].forEach(function(s){
+  ["overview","qbank","tests","mytests","daily","weak","progress","ai","predictor","live","settings","insights"].forEach(function(s){
     var el=document.getElementById("sec-"+s); if(el) el.classList.toggle("hidden", s!==sec);
   });
   closeSidebar();
@@ -1597,6 +1603,7 @@ function go(sec){
   if(sec==="mytests") renderMyTests();
   if(sec==="weak") renderWeak();
   if(sec==="progress") renderProgress();
+  if(sec==="insights") renderInsights();
   if(sec==="ai") aiInit();
   if(sec==="live"){ liveRender(); liveStartTicker(); } else { liveStopTicker(); }
   if(sec==="settings"){ document.getElementById("set_tests").textContent=currentProfile.stats.testsTaken; prefillRef(); }
@@ -1864,6 +1871,7 @@ function advSubmit(){ clearInterval(advS.timerId); advS.active=false;
     var pct=Math.max(0,Math.round(total/advS.max*100));
     var he={ type:advS.name, score:pct, marks:total, correct:correct, total:advS.qs.length, subjects:subjTags, date:Date.now() };
     currentProfile.history=(currentProfile.history||[]).concat([he]); if(currentProfile.history.length>30) currentProfile.history=currentProfile.history.slice(-30);
+    try{ logAttempt({ mode:"advanced", name:advS.name, score:pct, marks:total, correct:correct, total:advS.qs.length, order:[] }, advS.qs.map(function(q,i){ var m=(rows[i]?rows[i].m:0), has=advHasAns(i); return { qid:(q.img||null), sub:(q.subject||""), you:null, corr:null, ok:(m>0), skipped:!has, t:0 }; })); }catch(e){ console.error("adv log", e); }
     currentProfile.stats.testsTaken+=1;
     if(USE_FIREBASE && fbDB && currentUser){ fbDB.collection("users").doc(currentUser).set({ testsTaken:firebase.firestore.FieldValue.increment(1), history:currentProfile.history },{merge:true}).catch(function(e){ console.error(e); }); }
     else { persistDB(); }
@@ -2056,6 +2064,7 @@ function mnFinishPractice(){
     var he={ type:mnS.name, score:Math.round(correct/graded*100), marks:marks, correct:correct, total:graded, subjects:{}, date:Date.now() };
     he.subjects[mnS.qs[0]&&mnS.qs[0].subject||"Practice"]=marks;
     he.review=mnS.qs.map(function(q,i){ return { img:(q.img||""), sub:(q.subject||""), you:(mnS.picks[i]==null?null:mnS.picks[i]), corr:(q.answer||""), sol:(q.sol||""), type:(q.type||"single") }; });
+    try{ logAttempt({ mode:"mains", name:mnS.name, score:Math.round(correct/graded*100), marks:marks, correct:correct, total:graded, order:[] }, mnS.qs.map(function(q,i){ var p=mnS.picks[i], sk=(p==null); return { qid:(q.img||null), sub:(q.subject||""), you:null, corr:null, ok:(!sk&&mnIsCorrect(q,p)), skipped:sk, t:0 }; })); }catch(e){ console.error("mn log", e); }
     currentProfile.history=(currentProfile.history||[]).concat([he]); trimHistory();
     if(currentProfile.stats) currentProfile.stats.testsTaken=(currentProfile.stats.testsTaken||0)+1;
     if(USE_FIREBASE && fbDB && currentUser){ try{ fbDB.collection("users").doc(currentUser).set({ testsTaken:firebase.firestore.FieldValue.increment(1), history:currentProfile.history },{merge:true}).catch(function(){}); }catch(e){ console.error(e); } }
@@ -2241,6 +2250,7 @@ function mnSubmit(){
     var he={ type:mnS.name, score:pctInt, marks:r.marks, correct:r.correct, total:mnS.qs.length, subjects:{}, date:Date.now() };
     Object.keys(r.perSub).forEach(function(s){ he.subjects[s]=r.perSub[s].m; });
     he.review=mnS.qs.map(function(q,i){ return { img:(q.img||""), sub:(q.subject||""), you:(mnS.picks[i]==null?null:mnS.picks[i]), corr:(q.answer==null?"":q.answer), sol:(q.sol||""), type:(q.type||"single") }; });
+    try{ logAttempt({ mode:"mains", name:mnS.name, score:pctInt, marks:r.marks, correct:r.correct, total:mnS.qs.length, order:[] }, mnS.qs.map(function(q,i){ var p=mnS.picks[i], sk=(p==null); return { qid:(q.img||null), sub:(q.subject||""), you:null, corr:null, ok:(!sk&&mnIsCorrect(q,p)), skipped:sk, t:0 }; })); }catch(e){ console.error("mn log", e); }
     currentProfile.history=(currentProfile.history||[]).concat([he]); trimHistory();
     if(currentProfile.stats) currentProfile.stats.testsTaken=(currentProfile.stats.testsTaken||0)+1;
     // feed the growth matrix (same readiness scale as the diagnostic/full mock)
@@ -2592,7 +2602,7 @@ function computeSections(qs){ var secs=[], cur=null; qs.forEach(function(q,i){ i
 function sectionOf(i){ for(var k=0;k<testState.sections.length;k++){ var s=testState.sections[k]; if(i>=s.start&&i<=s.end) return s; } return testState.sections[0]; }
 function beginTest(qs, mode, timed, minutes, name){
   if(qs.length<1){ alert("Questions unavailable, please refresh."); return; }
-  testState={ questions:qs, answers:new Array(qs.length).fill(null), marked:new Array(qs.length).fill(false), visited:new Array(qs.length).fill(false), current:0, active:true, mode:mode, timed:!!timed, endAt:0, timerId:null, sections:computeSections(qs), mockName:name||"" };
+  testState={ questions:qs, answers:new Array(qs.length).fill(null), marked:new Array(qs.length).fill(false), visited:new Array(qs.length).fill(false), current:0, active:true, mode:mode, timed:!!timed, endAt:0, timerId:null, sections:computeSections(qs), mockName:name||"", timeMs:new Array(qs.length).fill(0), order:[], _shownAt:Date.now(), _lastIdx:0 };
   document.getElementById("exam_title").textContent=(mode==="mock"?(name||"Mock Test"):modeLabel(mode));
   document.getElementById("q_total").textContent=qs.length;
   renderMode(mode);
@@ -2648,6 +2658,7 @@ function refreshPalette(){
 }
 function displayQuestion(){
   var idx=testState.current, q=testState.questions[idx]; testState.visited[idx]=true;
+  tsAccrue(idx);
   if(testState.mode==="mock"){
     var sec=sectionOf(idx);
     document.getElementById("q_now").textContent=(idx-sec.start+1);
@@ -2690,6 +2701,70 @@ function bumpStats(qCount, correctCount, isTest){
   currentProfile.stats.questionsSolved+=qCount; currentProfile.stats.correctAnswers+=correctCount; if(isTest) currentProfile.stats.testsTaken+=1;
   if(USE_FIREBASE && fbDB && currentUser){ var upd={ questionsSolved:firebase.firestore.FieldValue.increment(qCount), correctAnswers:firebase.firestore.FieldValue.increment(correctCount) }; if(isTest) upd.testsTaken=firebase.firestore.FieldValue.increment(1); fbDB.collection("users").doc(currentUser).set(upd,{merge:true}).catch(function(e){ console.error(e); }); } else { persistDB(); }
 }
+/* ---------- attempt logging foundation (additive; Firestore attempts + question_stats) ---------- */
+function tsAccrue(newIdx){
+  if(!testState||!testState.active||!testState.timeMs) return;
+  var now=Date.now(), li=testState._lastIdx;
+  if(li!=null){ testState.timeMs[li]=(testState.timeMs[li]||0)+(now-(testState._shownAt||now));
+    if(!testState.order) testState.order=[];
+    if(testState.order[testState.order.length-1]!==li) testState.order.push(li); }
+  testState._lastIdx=newIdx; testState._shownAt=now;
+}
+function logAttempt(meta, rev){
+  try{
+    if(!(USE_FIREBASE && fbDB && currentUser)) return;
+    fbDB.collection("attempts").add({ uid:currentUser, mode:(meta.mode||""), name:(meta.name||""), score:(meta.score!=null?meta.score:null), marks:(meta.marks!=null?meta.marks:null), correct:(meta.correct||0), total:(meta.total||0), order:(meta.order||[]), date:Date.now(), review:rev }).then(function(ref){ try{ window._lastAttemptId=ref.id; }catch(_e){} }).catch(function(e){ console.error("attempt log", e); });
+    var batch=fbDB.batch(), inc=firebase.firestore.FieldValue.increment;
+    rev.forEach(function(r){ if(r.qid==null) return;
+      var ref=fbDB.collection("question_stats").doc(String(r.qid));
+      var u={ subject:(r.sub||""), attempts:inc(1), timeMsSum:inc(r.t||0) };
+      if(r.skipped){ u.skipped=inc(1); } else if(r.ok){ u.correct=inc(1); } else { u.wrong=inc(1); if(r.you!=null){ u["opt_"+r.you]=inc(1); } }
+      batch.set(ref,u,{merge:true});
+    });
+    batch.commit().catch(function(e){ console.error("qstats", e); });
+  }catch(e){ console.error("logAttempt", e); }
+}
+function errTag(qid, sub, tag, el){
+  try{
+    if(el&&el.parentNode){ var bs=el.parentNode.querySelectorAll(".etbtn"); for(var i=0;i<bs.length;i++){ bs[i].style.background="#13233b"; bs[i].style.color="#9fb0c6"; } el.style.background="#2563eb"; el.style.color="#fff"; }
+    if(!(USE_FIREBASE && fbDB && currentUser)) return;
+    var inc=firebase.firestore.FieldValue.increment;
+    var u={}; u["aggErr."+tag]=inc(1); fbDB.collection("users").doc(currentUser).update(u).catch(function(){ var o={aggErr:{}}; o.aggErr[tag]=inc(1); fbDB.collection("users").doc(currentUser).set(o,{merge:true}).catch(function(){}); });
+    if(qid!=null){ var q={}; q["err_"+tag]=inc(1); fbDB.collection("question_stats").doc(String(qid)).set(q,{merge:true}).catch(function(){}); }
+    if(window._lastAttemptId&&qid!=null){ var a={}; a["errorTags."+qid]=tag; fbDB.collection("attempts").doc(window._lastAttemptId).update(a).catch(function(){}); }
+  }catch(e){ console.error("errTag", e); }
+}
+function renderErrTagPanel(rev){
+  var host=document.getElementById("errtag_panel"); if(!host) return;
+  host.innerHTML=""; host.classList.add("hidden");
+  if(!(USE_FIREBASE && fbDB && currentUser)) return;
+  var wrongs=(rev||[]).filter(function(r){ return r && !r.ok && !r.skipped; });
+  if(!wrongs.length) return;
+  var tags=[["concept","Concept"],["calculation","Calc slip"],["misread","Misread Q"],["trap","Trap option"],["time","Time pressure"]];
+  var html='<div style="font-weight:700;margin-bottom:8px">Apni galtiyan tag karo <span style="opacity:.6;font-weight:400">(optional — pata chalega kis type ki galti hai)</span></div>';
+  wrongs.slice(0,6).forEach(function(r){
+    var ql=(r.qid==null?'null':JSON.stringify(r.qid)), sl=JSON.stringify(r.sub||"");
+    var btns=tags.map(function(t){ return '<button class="etbtn" style="font-size:12px;padding:5px 9px;border-radius:14px;border:1px solid #2a3a52;background:#13233b;color:#9fb0c6;cursor:pointer" onclick=\'errTag('+ql+','+sl+','+JSON.stringify(t[0])+',this)\'>'+t[1]+'</button>'; }).join(" ");
+    html+='<div style="padding:8px 0;border-top:1px solid #1b2a40"><div style="font-size:13px;margin-bottom:5px">'+(r.sub||"Question")+' — galti kyon hui?</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+btns+'</div></div>';
+  });
+  host.innerHTML=html; host.classList.remove("hidden");
+}
+function renderInsights(){
+  var host=document.getElementById("insights_body"); if(!host) return;
+  host.innerHTML='<div style="opacity:.6">Loading…</div>';
+  if(!(USE_FIREBASE && fbDB && currentUser)){ host.innerHTML='<div style="opacity:.7">Sync on karke sign in karo, phir yahan mistake insights dikhenge.</div>'; return; }
+  fbDB.collection("users").doc(currentUser).get().then(function(doc){
+    var d=doc.exists?doc.data():{}, aggSub=d.aggSub||{}, aggErr=d.aggErr||{};
+    var subHtml=Object.keys(aggSub).map(function(s){ var a=aggSub[s]||{}, t=a.t||0, c=a.c||0, acc=t?Math.round(100*c/t):0; var col=acc>=60?"#22c55e":(acc>=40?"#f5a524":"#ef4444");
+      return '<div style="margin:10px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><b>'+s+'</b><span>'+acc+'% correct · '+(a.w||0)+' wrong</span></div><div style="height:8px;background:#13233b;border-radius:6px;overflow:hidden;margin-top:4px"><div style="height:100%;width:'+acc+'%;background:'+col+'"></div></div></div>'; }).join("");
+    if(!subHtml) subHtml='<div style="opacity:.7">Abhi tak koi graded test nahi. Ek diagnostic ya mock do, phir yahan subject-wise breakdown aayega.</div>';
+    var tags=[["concept","Concept gap"],["calculation","Calculation slip"],["misread","Question misread"],["trap","Trap option"],["time","Time pressure"]];
+    var tot=tags.reduce(function(x,t){ return x+(aggErr[t[0]]||0); },0);
+    var errHtml= tot? tags.map(function(t){ var n=aggErr[t[0]]||0, p=tot?Math.round(100*n/tot):0; return '<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>'+t[1]+'</span><span>'+n+' ('+p+'%)</span></div><div style="height:8px;background:#13233b;border-radius:6px;overflow:hidden;margin-top:4px"><div style="height:100%;width:'+p+'%;background:#60a5fa"></div></div></div>'; }).join("")
+      : '<div style="opacity:.7">Test ke result screen pe apni galtiyan tag karo — yahan dikhega kitni galti concept ki hai, kitni silly.</div>';
+    host.innerHTML='<h3 style="margin:0 0 6px">Subject-wise accuracy</h3>'+subHtml+'<h3 style="margin:20px 0 6px">Galti ka type</h3>'+errHtml;
+  }).catch(function(e){ console.error(e); host.innerHTML='<div style="opacity:.7">Insights load nahi hue. Baad me try karo.</div>'; });
+}
 function submitTest(){
   if(testState.timerId) clearInterval(testState.timerId);
   var qs=testState.questions, ans=testState.answers, total=qs.length, correct=0, wrong=0;
@@ -2712,6 +2787,12 @@ function submitTest(){
     if(diag && currentProfile.last){ upd.lastReadiness=currentProfile.last.readiness; upd.weakestSubject=currentProfile.last.weakest; upd.lastEst=currentProfile.last.est; upd.lastPer=currentProfile.last.per; }
     fbDB.collection("users").doc(currentUser).set(upd,{merge:true}).catch(function(e){ console.error(e); });
   } else { persistDB(); }
+  try{ tsAccrue(testState.current);
+    var richRev=qs.map(function(q,i){ var sk=(ans[i]==null); return { qid:(q.id!=null?q.id:(q.img||null)), sub:q.subject, you:(sk?null:ans[i]), corr:q.correct, ok:(ans[i]===q.correct), skipped:sk, t:((testState.timeMs&&testState.timeMs[i])||0) }; });
+    logAttempt({ mode:testState.mode, name:testState.mockName, score:scorePct, marks:(isMock?marks:null), correct:correct, total:total, order:testState.order }, richRev);
+    if(USE_FIREBASE && fbDB && currentUser){ var _inc=firebase.firestore.FieldValue.increment, _ag={}; SUBJECTS.forEach(function(s){ if(per[s]&&per[s].t){ _ag[s]={ c:_inc(per[s].c), w:_inc(per[s].w), t:_inc(per[s].t) }; } }); if(Object.keys(_ag).length){ fbDB.collection("users").doc(currentUser).set({ aggSub:_ag },{merge:true}).catch(function(){}); } }
+    try{ renderErrTagPanel(richRev); }catch(_e){}
+  }catch(e){ console.error("attempt capture", e); }
   testState.active=false; view("resultsScreen");
 }
 function renderMockReport(per, correct, wrong, total, marks, scorePct, qs, ans){

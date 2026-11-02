@@ -1,0 +1,33 @@
+// ============================================================
+// Dakhilaa — Firestore rules to ADD for the attempt-logging layer
+// ------------------------------------------------------------
+// IMPORTANT: Ye poora rules file REPLACE mat karna. Apne existing
+// Firebase Console → Firestore → Rules me, jo `match /databases/{database}/documents { ... }`
+// block hai uske ANDAR ye do match blocks ADD karo (baaki existing
+// rules jaise users/refcodes/commissions/growth waise hi rehne do).
+//
+// Logic: koi bhi signed-in student apni attempt bana sake aur
+// question_stats ke counters badha sake. Padhne (read) ki zaroorat
+// student ko nahi — isliye read sirf tabhi jab tumhe chahiye (admin).
+// ============================================================
+
+// Har attempt ka durable record (uncapped). Student sirf apni bana sakta hai.
+match /attempts/{attemptId} {
+  allow create: if request.auth != null
+                && request.resource.data.uid == request.auth.uid;
+  // owner apni attempt update kar sake (error tags patch ke liye)
+  allow update: if request.auth != null
+                && resource.data.uid == request.auth.uid;
+  allow read:   if request.auth != null
+                && resource.data.uid == request.auth.uid;
+}
+
+// Per-question aggregate counters (sab students shared). Sirf increment-type writes.
+match /question_stats/{qid} {
+  allow read:  if request.auth != null;
+  allow write: if request.auth != null;   // increments only (set with merge)
+}
+
+// NOTE: aggSub / aggErr fields tumhare EXISTING `users/{uid}` doc me hi
+// merge hote hain — iske liye koi naya rule nahi chahiye, tumhara
+// existing users/{uid} owner-write rule hi kaafi hai.
