@@ -2834,8 +2834,8 @@ function renderContentInsights(){
       var q=doc.data()||{};
       var subject=q.subject||"";
       var topicKey = q.topic ? (subject?subject+" · "+q.topic:q.topic) : (subject?subject+" · (untagged)":"(untagged)");
-      var t=byTopic[topicKey]||(byTopic[topicKey]={subject:subject, attempts:0, correct:0, wrong:0, skipped:0, err:{}});
-      t.attempts+=(q.attempts||0); t.correct+=(q.correct||0); t.wrong+=(q.wrong||0); t.skipped+=(q.skipped||0);
+      var t=byTopic[topicKey]||(byTopic[topicKey]={subject:subject, attempts:0, correct:0, wrong:0, skipped:0, timeMs:0, err:{}});
+      t.attempts+=(q.attempts||0); t.correct+=(q.correct||0); t.wrong+=(q.wrong||0); t.skipped+=(q.skipped||0); t.timeMs+=(q.timeMsSum||0);
       errKeys.forEach(function(k){ var n=q["err_"+k]||0; if(n){ t.err[k]=(t.err[k]||0)+n; errTotals[k]=(errTotals[k]||0)+n; } });
       // misconception: a single wrong option picked by many
       var opts=[]; for(var oi=0;oi<6;oi++){ var on=q["opt_"+oi]; if(on){ opts.push({o:oi,n:on}); } }
@@ -2851,7 +2851,8 @@ function renderContentInsights(){
     });
     var topics=Object.keys(byTopic).map(function(k){ var o=byTopic[k]; var graded=o.correct+o.wrong; var fail=graded?o.wrong/graded:0;
       var domErr=null,dm=0; errKeys.forEach(function(ek){ if((o.err[ek]||0)>dm){ dm=o.err[ek]; domErr=ek; } });
-      return {topic:k, subject:o.subject, attempts:o.attempts, correct:o.correct, wrong:o.wrong, graded:graded, fail:fail, domErr:domErr, dm:dm}; })
+      var skipRate=o.attempts?o.skipped/o.attempts:0; var avgSec=o.attempts?(o.timeMs/o.attempts)/1000:0;
+      return {topic:k, subject:o.subject, attempts:o.attempts, correct:o.correct, wrong:o.wrong, skipped:o.skipped, graded:graded, fail:fail, domErr:domErr, dm:dm, skipRate:skipRate, avgSec:avgSec}; })
       .filter(function(x){ return x.graded>=1; });
     if(!topics.length){ host.innerHTML='<div style="opacity:.75">Abhi question_stats khaali hai. Jab students tests denge, yahan sabse zyada galat hone wale concepts rank honge — podcast content ke liye.</div>'; return; }
     // rank by total wrong, then fail rate
@@ -2877,6 +2878,26 @@ function renderContentInsights(){
         return '<div style="padding:9px 0;border-bottom:1px solid #13233b"><div style="font-size:13px;font-weight:600">'+esc(m.topic)+'</div>'+
           '<div style="opacity:.75;font-size:12px;margin-top:2px">Option <b>'+L+'</b> ko <b>'+m.pick+'</b> students ne chuna (galat karne walon ka ~'+Math.round(m.share*100)+'%) — ye ek common misconception hai. Episode me isi "trap" ko explain karo.</div></div>'; }).join("");
     } else { misHtml='<div style="opacity:.7">Abhi koi strong misconception pattern nahi (ek hi galat option mass-pick). Zyada attempts ke baad dikhega.</div>'; }
+    // time-sink concepts: highest avg time per question (students yahan atakte hain)
+    function fmtSec(s){ return s>=60?(Math.floor(s/60)+"m "+Math.round(s%60)+"s"):(Math.round(s)+"s"); }
+    var timeRanked=topics.filter(function(x){ return x.attempts>=3 && x.avgSec>0; }).sort(function(a,b){ return b.avgSec-a.avgSec; });
+    var timeHtml= timeRanked.length? timeRanked.slice(0,12).map(function(x,i){ var acc=x.graded?Math.round(100*x.correct/x.graded):0;
+      return '<div style="display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid #13233b">'+
+        '<div style="opacity:.5;font-size:12px">'+(i+1)+'</div>'+
+        '<div><div style="font-size:13px;font-weight:600">'+esc(x.topic)+'</div><div style="opacity:.6;font-size:11px;margin-top:2px">'+acc+'% accuracy · '+x.attempts+' attempts</div></div>'+
+        '<div style="text-align:right;min-width:90px"><div style="font-size:14px;font-weight:700;color:#c084fc">'+fmtSec(x.avgSec)+'</div><div style="opacity:.6;font-size:11px">avg / question</div></div>'+
+        '</div>'; }).join("")
+      : '<div style="opacity:.7">Abhi per-question time data kam hai (≥3 attempts chahiye). Tests badhne pe dikhega.</div>';
+    // most-skipped concepts: students attempt hi nahi karte (dar / blank gap)
+    var skipRanked=topics.filter(function(x){ return x.attempts>=3 && x.skipped>=2; }).sort(function(a,b){ return b.skipRate-a.skipRate; });
+    var skipHtml= skipRanked.length? skipRanked.slice(0,12).map(function(x,i){ var sp=Math.round(100*x.skipRate);
+      var col=sp>=50?"#ef4444":(sp>=30?"#f5a524":"#9ca3af");
+      return '<div style="display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid #13233b">'+
+        '<div style="opacity:.5;font-size:12px">'+(i+1)+'</div>'+
+        '<div><div style="font-size:13px;font-weight:600">'+esc(x.topic)+'</div><div style="opacity:.6;font-size:11px;margin-top:2px">'+x.skipped+' skip / '+x.attempts+' attempts</div></div>'+
+        '<div style="text-align:right;min-width:90px"><div style="font-size:14px;font-weight:700;color:'+col+'">'+sp+'% skip</div><div style="opacity:.6;font-size:11px">chhod diya</div></div>'+
+        '</div>'; }).join("")
+      : '<div style="opacity:.7">Abhi koi high-skip concept nahi (≥2 skip + ≥3 attempts chahiye). Data badhne pe dikhega.</div>';
     // error-type distribution
     var etot=errKeys.reduce(function(a,k){ return a+(errTotals[k]||0); },0);
     var errHtml= etot? errKeys.map(function(k){ var n=errTotals[k]||0,p=etot?Math.round(100*n/etot):0; return '<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>'+errLbl[k]+'</span><span>'+n+' ('+p+'%)</span></div><div style="height:8px;background:#13233b;border-radius:6px;overflow:hidden;margin-top:4px"><div style="height:100%;width:'+p+'%;background:#60a5fa"></div></div></div>'; }).join("")
@@ -2884,6 +2905,8 @@ function renderContentInsights(){
     host.innerHTML=hdr+
       '<h3 style="margin:18px 0 2px">🔥 Top-failed concepts</h3><div style="opacity:.55;font-size:12px;margin-bottom:6px">Sabse zyada galat hone wale (total galat se ranked). Ye tumhare podcast episodes ki list hai.</div>'+rows+
       '<h3 style="margin:22px 0 2px">🎯 Common misconceptions</h3><div style="opacity:.55;font-size:12px;margin-bottom:6px">Jahan ek hi galat option bahut students ne chuna — "aise socho" wala content.</div>'+misHtml+
+      '<h3 style="margin:22px 0 2px">⏱️ Time-sink concepts</h3><div style="opacity:.55;font-size:12px;margin-bottom:6px">Jahan students sabse zyada time lagate hain — "ye concept slow karta hai". Shortcut / trick wala episode.</div>'+timeHtml+
+      '<h3 style="margin:22px 0 2px">⏭️ Sabse zyada skip</h3><div style="opacity:.55;font-size:12px;margin-bottom:6px">Jo questions students attempt hi nahi karte — blank gap / dar. In concepts ka "basics se" episode.</div>'+skipHtml+
       '<h3 style="margin:22px 0 6px">📊 Galti-type distribution (sab students)</h3>'+errHtml;
   }).catch(function(e){ console.error("content", e); host.innerHTML='<div style="opacity:.75">Content stats load nahi hue: '+esc(e&&e.message||e)+'</div>'; });
 }
