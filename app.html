@@ -2715,15 +2715,18 @@ function logAttempt(meta, rev){
   try{
     if(!(USE_FIREBASE && fbDB && currentUser)) return;
     fbDB.collection("attempts").add({ uid:currentUser, mode:(meta.mode||""), name:(meta.name||""), score:(meta.score!=null?meta.score:null), marks:(meta.marks!=null?meta.marks:null), correct:(meta.correct||0), total:(meta.total||0), order:(meta.order||[]), date:Date.now(), review:rev }).then(function(ref){ try{ window._lastAttemptId=ref.id; }catch(_e){} }).catch(function(e){ console.error("attempt log", e); });
-    var batch=fbDB.batch(), inc=firebase.firestore.FieldValue.increment;
-    rev.forEach(function(r){ if(r.qid==null) return;
-      var ref=fbDB.collection("question_stats").doc(String(r.qid));
-      var u={ subject:(r.sub||""), attempts:inc(1), timeMsSum:inc(r.t||0) };
-      if(r.topic){ u.topic=r.topic; }
-      if(r.skipped){ u.skipped=inc(1); } else if(r.ok){ u.correct=inc(1); } else { u.wrong=inc(1); if(r.you!=null){ u["opt_"+r.you]=inc(1); } }
-      batch.set(ref,u,{merge:true});
-    });
-    batch.commit().catch(function(e){ console.error("qstats", e); });
+    var inc=firebase.firestore.FieldValue.increment;
+    try{
+      var batch=fbDB.batch();
+      rev.forEach(function(r){ if(r.qid==null) return;
+        var ref=fbDB.collection("question_stats").doc(String(r.qid).replace(/\//g,"_"));
+        var u={ subject:(r.sub||""), attempts:inc(1), timeMsSum:inc(r.t||0) };
+        if(r.topic){ u.topic=r.topic; }
+        if(r.skipped){ u.skipped=inc(1); } else if(r.ok){ u.correct=inc(1); } else { u.wrong=inc(1); if(r.you!=null){ u["opt_"+r.you]=inc(1); } }
+        batch.set(ref,u,{merge:true});
+      });
+      batch.commit().catch(function(e){ console.error("qstats", e); });
+    }catch(e){ console.error("qstats build", e); }
     // per-user aggregates: subject accuracy + chapter accuracy (chapter only when the question carries a topic)
     var sub={}, chap={};
     rev.forEach(function(r){ var s=r.sub||"";
@@ -2741,7 +2744,7 @@ function errTag(qid, sub, tag, el){
     if(!(USE_FIREBASE && fbDB && currentUser)) return;
     var inc=firebase.firestore.FieldValue.increment;
     var u={}; u["aggErr."+tag]=inc(1); fbDB.collection("users").doc(currentUser).update(u).catch(function(){ var o={aggErr:{}}; o.aggErr[tag]=inc(1); fbDB.collection("users").doc(currentUser).set(o,{merge:true}).catch(function(){}); });
-    if(qid!=null){ var q={}; q["err_"+tag]=inc(1); fbDB.collection("question_stats").doc(String(qid)).set(q,{merge:true}).catch(function(){}); }
+    if(qid!=null){ var q={}; q["err_"+tag]=inc(1); fbDB.collection("question_stats").doc(String(qid).replace(/\//g,"_")).set(q,{merge:true}).catch(function(){}); }
     if(window._lastAttemptId&&qid!=null){ var a={}; a["errorTags."+qid]=tag; fbDB.collection("attempts").doc(window._lastAttemptId).update(a).catch(function(){}); }
   }catch(e){ console.error("errTag", e); }
 }
