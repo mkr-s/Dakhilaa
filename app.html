@@ -518,6 +518,7 @@
       <div class="divider"></div>
       <div class="navi" data-sec="live" onclick="go('live')"><span class="ic">🖥️</span> Live NTA CBT Portal</div>
       <div class="navi" data-sec="settings" onclick="go('settings')"><span class="ic">⚙️</span> Settings &amp; Profile</div>
+      <div class="navi" id="nav-content" data-sec="content" onclick="go('content')" style="display:none"><span class="ic">🎙️</span> Content Engine</div>
       <div class="navi" onclick="openRate()"><span class="ic">⭐</span> Rate Us</div>
     </nav>
     <div class="sb-user">
@@ -734,6 +735,13 @@
         <div class="sub" style="margin-bottom:14px">Kahan marks ja rahe hain, aur galti kis type ki hai.</div>
         <div id="insights_body"></div>
       </section>
+
+      <!-- CONTENT ENGINE (owner only) -->
+      <section id="sec-content" class="hidden">
+        <h2 style="margin:0 0 4px">🎙️ Content Engine</h2>
+        <div class="sub" style="margin-bottom:14px">Saare students ke data se "top-failed concepts" — podcast &amp; content ideas ke liye. Sirf owner ko dikhta hai.</div>
+        <div id="content_body"><div style="opacity:.6">Loading…</div></div>
+      </section>
       <section id="sec-settings" class="hidden">
         <h3 class="sec-h">Settings &amp; Profile</h3>
         <div class="sec-sub">Your account details.</div>
@@ -920,6 +928,7 @@
   <div class="report-ring" id="r_ring"><div class="pct" id="r_pct">0%</div><div class="subx">Score</div></div>
   <div id="errtag_panel" class="hidden" style="max-width:640px;margin:14px auto;padding:12px 14px;background:#0f1d33;border:1px solid #1b2a40;border-radius:12px"></div>
   <div id="strategy_panel" class="hidden" style="max-width:640px;margin:14px auto;padding:12px 14px;background:#0f1d33;border:1px solid #1b2a40;border-radius:12px"></div>
+  <div style="max-width:640px;margin:14px auto;text-align:center"><button class="btn" style="background:linear-gradient(135deg,#60a5fa,#3b82f6);border:none;color:#06122b;font-weight:700" onclick="view('shell'); go('ai'); setTimeout(function(){ try{ aiMe('Get my 7-day plan'); aiShowPlan(); }catch(_e){} },300);">📅 Mera 7-din study plan banao</button></div>
   <div id="r_estwrap">
     <div class="est-line"><span id="r_estlabel">Estimated JEE Main score</span>: <b id="r_est">0</b> / 300</div>
     <div class="est-note" id="r_estnote">An indicator based on this test — not an official score.</div>
@@ -1579,6 +1588,7 @@ function enterApp(){
      Once unlocked, the account's plan is saved, so it stays unlocked on reload. */
   try{
     if(isOwnerUser()){ sessionIsOwner=true;
+      var ncEl=document.getElementById("nav-content"); if(ncEl) ncEl.style.display="";
       if(p.plan!=="dropper"){
         p.plan="dropper"; p.planName="Owner Access"; p.planSince=Date.now();
         if(USE_FIREBASE && fbDB && currentUser){ fbDB.collection("users").doc(currentUser).set({plan:"dropper",planName:"Owner Access",planSince:p.planSince},{merge:true}).catch(function(){}); }
@@ -1594,7 +1604,7 @@ function enterApp(){
 function go(sec){
   curSec=sec;
   var navs=document.querySelectorAll(".sb-nav .navi"); for(var i=0;i<navs.length;i++){ navs[i].classList.toggle("active", navs[i].getAttribute("data-sec")===sec); }
-  ["overview","qbank","tests","mytests","daily","weak","progress","ai","predictor","live","settings","insights"].forEach(function(s){
+  ["overview","qbank","tests","mytests","daily","weak","progress","ai","predictor","live","settings","insights","content"].forEach(function(s){
     var el=document.getElementById("sec-"+s); if(el) el.classList.toggle("hidden", s!==sec);
   });
   closeSidebar();
@@ -1605,6 +1615,7 @@ function go(sec){
   if(sec==="weak") renderWeak();
   if(sec==="progress") renderProgress();
   if(sec==="insights") renderInsights();
+  if(sec==="content"){ if(isOwnerUser()) renderContentInsights(); else go("overview"); }
   if(sec==="ai") aiInit();
   if(sec==="live"){ liveRender(); liveStartTicker(); } else { liveStopTicker(); }
   if(sec==="settings"){ document.getElementById("set_tests").textContent=currentProfile.stats.testsTaken; prefillRef(); }
@@ -2805,6 +2816,77 @@ function renderInsights(){
     host.innerHTML='<h3 style="margin:0 0 6px">Subject-wise accuracy</h3>'+subHtml+'<h3 style="margin:20px 0 6px">Chapter-wise heatmap <span style="opacity:.55;font-size:12px;font-weight:400">(Mains chapter practice)</span></h3>'+chapHtml+'<h3 style="margin:20px 0 6px">Galti ka type</h3>'+errHtml;
   }).catch(function(e){ console.error(e); host.innerHTML='<div style="opacity:.7">Insights load nahi hue. Baad me try karo.</div>'; });
 }
+
+/* ---------- CONTENT ENGINE (owner only) ----------
+   Reads the shared question_stats collection (all students' aggregate counters)
+   and surfaces "top-failed concepts" + the single most-picked wrong option
+   (misconception signal) — raw material for podcast episodes & content. */
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function renderContentInsights(){
+  var host=document.getElementById("content_body"); if(!host) return;
+  host.innerHTML='<div style="opacity:.6">Question stats load ho rahe hain…</div>';
+  if(!(USE_FIREBASE && fbDB && currentUser)){ host.innerHTML='<div style="opacity:.7">Firebase sync chahiye.</div>'; return; }
+  fbDB.collection("question_stats").get().then(function(snap){
+    var byTopic={}, errTotals={}, misRows=[];
+    var errKeys=["concept","calculation","misread","trap","time"];
+    var errLbl={concept:"Concept gap",calculation:"Calc slip",misread:"Misread",trap:"Trap option",time:"Time pressure"};
+    snap.forEach(function(doc){
+      var q=doc.data()||{};
+      var subject=q.subject||"";
+      var topicKey = q.topic ? (subject?subject+" · "+q.topic:q.topic) : (subject?subject+" · (untagged)":"(untagged)");
+      var t=byTopic[topicKey]||(byTopic[topicKey]={subject:subject, attempts:0, correct:0, wrong:0, skipped:0, err:{}});
+      t.attempts+=(q.attempts||0); t.correct+=(q.correct||0); t.wrong+=(q.wrong||0); t.skipped+=(q.skipped||0);
+      errKeys.forEach(function(k){ var n=q["err_"+k]||0; if(n){ t.err[k]=(t.err[k]||0)+n; errTotals[k]=(errTotals[k]||0)+n; } });
+      // misconception: a single wrong option picked by many
+      var opts=[]; for(var oi=0;oi<6;oi++){ var on=q["opt_"+oi]; if(on){ opts.push({o:oi,n:on}); } }
+      var graded=(q.correct||0)+(q.wrong||0);
+      if((q.wrong||0)>=3 && opts.length){
+        opts.sort(function(a,b){ return b.n-a.n; });
+        var top=opts[0];
+        var share = (q.wrong||0) ? top.n/(q.wrong||1) : 0;
+        if(top.n>=3 && share>=0.5){
+          misRows.push({ id:doc.id, topic:topicKey, subject:subject, opt:top.o, pick:top.n, wrong:(q.wrong||0), graded:graded, share:share });
+        }
+      }
+    });
+    var topics=Object.keys(byTopic).map(function(k){ var o=byTopic[k]; var graded=o.correct+o.wrong; var fail=graded?o.wrong/graded:0;
+      var domErr=null,dm=0; errKeys.forEach(function(ek){ if((o.err[ek]||0)>dm){ dm=o.err[ek]; domErr=ek; } });
+      return {topic:k, subject:o.subject, attempts:o.attempts, correct:o.correct, wrong:o.wrong, graded:graded, fail:fail, domErr:domErr, dm:dm}; })
+      .filter(function(x){ return x.graded>=1; });
+    if(!topics.length){ host.innerHTML='<div style="opacity:.75">Abhi question_stats khaali hai. Jab students tests denge, yahan sabse zyada galat hone wale concepts rank honge — podcast content ke liye.</div>'; return; }
+    // rank by total wrong, then fail rate
+    topics.sort(function(a,b){ return (b.wrong-a.wrong) || (b.fail-a.fail); });
+    var subjN={}; topics.forEach(function(x){ var s=x.subject||"Other"; subjN[s]=(subjN[s]||0)+x.wrong; });
+    var hdr='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">'+
+      '<div style="flex:1;min-width:120px;background:#0f1d33;border:1px solid #1b2a40;border-radius:12px;padding:10px 12px"><div style="opacity:.6;font-size:12px">Tagged questions</div><div style="font-size:20px;font-weight:800">'+topics.length+'</div></div>'+
+      Object.keys(subjN).sort(function(a,b){return subjN[b]-subjN[a];}).slice(0,3).map(function(s){ return '<div style="flex:1;min-width:120px;background:#0f1d33;border:1px solid #1b2a40;border-radius:12px;padding:10px 12px"><div style="opacity:.6;font-size:12px">'+esc(s)+' — total galat</div><div style="font-size:20px;font-weight:800">'+subjN[s]+'</div></div>'; }).join("")+
+      '</div>';
+    // top failed concepts table
+    var rows=topics.slice(0,25).map(function(x,i){ var acc=x.graded?Math.round(100*x.correct/x.graded):0; var failP=Math.round(100*x.fail);
+      var col=failP>=60?"#ef4444":(failP>=40?"#f5a524":"#22c55e");
+      var de=x.domErr?'<span style="opacity:.75;font-size:11px">'+errLbl[x.domErr]+' ('+x.dm+')</span>':'<span style="opacity:.4;font-size:11px">—</span>';
+      return '<div style="display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid #13233b">'+
+        '<div style="opacity:.5;font-size:12px">'+(i+1)+'</div>'+
+        '<div><div style="font-size:13px;font-weight:600">'+esc(x.topic)+'</div><div style="margin-top:2px">'+de+'</div></div>'+
+        '<div style="text-align:right;min-width:120px"><div style="font-size:13px;font-weight:700;color:'+col+'">'+failP+'% fail</div><div style="opacity:.6;font-size:11px">'+x.wrong+' galat / '+x.graded+' attempts</div></div>'+
+        '</div>'; }).join("");
+    // misconception panel
+    var misHtml;
+    if(misRows.length){ misRows.sort(function(a,b){ return b.pick-a.pick; });
+      misHtml=misRows.slice(0,15).map(function(m){ var L="ABCDEF"[m.opt]||("#"+m.opt);
+        return '<div style="padding:9px 0;border-bottom:1px solid #13233b"><div style="font-size:13px;font-weight:600">'+esc(m.topic)+'</div>'+
+          '<div style="opacity:.75;font-size:12px;margin-top:2px">Option <b>'+L+'</b> ko <b>'+m.pick+'</b> students ne chuna (galat karne walon ka ~'+Math.round(m.share*100)+'%) — ye ek common misconception hai. Episode me isi "trap" ko explain karo.</div></div>'; }).join("");
+    } else { misHtml='<div style="opacity:.7">Abhi koi strong misconception pattern nahi (ek hi galat option mass-pick). Zyada attempts ke baad dikhega.</div>'; }
+    // error-type distribution
+    var etot=errKeys.reduce(function(a,k){ return a+(errTotals[k]||0); },0);
+    var errHtml= etot? errKeys.map(function(k){ var n=errTotals[k]||0,p=etot?Math.round(100*n/etot):0; return '<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>'+errLbl[k]+'</span><span>'+n+' ('+p+'%)</span></div><div style="height:8px;background:#13233b;border-radius:6px;overflow:hidden;margin-top:4px"><div style="height:100%;width:'+p+'%;background:#60a5fa"></div></div></div>'; }).join("")
+      : '<div style="opacity:.7">Abhi error-tags nahi aaye. Students result screen pe galti tag karenge to yahan aggregate dikhega.</div>';
+    host.innerHTML=hdr+
+      '<h3 style="margin:18px 0 2px">🔥 Top-failed concepts</h3><div style="opacity:.55;font-size:12px;margin-bottom:6px">Sabse zyada galat hone wale (total galat se ranked). Ye tumhare podcast episodes ki list hai.</div>'+rows+
+      '<h3 style="margin:22px 0 2px">🎯 Common misconceptions</h3><div style="opacity:.55;font-size:12px;margin-bottom:6px">Jahan ek hi galat option bahut students ne chuna — "aise socho" wala content.</div>'+misHtml+
+      '<h3 style="margin:22px 0 6px">📊 Galti-type distribution (sab students)</h3>'+errHtml;
+  }).catch(function(e){ console.error("content", e); host.innerHTML='<div style="opacity:.75">Content stats load nahi hue: '+esc(e&&e.message||e)+'</div>'; });
+}
 function submitTest(){
   if(testState.timerId) clearInterval(testState.timerId);
   var qs=testState.questions, ans=testState.answers, total=qs.length, correct=0, wrong=0;
@@ -2991,8 +3073,63 @@ function aiInit(){
 }
 function aiBot(html){ var c=document.getElementById("ai_chat"); var d=document.createElement("div"); d.className="bubble bot"; d.innerHTML=html; c.appendChild(d); c.scrollTop=c.scrollHeight; }
 function aiMe(txt){ var c=document.getElementById("ai_chat"); var d=document.createElement("div"); d.className="bubble me"; d.textContent=txt; c.appendChild(d); c.scrollTop=c.scrollHeight; }
-function aiQuick(kind){ if(kind==="plan"){ aiMe("Get my study plan"); aiBot(planText()); } else if(kind==="weak"){ aiMe("Solve my weak topics"); aiBot(weakText()); } else { aiMe("Motivate me"); aiBot(motivate()); } }
-function aiSend(){ var el=document.getElementById("ai_in"); var t=el.value.trim(); if(!t) return; aiMe(t); el.value=""; aiBot(aiReply(t.toLowerCase())); }
+function aiQuick(kind){ if(kind==="plan"){ aiMe("Get my study plan"); aiShowPlan(); } else if(kind==="weak"){ aiMe("Solve my weak topics"); aiBot(weakText()); } else { aiMe("Motivate me"); aiBot(motivate()); } }
+function aiSend(){ var el=document.getElementById("ai_in"); var t=el.value.trim(); if(!t) return; aiMe(t); el.value=""; var lt=t.toLowerCase(); if(lt.indexOf("plan")>=0||lt.indexOf("study")>=0||lt.indexOf("schedule")>=0||lt.indexOf("7 din")>=0||lt.indexOf("7-din")>=0){ aiShowPlan(); } else { aiBot(aiReply(lt)); } }
+/* F4 — diagnosis se 7-din plan. Pehle "building…" dikhao, phir async genStudyPlan() */
+function aiShowPlan(){ aiBot("Ek sec… tumhare test results aur galtiyon se plan bana raha hoon ⏳"); genStudyPlan().then(function(html){ aiBot(html); }).catch(function(){ aiBot(planText()); }); }
+/* Fetches the user's aggregates (aggSub/aggChap/aggErr) and builds a diagnosis-driven
+   7-day plan. Falls back to the old rule-based planText() when offline or no data yet. */
+function genStudyPlan(){
+  return new Promise(function(resolve){
+    try{
+      if(!(USE_FIREBASE && fbDB && currentUser)){ resolve(planText()); return; }
+      fbDB.collection("users").doc(currentUser).get().then(function(doc){
+        var d=(doc.exists?doc.data():{})||{};
+        var aggSub=d.aggSub||{}, aggChap=d.aggChap||{}, aggErr=d.aggErr||{};
+        // weakest subjects (need >=3 attempts to count)
+        var subs=Object.keys(aggSub).map(function(s){ var a=aggSub[s]||{}; var t=a.t||0; return {s:s, acc:(t?(a.c||0)/t:1), t:t}; })
+                 .filter(function(x){ return x.t>=3; }).sort(function(a,b){ return a.acc-b.acc; });
+        // weakest chapters (need >=4 attempts). key format "Subject · Topic"
+        var chaps=Object.keys(aggChap).map(function(k){ var a=aggChap[k]||{}; var t=a.t||0; return {k:k, name:(k.split(" · ")[1]||k), acc:(t?(a.c||0)/t:1), w:(a.w||0), t:t}; })
+                  .filter(function(x){ return x.t>=4; }).sort(function(a,b){ return (b.w-a.w) || (a.acc-b.acc); });
+        // dominant error type
+        var errMap={concept:"Concept gap",calculation:"Calculation slip",misread:"Question misread",trap:"Trap option",time:"Time pressure"};
+        var errs=Object.keys(errMap).map(function(k){ return {k:k, n:(aggErr[k]||0)}; }).sort(function(a,b){ return b.n-a.n; });
+        var topErr=(errs[0] && errs[0].n>0) ? errs[0] : null;
+        // not enough signal yet → graceful fallback
+        if(!subs.length && !chaps.length){ resolve(planText()); return; }
+        var p=currentProfile||{};
+        var weakSub = subs.length ? subs[0].s : ((p.last&&p.last.weakest)||SUBJECTS[0]);
+        var top3=chaps.slice(0,3);
+        var L=[]; var day=1;
+        L.push("<b>📅 Tumhara 7-din plan</b> — tumhare actual test data se bana (guess nahi):<br>");
+        // Days from weakest chapters
+        top3.forEach(function(c){
+          L.push("<b>Day "+(day++)+" — "+c.name+"</b> <span style='opacity:.7'>("+Math.round(c.acc*100)+"% accuracy, "+c.w+" galat)</span>: 30 min theory revise karo, phir isi chapter ka chapter-test dobara do, aur har galat answer review karo.");
+        });
+        // Day: weakest subject full test
+        L.push("<b>Day "+(day++)+" — "+weakSub+" subject test</b>: 25 questions, apne weak areas pe focus, saari galtiyan review.");
+        // Day: error-type drill
+        if(topErr){
+          var tip = topErr.k==="concept" ? "theory dobara padho + ek formula/concept sheet banao" :
+                    topErr.k==="calculation" ? "rough-work neat rakho, har step likho, aur speed-maths drill karo" :
+                    topErr.k==="misread" ? "question ke keywords (NOT / except / incorrect / units) circle karke padho" :
+                    topErr.k==="trap" ? "options ko eliminate karke solve karo, jaldbaazi mat karo" :
+                    "time-boxing — har question ~1.5 min, atak jao to mark-&-skip";
+          L.push("<b>Day "+(day++)+" — Galti-type drill ("+errMap[topErr.k]+")</b>: tumhari sabse zyada galtiyan ("+topErr.n+") isi type ki hain. "+tip+". Ek timed set solve karke sirf ispe kaam karo.");
+        }
+        // Day: second weak subject (if space + exists)
+        if(day<=6 && subs.length>1){ L.push("<b>Day "+(day++)+" — "+subs[1].s+"</b>: 20 targeted questions + review."); }
+        // Fill any remaining days up to 6 with revision
+        while(day<=6){ L.push("<b>Day "+(day++)+" — Revision</b>: pichhle dino ki galat questions bina solution dekhe dobara solve karo."); }
+        // Day 7 always a full mock
+        L.push("<b>Day 7 — Full mock</b>: 75-question timed mock do, phir <b>Mistake Insights</b> me dekho kahan sudhaar hua.");
+        L.push("<br>💡 Har test ke baad result screen pe apni galtiyan tag kar dena — agle hafte ka plan aur sharp ho jayega.");
+        resolve(L.join("<br>"));
+      }).catch(function(){ resolve(planText()); });
+    }catch(e){ resolve(planText()); }
+  });
+}
 function planText(){
   var p=currentProfile;
   if(!p.last) return "Take the 15-question diagnostic first (Overview → Start diagnostic). Then I'll build a day-by-day plan around your weakest subject.";
