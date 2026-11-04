@@ -138,5 +138,725 @@
    "$5$",
    "$1$"
   ]
+ },
+ "questions/q_06aprs1_16.png": {
+  "format": "text",
+  "stem": "In photoelectric experiment energy of $2.48$ eV irradiates a photo sensitive material. The stopping potential was measured to be $0.5$ V. Work function of the photo sensitive material is:",
+  "opts": [
+   "$1.68$ eV",
+   "$2.48$ eV",
+   "$1.98$ eV",
+   "$0.5$ eV"
+  ]
+ },
+ "questions/q_06aprs1_17.png": {
+  "format": "text",
+  "stem": "Which of the following phenomena does not explain by wave nature of light. A. reflection  B. diffraction  C. photoelectric effect  D. interference  E. polarization. Choose the most appropriate answer from the options given below:",
+  "opts": [
+   "E only",
+   "B, D only",
+   "C only",
+   "A, C only"
+  ]
+ },
+ "questions/q_06aprs1_18.png": {
+  "format": "text",
+  "stem": "The ratio of the shortest wavelength of Balmer series to the shortest wavelength of Lyman series for hydrogen atom is:",
+  "opts": [
+   "$4:1$",
+   "$1:4$",
+   "$2:1$",
+   "$1:2$"
+  ]
+ },
+ "questions/q_06aprs1_20.png": {
+  "format": "text",
+  "stem": "While measuring diameter of wire using screw gauge the following readings were noted. Main scale reading is $1$ mm and circular scale reading is equal to $42$ divisions. Pitch of screw gauge is $1$ mm and it has $100$ divisions on circular scale. The diameter of the wire is $\\dfrac{x}{50}$ mm. The value of $x$ is:",
+  "opts": [
+   "$21$",
+   "$142$",
+   "$71$",
+   "$42$"
+  ]
+ },
+ "questions/q_06aprs1_31.png": {
+  "format": "text",
+  "stem": "The density of '$x$' M solution ('$X$' molar) of NaOH is $1.12$ g mL$^{-1}$, while in molality, the concentration of the solution is $3$ m ($3$ molal). Then $x$ is (Given: Molar mass of NaOH is $40$ g/mol):",
+  "opts": [
+   "$3.5$",
+   "$3.8$",
+   "$2.8$",
+   "$3.0$"
+  ]
+ },
+ "questions/q_06aprs1_32.png": {
+  "format": "text",
+  "stem": "The electron affinity values are negative for  A. $\\text{Be}\\rightarrow\\text{Be}^-$  B. $\\text{N}\\rightarrow\\text{N}^-$  C. $\\text{O}\\rightarrow\\text{O}^{2-}$  D. $\\text{Na}\\rightarrow\\text{Na}^-$  E. $\\text{Al}\\rightarrow\\text{Al}^-$. Choose the most appropriate answer from the options given below:",
+  "opts": [
+   "D and E only",
+   "A, B and C only",
+   "A and D only",
+   "A, B, D and E only"
+  ]
+ },
+ "questions/q_06aprs1_33.png": {
+  "format": "text",
+  "stem": "Which of the following material is not a semiconductor:",
+  "opts": [
+   "Silicon",
+   "Copper oxide",
+   "Germanium",
+   "Graphite"
+  ]
+ },
+ "questions/q_06aprs1_34.png": {
+  "format": "text",
+  "stem": "Match List I with List II<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List I (Hybridization)</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List II (Orientation in Space)</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. $sp^3$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">I. Trigonal bipyramidal</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. $dsp^2$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">II. Octahedral</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. $sp^3d$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">III. Tetrahedral</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. $sp^3d^2$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">IV. Square planar</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "A-IV, B-III, C-I, D-II",
+   "A-III, B-IV, C-I, D-II",
+   "A-III, B-I, C-IV, D-II",
+   "A-II, B-I, C-IV, D-III"
+  ]
+ },
+ "questions/q_06aprs1_35.png": {
+  "format": "text",
+  "stem": "Match List I with List II<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List I (Compound/Species)</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List II (Shape/Geometry)</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. $\\text{SF}_4$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">I. Tetrahedral</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. $\\text{BrF}_3$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">II. Pyramidal</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. $\\text{BrO}_3^-$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">III. See saw</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. $\\text{NH}_4^+$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">IV. Bent T-Shape</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "A-II, B-III, C-I, D-IV",
+   "A-II, B-IV, C-III, D-I",
+   "A-III, B-IV, C-II, D-I",
+   "A-III, B-II, C-IV, D-I"
+  ]
+ },
+ "questions/q_06aprs1_36.png": {
+  "format": "text",
+  "stem": "Match List I with List II<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List I (Molecule/Species)</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List II (Property/Shape)</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. $\\text{SO}_2\\text{Cl}_2$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">I. Paramagnetic</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. $\\text{NO}$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">II. Diamagnetic</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. $\\text{NO}_2^-$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">III. Tetrahedral</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. $\\text{I}_3^-$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">IV. Linear</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "A-II, B-III, C-I, D-IV",
+   "A-III, B-I, C-II, D-IV",
+   "A-IV, B-I, C-III, D-II",
+   "A-III, B-IV, C-II, D-I"
+  ]
+ },
+ "questions/q_06aprs1_37.png": {
+  "format": "text",
+  "stem": "At $-20^\\circ$C and $1$ atm pressure, a cylinder is filled with equal number of $\\text{H}_2$, $\\text{I}_2$ and HI molecules for the reaction $\\text{H}_2(g)+\\text{I}_2(g)\\rightleftharpoons 2\\text{HI}(g)$, the $K_p$ for the process is $x\\times10^{-1}$. $x=$ ___ (Given: $R=0.082$ L atm K$^{-1}$ mol$^{-1}$):",
+  "opts": [
+   "$0.01$",
+   "$10$",
+   "$2$",
+   "$1$"
+  ]
+ },
+ "questions/q_06aprs1_38.png": {
+  "format": "text",
+  "stem": "Functional group present in sulphonic acids is:",
+  "opts": [
+   "$-\\text{SO}_4\\text{H}$",
+   "$-\\text{SO}_3\\text{H}$",
+   "$-\\text{S}(=\\text{O})-\\text{OH}$",
+   "$-\\text{SO}_2$"
+  ]
+ },
+ "questions/q_06aprs1_39.png": {
+  "format": "text",
+  "stem": "Which of the following statements are correct?  A. Glycerol is purified by vacuum distillation because it decomposes at its normal boiling point.  B. Aniline can be purified by steam distillation as aniline is miscible in water.  C. Ethanol can be separated from ethanol water mixture by azeotropic distillation because it forms azeotrope.  D. An organic compound is pure, if mixed M.P. is remained same. Choose the most appropriate answer from the options given below:",
+  "opts": [
+   "A, B, C only",
+   "A, C, D only",
+   "A, B, D only",
+   "B, C, D only"
+  ]
+ },
+ "questions/q_06aprs1_41.png": {
+  "format": "text",
+  "stem": "Given below are two statements: <b>Statement I:</b> Gallium is used in the manufacturing of thermometers. <b>Statement II:</b> A thermometer containing gallium is useful for measuring the freezing point ($256$ K) of brine solution. In the light of the above statements, choose the correct answer from the options given below:",
+  "opts": [
+   "Both Statement I and Statement II are true",
+   "Statement I is false but Statement II is true",
+   "Both Statement I and Statement II are false",
+   "Statement I is true but Statement II is false"
+  ]
+ },
+ "questions/q_06aprs1_43.png": {
+  "format": "text",
+  "stem": "The number of element from the following that do not belong to lanthanoids is: Eu, Cm, Er, Tb, Yb and Lu",
+  "opts": [
+   "$3$",
+   "$4$",
+   "$1$",
+   "$5$"
+  ]
+ },
+ "questions/q_06aprs1_44.png": {
+  "format": "text",
+  "stem": "Match List I with List II<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List I (Compound)</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List II (Uses)</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. Iodoform</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">I. Fire extinguisher</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. Carbon tetrachloride</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">II. Insecticide</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. CFC</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">III. Antiseptic</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. DDT</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">IV. Refrigerants</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "A-I, B-II, C-III, D-IV",
+   "A-III, B-I, C-IV, D-II",
+   "A-II, B-IV, C-I, D-III",
+   "A-III, B-II, C-IV, D-I"
+  ]
+ },
+ "questions/q_06aprs1_45.png": {
+  "format": "text",
+  "stem": "The following complexes $[\\text{CoCl(NH}_3)_5]^{2+}$ (A), $[\\text{Co(CN)}_6]^{3-}$ (B), $[\\text{Co(NH}_3)_5(\\text{H}_2\\text{O})]^{3+}$ (C), $[\\text{Cu(H}_2\\text{O})_4]^{2+}$ (D). The correct order of A, B, C and D in terms of wavenumber of light absorbed is:",
+  "opts": [
+   "$C<D<A<B$",
+   "$B<C<A<D$",
+   "$A<C<B<D$",
+   "$D<A<C<B$"
+  ]
+ },
+ "questions/q_06aprs1_46.png": {
+  "format": "text",
+  "stem": "Given below are two statements: <b>Statement I:</b> Picric acid is 2,4,6-trinitrotoluene. <b>Statement II:</b> Phenol-2,4-disulphonic acid is treated with Conc. $\\text{HNO}_3$ to get picric acid. In the light of the above statements, choose the most appropriate answer from the options given below:",
+  "opts": [
+   "Statement I is incorrect but Statement II is correct",
+   "Both Statement I and Statement II are incorrect",
+   "Statement I is correct but Statement II is incorrect",
+   "Both Statement I and Statement II are correct"
+  ]
+ },
+ "questions/q_06aprs1_48.png": {
+  "format": "text",
+  "stem": "Which among the following aldehydes is most reactive towards nucleophilic addition reactions?",
+  "opts": [
+   "$\\text{C}_3\\text{H}_7\\text{CHO}$",
+   "$\\text{C}_2\\text{H}_5\\text{CHO}$",
+   "$\\text{CH}_3\\text{CHO}$",
+   "$\\text{HCHO}$"
+  ]
+ },
+ "questions/q_06aprs1_49.png": {
+  "format": "text",
+  "stem": "Match List I with List II<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List I (Precipitating reagent and conditions)</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List II (Cation)</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. $\\text{NH}_4\\text{Cl}+\\text{NH}_4\\text{OH}$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">I. $\\text{Mn}^{2+}$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. $\\text{NH}_4\\text{OH}+\\text{Na}_2\\text{CO}_3$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">II. $\\text{Pb}^{2+}$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. $\\text{NH}_4\\text{OH}+\\text{NH}_4\\text{Cl}+\\text{H}_2\\text{S}$ gas</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">III. $\\text{Al}^{3+}$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. dilute HCl</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">IV. $\\text{Sr}^{2+}$</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "A-III, B-IV, C-I, D-II",
+   "A-III, B-IV, C-II, D-I",
+   "A-IV, B-III, C-II, D-I",
+   "A-IV, B-III, C-I, D-II"
+  ]
+ },
+ "questions/q_06aprs1_62.png": {
+  "format": "text",
+  "stem": "The number of triangles whose vertices are at the vertices of a regular octagon but none of whose sides is a side of the octagon is:",
+  "opts": [
+   "$48$",
+   "$56$",
+   "$24$",
+   "$16$"
+  ]
+ },
+ "questions/q_06aprs1_63.png": {
+  "format": "text",
+  "stem": "Let $A=\\{n\\in[100,700]\\cap\\mathbb{N} : n \\text{ is neither a multiple of 3 nor a multiple of 4}\\}$. Then the number of elements in $A$ is:",
+  "opts": [
+   "$290$",
+   "$280$",
+   "$300$",
+   "$310$"
+  ]
+ },
+ "questions/q_06aprs1_64.png": {
+  "format": "text",
+  "stem": "Let a variable line of slope $m>0$ passing through the point $(4,-9)$ intersect the coordinate axes at the points $A$ and $B$. The minimum value of the sum of the distances of $A$ and $B$ from the origin is:",
+  "opts": [
+   "$30$",
+   "$25$",
+   "$15$",
+   "$10$"
+  ]
+ },
+ "questions/q_06aprs1_65.png": {
+  "format": "text",
+  "stem": "If $A(3,1,-1)$, $B\\left(\\dfrac{5}{3},\\dfrac{7}{3},\\dfrac{1}{3}\\right)$, $C(2,2,1)$ and $D\\left(\\dfrac{10}{3},\\dfrac{2}{3},\\dfrac{-1}{3}\\right)$ are the vertices of a quadrilateral $ABCD$, then its area is:",
+  "opts": [
+   "$\\dfrac{2\\sqrt{2}}{3}$",
+   "$\\dfrac{5\\sqrt{2}}{3}$",
+   "$2\\sqrt{2}$",
+   "$\\dfrac{4\\sqrt{2}}{3}$"
+  ]
+ },
+ "questions/q_06aprs1_66.png": {
+  "format": "text",
+  "stem": "A circle is inscribed in an equilateral triangle of side of length $12$. If the area and perimeter of any square inscribed in this circle are $m$ and $n$, respectively, then $m+n^2$ is equal to:",
+  "opts": [
+   "$408$",
+   "$414$",
+   "$396$",
+   "$312$"
+  ]
+ },
+ "questions/q_06aprs1_67.png": {
+  "format": "text",
+  "stem": "Let $C$ be the circle of minimum area touching the parabola $y=6-x^2$ and the lines $y=\\sqrt{3}|x|$. Then, which one of the following points lies on the circle $C$?",
+  "opts": [
+   "$(1,2)$",
+   "$(1,1)$",
+   "$(2,2)$",
+   "$(2,4)$"
+  ]
+ },
+ "questions/q_06aprs1_68.png": {
+  "format": "text",
+  "stem": "Let $f:(-\\infty,\\infty)-\\{0\\}\\to\\mathbb{R}$ be a differentiable function such that $f'(1)=\\lim_{a\\to\\infty}a^2 f\\left(\\dfrac{1}{a}\\right)$. Then $\\lim_{a\\to\\infty}\\dfrac{a(a+1)}{2}\\tan^{-1}\\left(\\dfrac{1}{a}\\right)+a^2-2\\log_e a$ is equal to:",
+  "opts": [
+   "$\\dfrac{3}{2}+\\dfrac{\\pi}{4}$",
+   "$\\dfrac{3}{4}+\\dfrac{\\pi}{8}$",
+   "$\\dfrac{3}{8}+\\dfrac{\\pi}{4}$",
+   "$\\dfrac{5}{2}+\\dfrac{\\pi}{8}$"
+  ]
+ },
+ "questions/q_06aprs1_69.png": {
+  "format": "text",
+  "stem": "The mean and standard deviation of $20$ observations are found to be $10$ and $2$, respectively. On rechecking, it was found that an observation by mistake was taken $8$ instead of $12$. The correct standard deviation is:",
+  "opts": [
+   "$1.8$",
+   "$1.94$",
+   "$\\sqrt{3.96}$",
+   "$\\sqrt{3.86}$"
+  ]
+ },
+ "questions/q_06aprs1_70.png": {
+  "format": "text",
+  "stem": "Let the relations $R_1$ and $R_2$ on the set $X=\\{1,2,3,\\ldots,20\\}$ be given by $R_1=\\{(x,y):2x-3y=2\\}$ and $R_2=\\{(x,y):-5x+4y=0\\}$. If $M$ and $N$ be the minimum number of elements required to be added in $R_1$ and $R_2$, respectively, in order to make the relations symmetric, then $M+N$ equals:",
+  "opts": [
+   "$12$",
+   "$16$",
+   "$8$",
+   "$10$"
+  ]
+ },
+ "questions/q_06aprs1_72.png": {
+  "format": "text",
+  "stem": "The function $f:\\mathbb{R}\\to\\mathbb{R}$, $f(x)=\\dfrac{x^2+2x-15}{x^2-4x+9}$, $x\\in\\mathbb{R}$ is:",
+  "opts": [
+   "one-one but not onto.",
+   "both one-one and onto.",
+   "onto but not one-one.",
+   "neither one-one nor onto."
+  ]
+ },
+ "questions/q_06aprs1_73.png": {
+  "format": "text",
+  "stem": "If $f(x)=\\begin{cases} x^3\\sin\\left(\\dfrac{1}{x}\\right), & x\\neq 0 \\\\ 0, & x=0 \\end{cases}$ then",
+  "opts": [
+   "$f''\\left(\\dfrac{2}{\\pi}\\right)=\\dfrac{24-\\pi^2}{2\\pi}$",
+   "$f''\\left(\\dfrac{2}{\\pi}\\right)=\\dfrac{12-\\pi^2}{2\\pi}$",
+   "$f''(0)=1$",
+   "$f''(0)=0$"
+  ]
+ },
+ "questions/q_06aprs1_74.png": {
+  "format": "text",
+  "stem": "The interval in which the function $f(x)=x^x$, $x>0$, is strictly increasing is:",
+  "opts": [
+   "$\\left(0,\\dfrac{1}{e}\\right]$",
+   "$(0,\\infty)$",
+   "$\\left[\\dfrac{1}{e},\\infty\\right)$",
+   "$\\left[\\dfrac{1}{e^2},1\\right)$"
+  ]
+ },
+ "questions/q_06aprs1_75.png": {
+  "format": "text",
+  "stem": "$\\displaystyle\\int_0^{\\pi/4}\\dfrac{\\cos^2 x\\,\\sin^2 x}{\\left(\\cos^3 x+\\sin^3 x\\right)^2}\\,dx$ is equal to:",
+  "opts": [
+   "$\\dfrac{1}{6}$",
+   "$\\dfrac{1}{3}$",
+   "$\\dfrac{1}{12}$",
+   "$\\dfrac{1}{9}$"
+  ]
+ },
+ "questions/q_06aprs1_76.png": {
+  "format": "text",
+  "stem": "Let the area of the region enclosed by the curves $y=3x$, $2y=27-3x$ and $y=3x-x\\sqrt{x}$ be $A$. Then $10A$ is equal to:",
+  "opts": [
+   "$172$",
+   "$162$",
+   "$154$",
+   "$184$"
+  ]
+ },
+ "questions/q_06aprs1_77.png": {
+  "format": "text",
+  "stem": "Let $y=y(x)$ be the solution of the differential equation $(1+x^2)\\dfrac{dy}{dx}+y=e^{\\tan^{-1}x}$, $y(1)=0$. Then $y(0)$ is:",
+  "opts": [
+   "$\\dfrac{1}{2}\\left(e^{\\pi/2}-1\\right)$",
+   "$\\dfrac{1}{2}\\left(1-e^{\\pi/2}\\right)$",
+   "$\\dfrac{1}{4}\\left(1-e^{\\pi/2}\\right)$",
+   "$\\dfrac{1}{4}\\left(e^{\\pi/2}-1\\right)$"
+  ]
+ },
+ "questions/q_06aprs1_78.png": {
+  "format": "text",
+  "stem": "Let $y=y(x)$ be the solution of the differential equation $(2x\\log_e x)\\dfrac{dy}{dx}+2y=\\dfrac{3}{x}\\log_e x$, $x>0$ and $y\\left(e^{-1}\\right)=0$. Then, $y(e)$ is equal to:",
+  "opts": [
+   "$-\\dfrac{3}{e}$",
+   "$-\\dfrac{3}{2e}$",
+   "$-\\dfrac{2}{3e}$",
+   "$-\\dfrac{2}{e}$"
+  ]
+ },
+ "questions/q_06aprs1_79.png": {
+  "format": "text",
+  "stem": "The shortest distance between the lines $\\dfrac{x-3}{2}=\\dfrac{y+15}{-7}=\\dfrac{z-9}{5}$ and $\\dfrac{x+1}{2}=\\dfrac{y-1}{1}=\\dfrac{z-9}{-3}$ is:",
+  "opts": [
+   "$8\\sqrt{3}$",
+   "$4\\sqrt{3}$",
+   "$5\\sqrt{3}$",
+   "$6\\sqrt{3}$"
+  ]
+ },
+ "questions/q_06aprs1_80.png": {
+  "format": "text",
+  "stem": "A company has two plants $A$ and $B$ to manufacture motorcycles. $60\\%$ motorcycles are manufactured at plant $A$ and the remaining are manufactured at plant $B$. $80\\%$ of the motorcycles manufactured at plant $A$ are rated of the standard quality, while $90\\%$ of the motorcycles manufactured at plant $B$ are rated of the standard quality. A motorcycle picked up randomly from the total production is found to be of the standard quality. If $p$ is the probability that it was manufactured at plant $B$, then $126p$ is:",
+  "opts": [
+   "$54$",
+   "$66$",
+   "$64$",
+   "$56$"
+  ]
+ },
+ "questions/q_30jans1_1.png": {
+  "format": "text",
+  "stem": "Match List-I with List-II.<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List-I</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List-II</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. Coefficient of viscosity</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">I. $[\\text{ML}^2\\text{T}^{-2}]$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. Surface Tension</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">II. $[\\text{ML}^2\\text{T}^{-1}]$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. Angular momentum</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">III. $[\\text{ML}^{-1}\\text{T}^{-1}]$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. Rotational kinetic energy</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">IV. $[\\text{ML}^0\\text{T}^{-2}]$</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "A-II, B-I, C-IV, D-III",
+   "A-I, B-II, C-III, D-IV",
+   "A-III, B-IV, C-II, D-I",
+   "A-IV, B-III, C-II, D-I"
+  ]
+ },
+ "questions/q_30jans1_2.png": {
+  "format": "text",
+  "stem": "A particle of mass $m$ projected with a velocity $u$ making an angle of $30^\\circ$ with the horizontal. The magnitude of angular momentum of the projectile about the point of projection when the particle is at its maximum height $h$ is:",
+  "opts": [
+   "$\\dfrac{\\sqrt{3}}{16}\\dfrac{mu^3}{g}$",
+   "$\\dfrac{\\sqrt{3}}{2}\\dfrac{mu^2}{g}$",
+   "$\\dfrac{mu^3}{\\sqrt{2}g}$",
+   "zero"
+  ]
+ },
+ "questions/q_30jans1_5.png": {
+  "format": "text",
+  "stem": "A spherical body of mass $100$ g is dropped from a height of $10$ m from the ground. After hitting the ground, the body rebounds to a height of $5$ m. The impulse of force imparted by the ground to the body is given by: (given $g=9.8$ m s$^{-2}$)",
+  "opts": [
+   "$4.32$ kg m s$^{-1}$",
+   "$43.2$ kg m s$^{-1}$",
+   "$23.9$ kg m s$^{-1}$",
+   "$2.39$ kg m s$^{-1}$"
+  ]
+ },
+ "questions/q_30jans1_6.png": {
+  "format": "text",
+  "stem": "The gravitational potential at a point above the surface of earth is $-5.12\\times10^{7}$ J kg$^{-1}$ and the acceleration due to gravity at that point is $6.4$ m s$^{-2}$. Assume that the mean radius of earth to be $6400$ km. The height of this point above the earth's surface is:",
+  "opts": [
+   "$1600$ km",
+   "$540$ km",
+   "$1200$ km",
+   "$1000$ km"
+  ]
+ },
+ "questions/q_30jans1_7.png": {
+  "format": "text",
+  "stem": "Young's modulus of material of a wire of length $L$ and cross-sectional area $A$ is $Y$. If the length of the wire is doubled and cross-sectional area is halved then Young's modulus will be:",
+  "opts": [
+   "$\\dfrac{Y}{4}$",
+   "$4Y$",
+   "$Y$",
+   "$2Y$"
+  ]
+ },
+ "questions/q_30jans1_8.png": {
+  "format": "text",
+  "stem": "At which temperature the r.m.s. velocity of a hydrogen molecule equal to that of an oxygen molecule at $47^\\circ$C?",
+  "opts": [
+   "$80$ K",
+   "$-73$ K",
+   "$4$ K",
+   "$20$ K"
+  ]
+ },
+ "questions/q_30jans1_10.png": {
+  "format": "text",
+  "stem": "The electrostatic potential due to an electric dipole at a distance $r$ varies as:",
+  "opts": [
+   "$r$",
+   "$\\dfrac{1}{r^2}$",
+   "$\\dfrac{1}{r^3}$",
+   "$\\dfrac{1}{r}$"
+  ]
+ },
+ "questions/q_30jans1_12.png": {
+  "format": "text",
+  "stem": "An electric toaster has resistance of $60\\ \\Omega$ at room temperature ($27^\\circ$C). The toaster is connected to a $220$ V supply. If the current flowing through it reaches $2.75$ A, the temperature attained by toaster is around: (if $\\alpha=2\\times10^{-4}\\ ^\\circ$C$^{-1}$)",
+  "opts": [
+   "$694^\\circ$C",
+   "$1235^\\circ$C",
+   "$1694^\\circ$C",
+   "$1667^\\circ$C"
+  ]
+ },
+ "questions/q_30jans1_14.png": {
+  "format": "text",
+  "stem": "A series $LR$ circuit connected with an ac source $E=(25\\sin 1000t)$ V has a power factor of $\\dfrac{1}{\\sqrt{2}}$. If the source of emf is changed to $E=(20\\sin 2000t)$ V, the new power factor of the circuit will be:",
+  "opts": [
+   "$\\dfrac{1}{\\sqrt{2}}$",
+   "$\\dfrac{1}{\\sqrt{3}}$",
+   "$\\dfrac{1}{\\sqrt{5}}$",
+   "$\\dfrac{1}{\\sqrt{7}}$"
+  ]
+ },
+ "questions/q_30jans1_16.png": {
+  "format": "text",
+  "stem": "The electric field of an electromagnetic wave in free space is represented as $\\vec{E}=E_0\\cos\\left(\\omega t-kz\\right)\\hat{i}$. The corresponding magnetic induction vector will be:",
+  "opts": [
+   "$\\vec{B}=E_0 C\\cos\\left(\\omega t-kz\\right)\\hat{j}$",
+   "$\\vec{B}=\\dfrac{E_0}{C}\\cos\\left(\\omega t-kz\\right)\\hat{j}$",
+   "$\\vec{B}=E_0 C\\cos\\left(\\omega t+kz\\right)\\hat{j}$",
+   "$\\vec{B}=\\dfrac{E_0}{C}\\cos\\left(\\omega t+kz\\right)\\hat{j}$"
+  ]
+ },
+ "questions/q_30jans1_17.png": {
+  "format": "text",
+  "stem": "The diffraction pattern of a light of wavelength $400$ nm diffracting from a slit of width $0.2$ mm is focused on the focal plane of a convex lens of focal length $100$ cm. The width of the $1^{\\text{st}}$ secondary maxima will be:",
+  "opts": [
+   "$2$ mm",
+   "$2$ cm",
+   "$0.02$ mm",
+   "$0.2$ mm"
+  ]
+ },
+ "questions/q_30jans1_18.png": {
+  "format": "text",
+  "stem": "The work function of a substance is $3.0$ eV. The longest wavelength of light that can cause the emission of photoelectrons from this substance is approximately:",
+  "opts": [
+   "$215$ nm",
+   "$414$ nm",
+   "$400$ nm",
+   "$200$ nm"
+  ]
+ },
+ "questions/q_30jans1_19.png": {
+  "format": "text",
+  "stem": "The ratio of the magnitude of the kinetic energy to the potential energy of an electron in the $5^{\\text{th}}$ excited state of a hydrogen atom is:",
+  "opts": [
+   "$4$",
+   "$\\dfrac{1}{4}$",
+   "$\\dfrac{1}{2}$",
+   "$1$"
+  ]
+ },
+ "questions/q_30jans1_31.png": {
+  "format": "text",
+  "stem": "Given below are two statements: <b>Statement-I:</b> The orbitals having same energy are called as degenerate orbitals. <b>Statement-II:</b> In hydrogen atom, 3p and 3d orbitals are not degenerate orbitals. In the light of the above statements, choose the most appropriate answer from the options given below:",
+  "opts": [
+   "Statement-I is true but Statement-II is false",
+   "Both Statement-I and Statement-II are true.",
+   "Both Statement-I and Statement-II are false",
+   "Statement-I is false but Statement-II is true"
+  ]
+ },
+ "questions/q_30jans1_32.png": {
+  "format": "text",
+  "stem": "Given below are the two statements: one is labeled as Assertion (A) and the other is labeled as Reason (R). <b>Assertion (A):</b> There is a considerable increase in covalent radius from $N$ to $P$. However from $As$ to $Bi$ only a small increase in covalent radius is observed. <b>Reason (R):</b> covalent and ionic radii in a particular oxidation state increases down the group. In the light of the above statement, choose the most appropriate answer from the options given below:",
+  "opts": [
+   "(A) is false but (R) is true",
+   "Both (A) and (R) are true but (R) is not the correct explanation of (A)",
+   "(A) is true but (R) is false",
+   "Both (A) and (R) are true and (R) is the correct explanation of (A)"
+  ]
+ },
+ "questions/q_30jans1_33.png": {
+  "format": "text",
+  "stem": "Match List-I with List-II<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List I (Molecule)</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List II (Shape)</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. $\\text{BrF}_5$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">i. T-shape</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. $\\text{H}_2\\text{O}$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">ii. See saw</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. $\\text{ClF}_3$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">iii. Bent</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. $\\text{SF}_4$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">iv. Square pyramidal</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "(A)-I, (B)-II, (C)-IV, (D)-III",
+   "(A)-II, (B)-I, (C)-III, (D)-IV",
+   "(A)-III, (B)-IV, (C)-I, (D)-II",
+   "(A)-IV, (B)-III, (C)-I, (D)-II"
+  ]
+ },
+ "questions/q_30jans1_36.png": {
+  "format": "text",
+  "stem": "Given below are two statements, one is labeled as Assertion (A) and the other is labeled as Reason (R). <b>Assertion (A):</b> $\\text{CH}_2=\\text{CH}-\\text{CH}_2-\\text{Cl}$ is an example of allyl halide. <b>Reason (R):</b> Allyl halides are the compounds in which the halogen atom is attached to $sp^2$ hybridised carbon atom. In the light of the two above statements, choose the most appropriate answer from the options given below:",
+  "opts": [
+   "(A) is true but (R) is false",
+   "Both (A) and (R) are true but (R) is not the correct explanation of A",
+   "(A) is false but (R) is true",
+   "Both (A) and (R) are true and (R) is the correct explanation of (A)"
+  ]
+ },
+ "questions/q_30jans1_40.png": {
+  "format": "text",
+  "stem": "What happens to freezing point of benzene when small quantity of naphthalene is added to benzene?",
+  "opts": [
+   "Increases",
+   "Remains unchanged",
+   "First decreases and then increases",
+   "Decreases"
+  ]
+ },
+ "questions/q_30jans1_41.png": {
+  "format": "text",
+  "stem": "Diamagnetic Lanthanoid ions are:",
+  "opts": [
+   "$\\text{Nd}^{3+}$ and $\\text{Eu}^{3+}$",
+   "$\\text{La}^{3+}$ and $\\text{Ce}^{4+}$",
+   "$\\text{Nd}^{3+}$ and $\\text{Ce}^{4+}$",
+   "$\\text{Lu}^{3+}$ and $\\text{Eu}^{3+}$"
+  ]
+ },
+ "questions/q_30jans1_42.png": {
+  "format": "text",
+  "stem": "Match List-I with List-II<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List I (Species)</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List II (Electronic distribution)</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. $\\text{Cr}^{+2}$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">i. $3d^8$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. $\\text{Mn}^{+}$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">ii. $3d^3 4s^1$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. $\\text{Ni}^{+2}$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">iii. $3d^4$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. $\\text{V}^{+}$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">iv. $3d^5 4s^1$</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "(A)-I, (B)-II, (C)-III, (D)-IV",
+   "(A)-III, (B)-IV, (C)-I, (D)-II",
+   "(A)-IV, (B)-III, (C)-I, (D)-II",
+   "(A)-II, (B)-I, (C)-IV, (D)-III"
+  ]
+ },
+ "questions/q_30jans1_43.png": {
+  "format": "text",
+  "stem": "Choose the correct Statements from the following:  (A) Ethane-1,2-diamine is a chelating ligand.  (B) Metallic aluminium is produced by electrolysis of aluminium oxide in presence of cryolite.  (C) Cyanide ion is used as ligand for leaching of silver.  (D) Phosphine act as a ligand in Wilkinson catalyst.  (E) The stability constants of $\\text{Ca}^{2+}$ and $\\text{Mg}^{2+}$ are similar with EDTA complexes. Choose the correct answer from the options given below:",
+  "opts": [
+   "(B), (C), (E) only",
+   "(C), (D), (E) only",
+   "(A), (B), (C) only",
+   "(A), (D), (E) only"
+  ]
+ },
+ "questions/q_30jans1_44.png": {
+  "format": "text",
+  "stem": "Aluminium chloride in acidified aqueous solution forms an ion having geometry:",
+  "opts": [
+   "Octahedral",
+   "Square Planar",
+   "Tetrahedral",
+   "Trigonal bipyramidal"
+  ]
+ },
+ "questions/q_30jans1_48.png": {
+  "format": "text",
+  "stem": "Given below are two statements: <b>Statement-I:</b> The gas liberated on warming a salt with dil $\\text{H}_2\\text{SO}_4$, turns a piece of paper dipped in lead acetate into black, it is a confirmatory test for sulphide ion. <b>Statement-II:</b> In statement-I the colour of paper turns black because of formation of lead sulphite. In the light of the above statements, choose the most appropriate answer from the options given below:",
+  "opts": [
+   "Both Statement-I and Statement-II are false",
+   "Statement-I is false but Statement-II is true",
+   "Statement-I is true but Statement-II is false",
+   "Both Statement-I and Statement-II are true."
+  ]
+ },
+ "questions/q_30jans1_49.png": {
+  "format": "text",
+  "stem": "The Lassaigne's extract is boiled with dil $\\text{HNO}_3$ before testing for halogens because,",
+  "opts": [
+   "$\\text{AgCN}$ is soluble in $\\text{HNO}_3$",
+   "Silver halides are soluble in $\\text{HNO}_3$",
+   "$\\text{Ag}_2\\text{S}$ is soluble in $\\text{HNO}_3$",
+   "$\\text{Na}_2\\text{S}$ and $\\text{NaCN}$ are decomposed by $\\text{HNO}_3$"
+  ]
+ },
+ "questions/q_30jans1_50.png": {
+  "format": "text",
+  "stem": "Sugar which does not give reddish brown precipitate with Fehling's reagent is:",
+  "opts": [
+   "Sucrose",
+   "Lactose",
+   "Glucose",
+   "Maltose"
+  ]
+ },
+ "questions/q_30jans1_61.png": {
+  "format": "text",
+  "stem": "If $z=x+iy$, $xy\\neq 0$, satisfies the equation $z^2+i\\bar{z}=0$, then $\\left|z^2\\right|$ is equal to:",
+  "opts": [
+   "$9$",
+   "$1$",
+   "$4$",
+   "$\\dfrac{1}{4}$"
+  ]
+ },
+ "questions/q_30jans1_62.png": {
+  "format": "text",
+  "stem": "Let $S_n$ denote the sum of first $n$ terms of an arithmetic progression. If $S_{20}=790$ and $S_{10}=145$, then $S_{15}-S_5$ is:",
+  "opts": [
+   "$395$",
+   "$390$",
+   "$405$",
+   "$410$"
+  ]
+ },
+ "questions/q_30jans1_63.png": {
+  "format": "text",
+  "stem": "If $2\\sin^3 x+\\sin 2x\\cos x+4\\sin x-4=0$ has exactly $3$ solutions in the interval $\\left[0,\\dfrac{n\\pi}{2}\\right]$, $n\\in\\mathbb{N}$, then the roots of the equation $x^2+nx+(n-3)=0$ belong to:",
+  "opts": [
+   "$(0,\\infty)$",
+   "$(-\\infty,0)$",
+   "$\\left(-\\dfrac{\\sqrt{17}}{2},\\dfrac{\\sqrt{17}}{2}\\right)$",
+   "$\\mathbb{Z}$"
+  ]
+ },
+ "questions/q_30jans1_64.png": {
+  "format": "text",
+  "stem": "A line passing through the point $A(9,0)$ makes an angle of $30^\\circ$ with the positive direction of $x$-axis. If this line is rotated about $A$ through an angle of $15^\\circ$ in the clockwise direction, then its equation in the new position is:",
+  "opts": [
+   "$\\dfrac{y}{\\sqrt{3}-2}+x=9$",
+   "$\\dfrac{x}{\\sqrt{3}-2}+y=9$",
+   "$\\dfrac{x}{\\sqrt{3}+2}+y=9$",
+   "$\\dfrac{y}{\\sqrt{3}+2}+x=9$"
+  ]
+ },
+ "questions/q_30jans1_65.png": {
+  "format": "text",
+  "stem": "If the circles $(x+1)^2+(y+2)^2=r^2$ and $x^2+y^2-4x-4y+4=0$ intersect at exactly two distinct points, then:",
+  "opts": [
+   "$5<r<9$",
+   "$0<r<7$",
+   "$3<r<7$",
+   "$\\dfrac{1}{2}<r<7$"
+  ]
+ },
+ "questions/q_30jans1_66.png": {
+  "format": "text",
+  "stem": "The maximum area of a triangle whose one vertex is at $(0,0)$ and the other two vertices lie on the curve $y=-2x^2+54$ at points $(x,y)$ and $(-x,y)$ where $y>0$ is:",
+  "opts": [
+   "$88$",
+   "$122$",
+   "$92$",
+   "$108$"
+  ]
+ },
+ "questions/q_30jans1_67.png": {
+  "format": "text",
+  "stem": "If the length of the minor axis of ellipse is equal to half of the distance between the foci, then the eccentricity of the ellipse is:",
+  "opts": [
+   "$\\dfrac{\\sqrt{5}}{3}$",
+   "$\\dfrac{\\sqrt{3}}{2}$",
+   "$\\dfrac{1}{\\sqrt{3}}$",
+   "$\\dfrac{2}{\\sqrt{5}}$"
+  ]
+ },
+ "questions/q_30jans1_68.png": {
+  "format": "text",
+  "stem": "Let $f:\\left[-\\dfrac{\\pi}{2},\\dfrac{\\pi}{2}\\right]\\to\\mathbb{R}$ be a differentiable function such that $f(0)=\\dfrac{1}{2}$. If $\\displaystyle\\lim_{x\\to 0}\\dfrac{x\\int_0^x f(t)\\,dt}{e^{x^2}-1}=\\alpha$, then $8\\alpha^2$ is equal to:",
+  "opts": [
+   "$16$",
+   "$2$",
+   "$1$",
+   "$4$"
+  ]
+ },
+ "questions/q_30jans1_69.png": {
+  "format": "text",
+  "stem": "Let $M$ denote the median of the following frequency distribution.<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">Class</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">0-4</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">4-8</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">8-12</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">12-16</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">16-20</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">Frequency</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">3</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">9</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">10</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">8</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">6</td></tr></table>Then $20M$ is equal to:",
+  "opts": [
+   "$416$",
+   "$104$",
+   "$52$",
+   "$208$"
+  ]
  }
 }
