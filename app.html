@@ -1068,6 +1068,9 @@ var fbAuth=null, fbDB=null;
 if(USE_FIREBASE){ try{ firebase.initializeApp(firebaseConfig); fbAuth=firebase.auth(); fbDB=firebase.firestore(); }catch(e){ console.error(e); USE_FIREBASE=false; } }
 
 var allQuestions=[];
+/* converted image->text questions (grows over time); merged onto questions by img path */
+var CONVERTED={};
+function mergeConverted(list){ try{ if(!CONVERTED||!list) return; list.forEach(function(q){ var c=q&&q.img?CONVERTED[q.img]:null; if(c){ if(c.stem!=null) q.stem=c.stem; if(c.opts) q.opts=c.opts; if(c.figure) q.figureImg=c.figure; if(c.format) q.cformat=c.format; } }); }catch(e){} }
 var currentUser=null, currentEmail="", currentProfile=null;
 var SUBJECTS=["Physics","Chemistry","Mathematics"];
 var MIN_PASS=6;
@@ -2680,6 +2683,7 @@ function refreshPalette(){
 }
 function displayQuestion(){
   var idx=testState.current, q=testState.questions[idx]; testState.visited[idx]=true;
+  if(!q.stem && CONVERTED && q.img && CONVERTED[q.img]){ var _c=CONVERTED[q.img]; if(_c.stem!=null) q.stem=_c.stem; if(_c.opts) q.opts=_c.opts; if(_c.figure) q.figureImg=_c.figure; }
   tsAccrue(idx);
   if(testState.mode==="mock"){
     var sec=sectionOf(idx);
@@ -3467,7 +3471,13 @@ function initApp(){
   try{ var up=new URLSearchParams(location.search).get("plan"); if(up && PLANS[up]) pendingPlan=up; }catch(e){}
   fetch("questions.json").then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); })
     .then(function(data){
-      allQuestions=data; buildMocks();
+      allQuestions=data;
+      /* best-effort: load converted text questions and merge (file may not exist yet) */
+      return fetch("converted_text.json").then(function(r){ return r.ok?r.json():{}; }).catch(function(){ return {}; })
+        .then(function(conv){ CONVERTED=conv||{}; mergeConverted(allQuestions); });
+    })
+    .then(function(){
+      buildMocks();
       if(USE_FIREBASE){ initFirebaseAuth(); }
       else { var saved=readCurrent(); if(saved && usersDB[saved]){ currentUser=saved; currentEmail=saved; currentProfile=usersDB[saved]; enterApp(); } else { view("authScreen"); if(pendingPlan){ showPlanIntent(); } else { showSignup(); } } }
     }).catch(function(){ allQuestions=[]; var el=document.getElementById("au_msg"); if(el){ el.className="msg err"; el.textContent="Could not load question bank. Please refresh."; } view("authScreen"); showAuthStep1(); });

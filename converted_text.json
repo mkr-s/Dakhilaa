@@ -1,0 +1,142 @@
+{
+ "questions/q_06aprs1_1.png": {
+  "format": "text",
+  "stem": "To find the spring constant $(k)$ of a spring experimentally, a student commits $2\\%$ positive error in the measurement of time and $1\\%$ negative error in measurement of mass. The percentage error in determining the value of $k$ is:",
+  "opts": [
+   "$5\\%$",
+   "$1\\%$",
+   "$3\\%$",
+   "$4\\%$"
+  ]
+ },
+ "questions/q_06aprs1_2.png": {
+  "format": "text",
+  "stem": "Match List I with List II<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List I</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List II</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. Torque</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">I. $[M^1L^1T^{-2}A^{-2}]$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. Magnetic field</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">II. $[L^2A^1]$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. Magnetic moment</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">III. $[M^1T^{-2}A^{-1}]$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. Permeability of free space</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">IV. $[M^1L^2T^{-2}]$</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "A-III, B-I, C-II, D-IV",
+   "A-IV, B-II, C-III, D-I",
+   "A-IV, B-III, C-II, D-I",
+   "A-I, B-III, C-II, D-IV"
+  ]
+ },
+ "questions/q_06aprs1_3.png": {
+  "format": "text",
+  "stem": "A train starting from rest first accelerates uniformly up to a speed of $80$ km/h for time $t$, then it moves with a constant speed for time $3t$. The average speed of the train for this duration of journey will be (in km/h):",
+  "opts": [
+   "$40$",
+   "$80$",
+   "$30$",
+   "$70$"
+  ]
+ },
+ "questions/q_06aprs1_4.png": {
+  "format": "text",
+  "stem": "A light string passing over a smooth light pulley connects two blocks of masses $m_1$ and $m_2$ (where $m_2 > m_1$). If the acceleration of the system is $\\dfrac{g}{\\sqrt{2}}$, then the ratio of the masses $\\dfrac{m_1}{m_2}$ is:",
+  "opts": [
+   "$\\dfrac{1+\\sqrt{5}}{\\sqrt{5}-1}$",
+   "$\\dfrac{\\sqrt{2}-1}{\\sqrt{2}+1}$",
+   "$\\dfrac{1+\\sqrt{5}}{\\sqrt{2}-1}$",
+   "$\\dfrac{\\sqrt{3}+1}{\\sqrt{2}-1}$"
+  ]
+ },
+ "questions/q_06aprs1_5.png": {
+  "format": "text",
+  "stem": "A bullet of mass $50$ g is fired with a speed $100$ m/s on a plywood and emerges with $40$ m/s. The percentage loss of kinetic energy is:",
+  "opts": [
+   "$84\\%$",
+   "$16\\%$",
+   "$32\\%$",
+   "$44\\%$"
+  ]
+ },
+ "questions/q_06aprs1_6.png": {
+  "format": "text",
+  "stem": "Four particles $A, B, C, D$ of mass $\\dfrac{m}{2}, m, 2m, 4m$, have same momentum, respectively. The particle with maximum kinetic energy is:",
+  "opts": [
+   "$B$",
+   "$A$",
+   "$D$",
+   "$C$"
+  ]
+ },
+ "questions/q_06aprs1_7.png": {
+  "format": "text",
+  "stem": "To project a body of mass $m$ from earth's surface to infinity, the required kinetic energy is (assume, the radius of earth is $R_E$, $g=$ acceleration due to gravity on the surface of earth):",
+  "opts": [
+   "$2mgR_E$",
+   "$4mgR_E$",
+   "$mgR_E$",
+   "$\\dfrac{1}{2}mgR_E$"
+  ]
+ },
+ "questions/q_06aprs1_8.png": {
+  "format": "text",
+  "stem": "A small ball of mass $m$ and density $\\rho$ is dropped in a viscous liquid of density $\\rho_0$. After sometime, the ball falls with constant velocity. The viscous force on the ball is:",
+  "opts": [
+   "$mg\\left(1-\\dfrac{\\rho}{\\rho_0}\\right)$",
+   "$mg\\left(1+\\dfrac{\\rho}{\\rho_0}\\right)$",
+   "$mg\\left(\\dfrac{\\rho_0}{\\rho}-1\\right)$",
+   "$mg\\left(1-\\dfrac{\\rho_0}{\\rho}\\right)$"
+  ]
+ },
+ "questions/q_06aprs1_9.png": {
+  "format": "text",
+  "stem": "A sample contains mixture of helium and oxygen gas. The ratio of root mean square speed of helium and oxygen in the sample, is:",
+  "opts": [
+   "$\\dfrac{1}{32}$",
+   "$\\dfrac{2\\sqrt{2}}{1}$",
+   "$\\dfrac{1}{2\\sqrt{2}}$",
+   "$\\dfrac{1}{4}$"
+  ]
+ },
+ "questions/q_06aprs1_10.png": {
+  "format": "text",
+  "stem": "The specific heat at constant pressure of a real gas obeying $PV^{2}=RT$ equation is:",
+  "opts": [
+   "$\\dfrac{R}{3}+C_V$",
+   "$C_V+R$",
+   "$C_V+\\dfrac{R}{2V}$",
+   "$R$"
+  ]
+ },
+ "questions/q_06aprs1_11.png": {
+  "format": "text",
+  "stem": "$\\sigma$ is the uniform surface charge density of a thin spherical shell of radius $R$. The electric field at any point on the surface of the spherical shell is:",
+  "opts": [
+   "$\\dfrac{\\sigma}{\\epsilon_0 R}$",
+   "$\\dfrac{\\sigma}{\\epsilon_0}$",
+   "$\\dfrac{\\sigma}{4\\epsilon_0}$",
+   "$\\dfrac{\\sigma}{2\\epsilon_0}$"
+  ]
+ },
+ "questions/q_06aprs1_13.png": {
+  "format": "text",
+  "stem": "An element $\\Delta l = \\Delta x\\,\\hat{i}$ is placed at the origin and carries a large current $I=10$ A. The magnetic field on the $y$-axis at a distance of $0.5$ m from the element $\\Delta x$ of $1$ cm length is:",
+  "opts": [
+   "$4\\times10^{-8}$ T",
+   "$10\\times10^{-8}$ T",
+   "$8\\times10^{-8}$ T",
+   "$12\\times10^{-8}$ T"
+  ]
+ },
+ "questions/q_06aprs1_14.png": {
+  "format": "text",
+  "stem": "Given below are two statements: <b>Statement I:</b> In an LCR series circuit, current is maximum at resonance. <b>Statement II:</b> Current in a purely resistive circuit can never be less than that in a series LCR circuit when connected to same voltage source. In the light of the above statements, choose the correct from the options given below:",
+  "opts": [
+   "Statement I is false but Statement II is true",
+   "Statement I is true but Statement II is false",
+   "Both Statement I and Statement II are true",
+   "Both Statement I and Statement II are false"
+  ]
+ },
+ "questions/q_06aprs1_15.png": {
+  "format": "text",
+  "stem": "Electromagnetic waves travel in a medium with speed of $1.5\\times10^{8}$ m s$^{-1}$. The relative permeability of the medium is $2.0$. The relative permittivity will be:",
+  "opts": [
+   "$2$",
+   "$4$",
+   "$5$",
+   "$1$"
+  ]
+ }
+}
