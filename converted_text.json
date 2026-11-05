@@ -858,5 +858,945 @@
    "$52$",
    "$208$"
   ]
+ },
+ "questions/q_30jans1_71.png": {
+  "format": "text",
+  "stem": "Consider the system of linear equation $x+y+z=4\\mu$, $x+2y+2\\lambda z=10\\mu$, $x+3y+4\\lambda^2 z=\\mu^2+15$, where $\\lambda,\\mu\\in\\mathbb{R}$. Which one of the following statements is NOT correct?",
+  "opts": [
+   "The system has unique solution if $\\lambda\\neq\\dfrac{1}{2}$ and $\\mu\\neq 1,15$",
+   "The system is inconsistent if $\\lambda=\\dfrac{1}{2}$ and $\\mu\\neq 1$",
+   "The system has infinite number of solutions if $\\lambda=\\dfrac{1}{2}$ and $\\mu=15$",
+   "The system is consistent if $\\lambda\\neq\\dfrac{1}{2}$"
+  ]
+ },
+ "questions/q_30jans1_72.png": {
+  "format": "text",
+  "stem": "If the domain of the function $f(x)=\\cos^{-1}\\left(\\dfrac{2-|x|}{4}\\right)+\\left(\\log_e(3-x)\\right)^{-1}$ is $[-\\alpha,\\beta)-\\{\\gamma\\}$, then $\\alpha+\\beta+\\gamma$ is equal to:",
+  "opts": [
+   "$12$",
+   "$9$",
+   "$11$",
+   "$8$"
+  ]
+ },
+ "questions/q_30jans1_73.png": {
+  "format": "text",
+  "stem": "Let $g:\\mathbb{R}\\to\\mathbb{R}$ be a non constant twice differentiable such that $g'\\left(\\dfrac{1}{2}\\right)=g'\\left(\\dfrac{3}{2}\\right)$. If a real valued function $f$ is defined as $f(x)=\\dfrac{1}{2}\\left[g(x)+g(2-x)\\right]$, then:",
+  "opts": [
+   "$f''(x)=0$ for at least two $x$ in $(0,2)$",
+   "$f''(x)=0$ for exactly one $x$ in $(0,1)$",
+   "$f''(x)=0$ for no $x$ in $(0,1)$",
+   "$f'\\left(\\dfrac{3}{2}\\right)+f'\\left(\\dfrac{1}{2}\\right)=1$"
+  ]
+ },
+ "questions/q_30jans1_74.png": {
+  "format": "text",
+  "stem": "The value of $\\displaystyle\\lim_{n\\to\\infty}\\sum_{k=1}^{n}\\dfrac{n^3}{(n^2+k^2)(n^2+3k^2)}$ is:",
+  "opts": [
+   "$\\dfrac{\\left(2\\sqrt{3}+3\\right)\\pi}{24}$",
+   "$\\dfrac{13\\pi}{8\\left(4\\sqrt{3}+3\\right)}$",
+   "$\\dfrac{13\\left(2\\sqrt{3}-3\\right)\\pi}{8}$",
+   "$\\dfrac{\\pi}{8\\left(2\\sqrt{3}+3\\right)}$"
+  ]
+ },
+ "questions/q_30jans1_75.png": {
+  "format": "text",
+  "stem": "The area (in square units) of the region bounded by the parabola $y^2=4(x-2)$ and the line $y=2x-8$ is:",
+  "opts": [
+   "$8$",
+   "$9$",
+   "$6$",
+   "$7$"
+  ]
+ },
+ "questions/q_30jans1_76.png": {
+  "format": "text",
+  "stem": "Let $y=y(x)$ be the solution of the differential equation $\\sec x\\,dy+\\{2(1-x)\\tan x+x(2-x)\\}dx=0$ such that $y(0)=2$. Then $y(2)$ is equal to:",
+  "opts": [
+   "$2$",
+   "$2\\{1-\\sin(2)\\}$",
+   "$2\\{\\sin(2)+1\\}$",
+   "$1$"
+  ]
+ },
+ "questions/q_30jans1_77.png": {
+  "format": "text",
+  "stem": "Let $A(2,3,5)$ and $C(-3,4,-2)$ be opposite vertices of a parallelogram $ABCD$ if the diagonal $\\overrightarrow{BD}=\\hat{i}+2\\hat{j}+3\\hat{k}$ then the area of the parallelogram is equal to:",
+  "opts": [
+   "$\\dfrac{1}{2}\\sqrt{410}$",
+   "$\\dfrac{1}{2}\\sqrt{474}$",
+   "$\\dfrac{1}{2}\\sqrt{586}$",
+   "$\\dfrac{1}{2}\\sqrt{306}$"
+  ]
+ },
+ "questions/q_30jans1_78.png": {
+  "format": "text",
+  "stem": "Let $\\vec{a}=a_1\\hat{i}+a_2\\hat{j}+a_3\\hat{k}$ and $\\vec{b}=b_1\\hat{i}+b_2\\hat{j}+b_3\\hat{k}$ be two vectors such that $|\\vec{a}|=1$; $\\vec{a}\\cdot\\vec{b}=2$ and $|\\vec{b}|=4$. If $\\vec{c}=2\\left(\\vec{a}\\times\\vec{b}\\right)-3\\vec{b}$, then the angle between $\\vec{b}$ and $\\vec{c}$ is equal to:",
+  "opts": [
+   "$\\cos^{-1}\\left(\\dfrac{2}{\\sqrt{3}}\\right)$",
+   "$\\cos^{-1}\\left(-\\dfrac{1}{\\sqrt{3}}\\right)$",
+   "$\\cos^{-1}\\left(-\\dfrac{\\sqrt{3}}{2}\\right)$",
+   "$\\cos^{-1}\\left(\\dfrac{2}{3}\\right)$"
+  ]
+ },
+ "questions/q_30jans1_79.png": {
+  "format": "text",
+  "stem": "Let $(\\alpha,\\beta,\\gamma)$ be the foot of perpendicular from the point $(1,2,3)$ on the line $\\dfrac{x+3}{5}=\\dfrac{y-1}{2}=\\dfrac{z+4}{3}$. Then $19(\\alpha+\\beta+\\gamma)$ is equal to:",
+  "opts": [
+   "$102$",
+   "$101$",
+   "$99$",
+   "$100$"
+  ]
+ },
+ "questions/q_30jans1_80.png": {
+  "format": "text",
+  "stem": "Two integers $x$ and $y$ are chosen with replacement from the set $\\{0,1,2,3,\\ldots,10\\}$. Then the probability that $|x-y|>5$ is:",
+  "opts": [
+   "$\\dfrac{30}{121}$",
+   "$\\dfrac{62}{121}$",
+   "$\\dfrac{60}{121}$",
+   "$\\dfrac{31}{121}$"
+  ]
+ },
+ "questions/q_30jans2_1.png": {
+  "format": "text",
+  "stem": "If mass is written as $m=kc^P G^{-1/2}h^{1/2}$, then the value of $P$ will be: (Constants have their usual meaning with $k$ a dimensionless constant)",
+  "opts": [
+   "$\\dfrac{1}{2}$",
+   "$\\dfrac{1}{3}$",
+   "$2$",
+   "$-\\dfrac{1}{3}$"
+  ]
+ },
+ "questions/q_30jans2_2.png": {
+  "format": "text",
+  "stem": "Projectiles $A$ and $B$ are thrown at angles of $45^\\circ$ and $60^\\circ$ with vertical respectively from top of a $400$ m high tower. If their times of flight are same, the ratio of their speeds of projection $v_A:v_B$ is:",
+  "opts": [
+   "$1:\\sqrt{3}$",
+   "$\\sqrt{2}:1$",
+   "$1:2$",
+   "$1:\\sqrt{2}$"
+  ]
+ },
+ "questions/q_30jans2_4.png": {
+  "format": "text",
+  "stem": "A block of mass $m$ is placed on a surface having vertical cross section given by $y=\\dfrac{x^2}{4}$. If coefficient of friction is $0.5$, the maximum height above the ground at which block can be placed without slipping is:",
+  "opts": [
+   "$\\dfrac{1}{4}$ m",
+   "$\\dfrac{1}{2}$ m",
+   "$\\dfrac{1}{6}$ m",
+   "$\\dfrac{1}{3}$ m"
+  ]
+ },
+ "questions/q_30jans2_6.png": {
+  "format": "text",
+  "stem": "Escape velocity of a body from earth is $11.2$ km s$^{-1}$. If the radius of a planet be one-third the radius of earth and mass be one-sixth that of earth, the escape velocity from the planet is:",
+  "opts": [
+   "$11.2$ km s$^{-1}$",
+   "$8.4$ km s$^{-1}$",
+   "$4.2$ km s$^{-1}$",
+   "$7.9$ km s$^{-1}$"
+  ]
+ },
+ "questions/q_30jans2_9.png": {
+  "format": "text",
+  "stem": "If three moles of monoatomic gas $\\gamma=\\dfrac{5}{3}$ is mixed with two moles of a diatomic gas $\\gamma=\\dfrac{7}{5}$, the value of adiabatic exponent $\\gamma$ for the mixture is:",
+  "opts": [
+   "$1.75$",
+   "$1.40$",
+   "$1.52$",
+   "$1.35$"
+  ]
+ },
+ "questions/q_30jans2_10.png": {
+  "format": "text",
+  "stem": "A particle of charge $-q$ and mass $m$ moves in a circle of radius $r$ around an infinitely long line charge of linear density $+\\lambda$. Then time period will be given as: (Consider $k$ as Coulomb's constant)",
+  "opts": [
+   "$T^2=\\dfrac{4\\pi^2 m}{2k\\lambda q}r^3$",
+   "$T=2\\pi r\\sqrt{\\dfrac{m}{2k\\lambda q}}$",
+   "$T=\\dfrac{1}{2\\pi r}\\sqrt{\\dfrac{m}{2k\\lambda q}}$",
+   "$T=\\dfrac{1}{2\\pi}\\sqrt{\\dfrac{2k\\lambda q}{m}}$"
+  ]
+ },
+ "questions/q_30jans2_11.png": {
+  "format": "text",
+  "stem": "When a potential difference $V$ is applied across a wire of resistance $R$, it dissipates energy at a rate $W$. If the wire is cut into two halves and these halves are connected mutually parallel across the same supply, the energy dissipation rate will become:",
+  "opts": [
+   "$\\dfrac{1}{4}W$",
+   "$\\dfrac{1}{2}W$",
+   "$2W$",
+   "$4W$"
+  ]
+ },
+ "questions/q_30jans2_12.png": {
+  "format": "text",
+  "stem": "An alternating voltage $V(t)=220\\sin 100\\pi t$ volt is applied to a purely resistive load of $50\\ \\Omega$. The time taken for the current to rise from half of the peak value to the peak value is:",
+  "opts": [
+   "$5$ ms",
+   "$3.3$ ms",
+   "$7.2$ ms",
+   "$2.2$ ms"
+  ]
+ },
+ "questions/q_30jans2_13.png": {
+  "format": "text",
+  "stem": "Match List I with List II<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List I</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List II</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. Gauss's law of magnetostatics</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">i. $\\oint\\vec{E}\\cdot d\\vec{a}=\\dfrac{1}{\\epsilon_0}\\int\\rho\\,dV$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. Faraday's law of electromagnetic induction</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">ii. $\\oint\\vec{B}\\cdot d\\vec{a}=0$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. Ampere's law</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">iii. $\\oint\\vec{E}\\cdot d\\vec{l}=-\\dfrac{d}{dt}\\int\\vec{B}\\cdot d\\vec{a}$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. Gauss's law of electrostatics</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">iv. $\\oint\\vec{B}\\cdot d\\vec{l}=\\mu_0 I$</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "A-I, B-III, C-IV, D-II",
+   "A-III, B-IV, C-I, D-II",
+   "A-IV, B-II, C-III, D-I",
+   "A-II, B-III, C-IV, D-I"
+  ]
+ },
+ "questions/q_30jans2_14.png": {
+  "format": "text",
+  "stem": "A beam of unpolarised light of intensity $I_0$ is passed through a polaroid $A$ and then through another polaroid $B$ which is oriented so that its principal plane makes an angle of $45^\\circ$ relative to that of $A$. The intensity of emergent light is:",
+  "opts": [
+   "$\\dfrac{I_0}{4}$",
+   "$I_0$",
+   "$\\dfrac{I_0}{2}$",
+   "$\\dfrac{I_0}{8}$"
+  ]
+ },
+ "questions/q_30jans2_15.png": {
+  "format": "text",
+  "stem": "If the total energy transferred to a surface in time $t$ is $6.48\\times10^{5}$ J, then the magnitude of the total momentum delivered to this surface for complete absorption will be:",
+  "opts": [
+   "$2.46\\times10^{-3}$ kg m s$^{-1}$",
+   "$2.16\\times10^{-3}$ kg m s$^{-1}$",
+   "$1.58\\times10^{-3}$ kg m s$^{-1}$",
+   "$4.32\\times10^{-3}$ kg m s$^{-1}$"
+  ]
+ },
+ "questions/q_30jans2_17.png": {
+  "format": "text",
+  "stem": "An electron revolving in $n^{\\text{th}}$ Bohr orbit has magnetic moment $\\mu_n$. If $\\mu_n\\propto n^x$, the value of $x$ is:",
+  "opts": [
+   "$2$",
+   "$1$",
+   "$3$",
+   "$0$"
+  ]
+ },
+ "questions/q_30jans2_18.png": {
+  "format": "text",
+  "stem": "In a nuclear fission reaction of an isotope of mass $M$, three similar daughter nuclei of same mass are formed. The speed of a daughter nuclei in terms of mass defect $\\Delta M$ will be:",
+  "opts": [
+   "$\\sqrt{\\dfrac{2c\\Delta M}{M}}$",
+   "$\\dfrac{\\Delta M c^2}{3}$",
+   "$c\\sqrt{\\dfrac{2\\Delta M}{M}}$",
+   "$c\\sqrt{\\dfrac{3\\Delta M}{M}}$"
+  ]
+ },
+ "questions/q_30jans2_20.png": {
+  "format": "text",
+  "stem": "If $50$ Vernier divisions are equal to $49$ main scale divisions of a travelling microscope and one smallest reading of main scale is $0.5$ mm, the Vernier constant of travelling microscope is:",
+  "opts": [
+   "$0.1$ mm",
+   "$0.1$ cm",
+   "$0.01$ cm",
+   "$0.01$ mm"
+  ]
+ },
+ "questions/q_30jans2_31.png": {
+  "format": "text",
+  "stem": "Given below are two statements: <b>Statement-I:</b> Along the period, the chemical reactivity of the element gradually increases from group 1 to group 18. <b>Statement-II:</b> The nature of oxides formed by group 1 element is basic while that of group 17 elements is acidic. In the light of above statements, choose the most appropriate from the options given below:",
+  "opts": [
+   "Both statement I and Statement II are true.",
+   "Statement I is true but Statement II is False.",
+   "Statement I is false but Statement II is true.",
+   "Both Statement I and Statement II are false."
+  ]
+ },
+ "questions/q_30jans2_32.png": {
+  "format": "text",
+  "stem": "Given below are two statements: <b>Statement-I:</b> Since fluorine is more electronegative than nitrogen, the net dipole moment of $\\text{NF}_3$ is greater than $\\text{NH}_3$. <b>Statement-II:</b> In $\\text{NH}_3$, the orbital dipole due to lone pair and the dipole moment of N-H bonds are in opposite direction, but in $\\text{NF}_3$ the orbital dipole due to lone pair and dipole moments of N-F bonds are in same direction. In the light of the above statements, choose the most appropriate from the options given below:",
+  "opts": [
+   "Statement I is true but Statement II is false.",
+   "Both Statement I and Statement II are false.",
+   "Both statement I and Statement II are true.",
+   "Statement I is false but Statement II is true."
+  ]
+ },
+ "questions/q_30jans2_33.png": {
+  "format": "text",
+  "stem": "Given below are two statements: One is labelled as Assertion A and the other is labelled as Reason R. <b>Assertion A:</b> $\\text{H}_2\\text{Te}$ is more acidic than $\\text{H}_2\\text{S}$. <b>Reason R:</b> Bond dissociation enthalpy of $\\text{H}_2\\text{Te}$ is lower than $\\text{H}_2\\text{S}$. In the light of the above statements, choose the most appropriate from the options given below:",
+  "opts": [
+   "Both A and R are true but R is NOT the correct explanation of A.",
+   "Both A and R are true and R is the correct explanation of A.",
+   "A is false but R is true.",
+   "A is true but R is false."
+  ]
+ },
+ "questions/q_30jans2_34.png": {
+  "format": "text",
+  "stem": "IUPAC name of the following compound is: $\\text{CH}_3-\\underset{\\overset{\\textstyle|}{\\text{NH}_2}}{\\text{CH}}-\\text{CH}_2-\\text{CN}$",
+  "opts": [
+   "2 - Aminopentanenitrile",
+   "2 - Aminobutanenitrile",
+   "3 - Aminobutanenitrile",
+   "3 - Aminopropanenitrile"
+  ]
+ },
+ "questions/q_30jans2_35.png": {
+  "format": "text",
+  "stem": "Which among the following purification methods is based on the principle of 'Solubility' in two different solvents?",
+  "opts": [
+   "Column Chromatography",
+   "Sublimation",
+   "Distillation",
+   "Differential Extraction"
+  ]
+ },
+ "questions/q_30jans2_38.png": {
+  "format": "text",
+  "stem": "If a substance '$A$' dissolves in solution of a mixture of '$B$' and '$C$' with their respective number of moles as $n_A$, $n_B$ and $n_C$, mole fraction of $C$ in the solution is:",
+  "opts": [
+   "$\\dfrac{n_C}{n_A\\times n_B\\times n_C}$",
+   "$\\dfrac{n_C}{n_A+n_B+n_C}$",
+   "$\\dfrac{n_C}{n_A-n_B-n_C}$",
+   "$\\dfrac{n_B}{n_A+n_B}$"
+  ]
+ },
+ "questions/q_30jans2_39.png": {
+  "format": "text",
+  "stem": "The solution from the following with highest depression in freezing point / lowest freezing point is:",
+  "opts": [
+   "180 g of acetic acid dissolved in 1 L of aqueous solution.",
+   "180 g of acetic acid dissolved in benzene",
+   "180 g of benzoic acid dissolved in benzene",
+   "180 g of glucose dissolved in water"
+  ]
+ },
+ "questions/q_30jans2_40.png": {
+  "format": "text",
+  "stem": "Reduction potential of ions are given below: $\\text{ClO}_4^-$ ($E^\\circ=1.19$ V); $\\text{IO}_4^-$ ($E^\\circ=1.65$ V); $\\text{BrO}_4^-$ ($E^\\circ=1.74$ V). The correct order of their oxidising power is:",
+  "opts": [
+   "$\\text{ClO}_4^- > \\text{IO}_4^- > \\text{BrO}_4^-$",
+   "$\\text{BrO}_4^- > \\text{IO}_4^- > \\text{ClO}_4^-$",
+   "$\\text{BrO}_4^- > \\text{ClO}_4^- > \\text{IO}_4^-$",
+   "$\\text{IO}_4^- > \\text{BrO}_4^- > \\text{ClO}_4^-$"
+  ]
+ },
+ "questions/q_30jans2_41.png": {
+  "format": "text",
+  "stem": "Choose the correct statements about the hydrides of group 15 elements.  A. The stability of the hydrides decreases in the order $\\text{NH}_3>\\text{PH}_3>\\text{AsH}_3>\\text{SbH}_3>\\text{BiH}_3$.  B. The reducing ability of the hydrides increases in the order $\\text{NH}_3<\\text{PH}_3<\\text{AsH}_3<\\text{SbH}_3<\\text{BiH}_3$.  C. Among the hydrides, $\\text{NH}_3$ is strong reducing agent while $\\text{BiH}_3$ is mild reducing agent.  D. The basicity of the hydrides increases in the order $\\text{NH}_3<\\text{PH}_3<\\text{AsH}_3<\\text{SbH}_3<\\text{BiH}_3$. Choose the most appropriate from the option given below:",
+  "opts": [
+   "B and C only",
+   "C and D only",
+   "A and B only",
+   "A and D only"
+  ]
+ },
+ "questions/q_30jans2_42.png": {
+  "format": "text",
+  "stem": "The orange colour of $\\text{K}_2\\text{Cr}_2\\text{O}_7$ and purple colour of $\\text{KMnO}_4$ is due to:",
+  "opts": [
+   "Charge transfer transition in both.",
+   "$d\\to d$ transition in $\\text{KMnO}_4$ and charge transfer transitions in $\\text{K}_2\\text{Cr}_2\\text{O}_7$.",
+   "$d\\to d$ transition in $\\text{K}_2\\text{Cr}_2\\text{O}_7$ and charge transfer transitions in $\\text{KMnO}_4$.",
+   "$d\\to d$ transition in both."
+  ]
+ },
+ "questions/q_30jans2_43.png": {
+  "format": "text",
+  "stem": "$A$ and $B$ formed in the following reactions are: $\\text{CrO}_2\\text{Cl}_2+4\\text{NaOH}\\rightarrow A+2\\text{NaCl}+2\\text{H}_2\\text{O}$; $A+2\\text{HCl}+2\\text{H}_2\\text{O}_2\\rightarrow B+3\\text{H}_2\\text{O}$",
+  "opts": [
+   "$A=\\text{Na}_2\\text{CrO}_4$, $B=\\text{CrO}_5$",
+   "$A=\\text{Na}_2\\text{Cr}_2\\text{O}_4$, $B=\\text{CrO}_4$",
+   "$A=\\text{Na}_2\\text{Cr}_2\\text{O}_7$, $B=\\text{CrO}_3$",
+   "$A=\\text{Na}_2\\text{Cr}_2\\text{O}_7$, $B=\\text{CrO}_5$"
+  ]
+ },
+ "questions/q_30jans2_44.png": {
+  "format": "text",
+  "stem": "Alkaline oxidative fusion of $\\text{MnO}_2$ gives 'A' which on electrolytic oxidation in alkaline solution produces B. A and B respectively are:",
+  "opts": [
+   "$\\text{Mn}_2\\text{O}_7$ and $\\text{MnO}_4^-$",
+   "$\\text{MnO}_4^{2-}$ and $\\text{MnO}_4^-$",
+   "$\\text{Mn}_2\\text{O}_3$ and $\\text{MnO}_4^{2-}$",
+   "$\\text{MnO}_4^{2-}$ and $\\text{Mn}_2\\text{O}_7$"
+  ]
+ },
+ "questions/q_30jans2_45.png": {
+  "format": "text",
+  "stem": "The molecule/ion with square pyramidal shape is:",
+  "opts": [
+   "$\\text{Ni(CN)}_4^{2-}$",
+   "$\\text{PCl}_5$",
+   "$\\text{BrF}_5$",
+   "$\\text{PF}_5$"
+  ]
+ },
+ "questions/q_30jans2_46.png": {
+  "format": "text",
+  "stem": "The coordination geometry around the manganese in decacarbonyldimanganese(0) is:",
+  "opts": [
+   "Octahedral",
+   "Trigonal bipyramidal",
+   "Square pyramidal",
+   "Square planar"
+  ]
+ },
+ "questions/q_30jans2_47.png": {
+  "format": "text",
+  "stem": "Given below are two statements: <b>Statement-I:</b> High concentration of strong nucleophilic reagent with secondary alkyl halides which do not have bulky substituents will follow $S_N 2$ mechanism. <b>Statement-II:</b> A secondary alkyl halide when treated with a large excess of ethanol follows $S_N 1$ mechanism. In the light of the above statements, choose the most appropriate from the questions given below:",
+  "opts": [
+   "Statement I is true but Statement II is false.",
+   "Statement I is false but Statement II is true.",
+   "Both statement I and Statement II are false.",
+   "Both statement I and Statement II are true."
+  ]
+ },
+ "questions/q_30jans2_48.png": {
+  "format": "text",
+  "stem": "Salicylaldehyde is synthesized from phenol, when reacted with:",
+  "opts": [
+   "$\\text{HCOCl}$",
+   "$\\text{CO}_2$, NaOH",
+   "$\\text{CCl}_4$, NaOH",
+   "$\\text{HCCl}_3$, NaOH"
+  ]
+ },
+ "questions/q_30jans2_61.png": {
+  "format": "text",
+  "stem": "If $z$ is a complex number, then the number of common roots of the equation $z^{1985}+z^{100}+1=0$ and $z^3+2z^2+2z+1=0$, is equal to:",
+  "opts": [
+   "$1$",
+   "$2$",
+   "$0$",
+   "$3$"
+  ]
+ },
+ "questions/q_30jans2_62.png": {
+  "format": "text",
+  "stem": "Let $a$ and $b$ be two distinct positive real numbers. Let $11^{\\text{th}}$ term of a GP, whose first term is $a$ and third term is $b$, is equal to $p^{\\text{th}}$ term of another GP, whose first term is $a$ and fifth term is $b$. Then $p$ is equal to:",
+  "opts": [
+   "$20$",
+   "$25$",
+   "$21$",
+   "$24$"
+  ]
+ },
+ "questions/q_30jans2_63.png": {
+  "format": "text",
+  "stem": "Suppose $28-p$, $p$, $70-\\alpha$, $\\alpha$ are the coefficient of four consecutive terms in the expansion of $(1+x)^n$. Then the value of $2\\alpha-3p$ equals:",
+  "opts": [
+   "$7$",
+   "$10$",
+   "$4$",
+   "$6$"
+  ]
+ },
+ "questions/q_30jans2_64.png": {
+  "format": "text",
+  "stem": "For $\\alpha,\\beta\\in\\left(0,\\dfrac{\\pi}{2}\\right)$ let $3\\sin(\\alpha+\\beta)=2\\sin(\\alpha-\\beta)$ and a real number $k$ be such that $\\tan\\alpha=k\\tan\\beta$. Then the value of $k$ is equal to:",
+  "opts": [
+   "$-5$",
+   "$5$",
+   "$\\dfrac{2}{3}$",
+   "$-\\dfrac{2}{3}$"
+  ]
+ },
+ "questions/q_30jans2_65.png": {
+  "format": "text",
+  "stem": "If $x^2-y^2+2hxy+2gx+2fy+c=0$ is the locus of a point, which moves such that it is always equidistant from the lines $x+2y+7=0$ and $2x-y+8=0$, then the value of $g+c+h-f$ equals:",
+  "opts": [
+   "$14$",
+   "$6$",
+   "$8$",
+   "$29$"
+  ]
+ },
+ "questions/q_30jans2_66.png": {
+  "format": "text",
+  "stem": "Let $A(\\alpha,0)$ and $B(0,\\beta)$ be the points on the line $5x+7y=50$. Let the point $P$ divide the line segment $AB$ internally in the ratio $7:3$. Let $3x-25=0$ be a directrix of the ellipse $E:\\dfrac{x^2}{a^2}+\\dfrac{y^2}{b^2}=1$ and the corresponding focus be $S$. If from $S$, the perpendicular on the $x$-axis passes through $P$, then the length of the latus rectum of $E$ is equal to:",
+  "opts": [
+   "$\\dfrac{25}{3}$",
+   "$\\dfrac{32}{9}$",
+   "$\\dfrac{25}{9}$",
+   "$\\dfrac{32}{5}$"
+  ]
+ },
+ "questions/q_30jans2_67.png": {
+  "format": "text",
+  "stem": "Let $P$ be a point on the hyperbola $H:\\dfrac{x^2}{9}-\\dfrac{y^2}{4}=1$, in the first quadrant such that the area of triangle formed by $P$ and the two foci of $H$ is $2\\sqrt{13}$. Then, the square of the distance of $P$ from the origin is:",
+  "opts": [
+   "$18$",
+   "$26$",
+   "$22$",
+   "$20$"
+  ]
+ },
+ "questions/q_30jans2_68.png": {
+  "format": "text",
+  "stem": "Let $R=\\begin{pmatrix} x&0&0\\\\0&y&0\\\\0&0&z\\end{pmatrix}$ be a non-zero $3\\times3$ matrix, where $x\\sin\\theta=y\\sin\\left(\\theta+\\dfrac{2\\pi}{3}\\right)=z\\sin\\left(\\theta+\\dfrac{4\\pi}{3}\\right)\\neq0$, $\\theta\\in(0,2\\pi)$. For a square matrix $M$, let Trace $M$ denote the sum of all the diagonal entries of $M$. Then, among the statements:  (I) Trace $(R)=0$  (II) If Trace $(\\text{adj}(\\text{adj}(R)))=0$, then $R$ has exactly one non-zero entry.",
+  "opts": [
+   "Both (I) and (II) are true",
+   "Only (II) is true",
+   "Neither (I) nor (II) is true",
+   "Only (I) is true"
+  ]
+ },
+ "questions/q_30jans2_69.png": {
+  "format": "text",
+  "stem": "Consider the system of linear equations $x+y+z=5$, $x+2y+\\lambda^2 z=9$ and $x+3y+\\lambda z=\\mu$, where $\\lambda,\\mu\\in\\mathbb{R}$. Then, which of the following statement is NOT correct?",
+  "opts": [
+   "System has infinite number of solution if $\\lambda=1$ and $\\mu=13$",
+   "System is inconsistent if $\\lambda=1$ and $\\mu\\neq13$",
+   "System has unique solution if $\\lambda\\neq1$ and $\\mu\\neq13$",
+   "System is consistent if $\\lambda\\neq1$ and $\\mu=13$"
+  ]
+ },
+ "questions/q_30jans2_70.png": {
+  "format": "text",
+  "stem": "If the domain of the function $f(x)=\\log_e\\dfrac{2x+3}{4x^2+x-3}+\\cos^{-1}\\dfrac{2x-1}{x+2}$ is $(\\alpha,\\beta]$, then the value of $5\\beta-4\\alpha$ is equal to:",
+  "opts": [
+   "$10$",
+   "$12$",
+   "$11$",
+   "$9$"
+  ]
+ },
+ "questions/q_30jans2_71.png": {
+  "format": "text",
+  "stem": "Let $f:\\mathbb{R}\\to\\mathbb{R}$ be a function defined $f(x)=\\dfrac{x}{(1+x^4)^{1/4}}$ and $g(x)=f(f(f(f(x))))$ then $18\\displaystyle\\int_0^{\\sqrt{2\\sqrt5}} x^2 g(x)\\,dx$:",
+  "opts": [
+   "$33$",
+   "$36$",
+   "$42$",
+   "$39$"
+  ]
+ },
+ "questions/q_30jans2_72.png": {
+  "format": "text",
+  "stem": "Let $a$ and $b$ be real constants such that the function $f$ defined by $f(x)=\\begin{cases} x^2+3x+a, & x\\leq 1 \\\\ bx+2, & x>1 \\end{cases}$ be differentiable on $\\mathbb{R}$. Then, the value of $\\displaystyle\\int_{-2}^{2} f(x)\\,dx$ equals:",
+  "opts": [
+   "$\\dfrac{15}{6}$",
+   "$\\dfrac{19}{6}$",
+   "$21$",
+   "$17$"
+  ]
+ },
+ "questions/q_30jans2_73.png": {
+  "format": "text",
+  "stem": "Let $f:\\mathbb{R}-\\{0\\}\\to\\mathbb{R}$ be a function satisfying $f\\left(\\dfrac{x}{y}\\right)=\\dfrac{f(x)}{f(y)}$ for all $x,y$, $f(y)\\neq0$. If $f'(1)=2024$, then:",
+  "opts": [
+   "$xf'(x)-2024f(x)=0$",
+   "$xf'(x)+2024f(x)=0$",
+   "$xf'(x)+f(x)=2024$",
+   "$xf'(x)-2023f(x)=0$"
+  ]
+ },
+ "questions/q_30jans2_76.png": {
+  "format": "text",
+  "stem": "Let $f:\\mathbb{R}\\to\\mathbb{R}$ be defined $f(x)=ae^{2x}+be^x+cx$. If $f(0)=-1$, $f'(\\log_e 2)=21$ and $\\displaystyle\\int_0^{\\log 4}(f(x)-cx)\\,dx=\\dfrac{39}{2}$, then the value of $|a+b+c|$ equals:",
+  "opts": [
+   "$16$",
+   "$10$",
+   "$12$",
+   "$8$"
+  ]
+ },
+ "questions/q_30jans2_77.png": {
+  "format": "text",
+  "stem": "Let $\\vec{a}=\\hat{i}+\\alpha\\hat{j}+\\beta\\hat{k}$, $\\alpha,\\beta\\in\\mathbb{R}$. Let a vector $\\vec{b}$ be such that the angle between $\\vec{a}$ and $\\vec{b}$ is $\\dfrac{\\pi}{4}$ and $|\\vec{b}|^2=6$. If $\\vec{a}\\cdot\\vec{b}=3\\sqrt2$, then the value of $\\left(\\alpha^2+\\beta^2\\right)|\\vec{a}\\times\\vec{b}|^2$ is equal to:",
+  "opts": [
+   "$90$",
+   "$75$",
+   "$95$",
+   "$85$"
+  ]
+ },
+ "questions/q_30jans2_78.png": {
+  "format": "text",
+  "stem": "Let $\\vec{a}$ and $\\vec{b}$ be two vectors such that $|\\vec{b}|=1$ and $|\\vec{b}\\times\\vec{a}|=2$. Then $\\left|\\left(\\vec{b}\\times\\vec{a}\\right)-\\vec{b}\\right|^2$ is equal to:",
+  "opts": [
+   "$3$",
+   "$5$",
+   "$1$",
+   "$4$"
+  ]
+ },
+ "questions/q_30jans2_79.png": {
+  "format": "text",
+  "stem": "Let $L_1:\\vec{r}=\\hat{i}-\\hat{j}+2\\hat{k}+\\lambda(\\hat{i}-\\hat{j}+2\\hat{k})$, $\\lambda\\in\\mathbb{R}$, $L_2:\\vec{r}=\\hat{j}-\\hat{k}+\\mu(3\\hat{i}+\\hat{j}+p\\hat{k})$, $\\mu\\in\\mathbb{R}$ and $L_3:\\vec{r}=\\delta(l\\hat{i}+m\\hat{j}+n\\hat{k})$, $\\delta\\in\\mathbb{R}$ be three lines such that $L_1$ is perpendicular to $L_2$ and $L_3$ is perpendicular to both $L_1$ and $L_2$. Then the point which lies on $L_3$ is:",
+  "opts": [
+   "$(-1,7,4)$",
+   "$(-1,-7,4)$",
+   "$(1,7,-4)$",
+   "$(1,-7,4)$"
+  ]
+ },
+ "questions/q_30jans2_80.png": {
+  "format": "text",
+  "stem": "Bag $A$ contains 3 white, 7 red balls and bag $B$ contains 3 white, 2 red balls. One bag is selected at random and a ball is drawn from it. The probability of drawing the ball from the bag A, if the ball drawn is white, is:",
+  "opts": [
+   "$\\dfrac{1}{4}$",
+   "$\\dfrac{1}{9}$",
+   "$\\dfrac{1}{3}$",
+   "$\\dfrac{3}{10}$"
+  ]
+ },
+ "questions/q_09aprs2_1.png": {
+  "format": "text",
+  "stem": "The de-Broglie wavelength associated with a particle of mass $m$ and energy $E$ is $h/\\sqrt{2mE}$. The dimensional formula for Planck's constant is:",
+  "opts": [
+   "$[\\text{ML}^2\\text{T}^{-1}]$",
+   "$[\\text{ML}^{-1}\\text{T}^{-2}]$",
+   "$[\\text{MLT}^{-2}]$",
+   "$[\\text{M}^2\\text{L}^2\\text{T}^{-2}]$"
+  ]
+ },
+ "questions/q_09aprs2_2.png": {
+  "format": "text",
+  "stem": "Two cars are travelling towards each other at speed of $20$ m s$^{-1}$ each. When the cars are $300$ m apart, both the drivers apply brakes and the cars retard at the rate of $2$ m s$^{-2}$. The distance between them when they come to rest is:",
+  "opts": [
+   "$200$ m",
+   "$100$ m",
+   "$50$ m",
+   "$25$ m"
+  ]
+ },
+ "questions/q_09aprs2_4.png": {
+  "format": "text",
+  "stem": "A satellite of $10^3$ kg mass is revolving in circular orbit of radius $2R$. If $\\dfrac{10^4 R}{6}$ J energy is supplied to the satellite, it would revolve in a new circular orbit of radius (use $g=10$ m/s$^2$, $R=$ radius of earth):",
+  "opts": [
+   "$2.5R$",
+   "$3R$",
+   "$4R$",
+   "$6R$"
+  ]
+ },
+ "questions/q_09aprs2_5.png": {
+  "format": "text",
+  "stem": "The excess pressure inside a soap bubble is thrice the excess pressure inside a second soap bubble. The ratio between the volume of the first and the second bubble is:",
+  "opts": [
+   "$1:9$",
+   "$1:3$",
+   "$1:27$",
+   "$1:81$"
+  ]
+ },
+ "questions/q_09aprs2_6.png": {
+  "format": "text",
+  "stem": "A spherical ball of radius $1\\times10^{-4}$ m and density $10^5$ kg/m$^3$ falls freely under gravity through a distance $h$ before entering a tank of water. If after entering in water the velocity of the ball does not change, then the value of $h$ is approximately: (The coefficient of viscosity of water is $9.8\\times10^{-6}$ N s/m$^2$)",
+  "opts": [
+   "$2296$ m",
+   "$2518$ m",
+   "$2249$ m",
+   "$2396$ m"
+  ]
+ },
+ "questions/q_09aprs2_8.png": {
+  "format": "text",
+  "stem": "The temperature of a gas is $-78^\\circ$C and the average translational kinetic energy of its molecules is K. The temperature at which the average translational kinetic energy of the molecules of the same gas becomes $2$ K is:",
+  "opts": [
+   "$127^\\circ$C",
+   "$117^\\circ$C",
+   "$-39^\\circ$C",
+   "$-78^\\circ$C"
+  ]
+ },
+ "questions/q_09aprs2_11.png": {
+  "format": "text",
+  "stem": "A proton and a deuteron ($q=+e$, $m=2.0$u) having same kinetic energies enter a region of uniform magnetic field $\\vec{B}$, moving perpendicular to $\\vec{B}$. The ratio of the radius $r_d$ of deuteron path to the radius $r_p$ of the proton path is:",
+  "opts": [
+   "$\\sqrt2:1$",
+   "$1:1$",
+   "$1:\\sqrt2$",
+   "$1:2$"
+  ]
+ },
+ "questions/q_09aprs2_13.png": {
+  "format": "text",
+  "stem": "The magnetic field in a plane electromagnetic wave is $B_y=(3.5\\times10^{-7})\\sin(1.5\\times10^3 x+0.5\\times10^{11}t)$ T. The corresponding electric field will be:",
+  "opts": [
+   "$E_y=10.5\\sin(1.5\\times10^3 x+0.5\\times10^{11}t)$ Vm$^{-1}$",
+   "$E_z=1.17\\sin(1.5\\times10^3 x+0.5\\times10^{11}t)$ Vm$^{-1}$",
+   "$E_y=1.17\\sin(1.5\\times10^3 x+0.5\\times10^{11}t)$ Vm$^{-1}$",
+   "$E_z=105\\sin(1.5\\times10^3 x+0.5\\times10^{11}t)$ Vm$^{-1}$"
+  ]
+ },
+ "questions/q_09aprs2_15.png": {
+  "format": "text",
+  "stem": "UV light of $4.13$ eV is incident on a photosensitive metal surface having work function $3.13$ eV. The maximum kinetic energy of ejected photoelectrons will be:",
+  "opts": [
+   "$4.13$ eV",
+   "$3.13$ eV",
+   "$1$ eV",
+   "$7.26$ eV"
+  ]
+ },
+ "questions/q_09aprs2_16.png": {
+  "format": "text",
+  "stem": "A hydrogen atom in ground state is given an energy of $10.2$ eV. How many spectral lines will be emitted due to transition of electrons?",
+  "opts": [
+   "$6$",
+   "$3$",
+   "$10$",
+   "$1$"
+  ]
+ },
+ "questions/q_09aprs2_17.png": {
+  "format": "text",
+  "stem": "A nucleus at rest disintegrates into two smaller nuclei with their masses in the ratio of $2:1$. After disintegration they will move:",
+  "opts": [
+   "in the same direction with same speed.",
+   "in opposite directions with the same speed.",
+   "in opposite directions with speed in the ratio of 2:1 respectively.",
+   "in opposite directions with speed in the ratio of 1:2 respectively."
+  ]
+ },
+ "questions/q_09aprs2_18.png": {
+  "format": "text",
+  "stem": "The energy released in the fusion of $2$ kg of hydrogen deep in the sun is $E_H$ and the energy released in the fission of $2$ kg of $^{235}$U is $E_U$. The ratio $\\dfrac{E_H}{E_U}$ is approximately: (Consider the fusion reaction as $4\\,^1H+2e^-\\to\\,^4_2He+2\\nu+6\\gamma+26.7$ MeV, energy released in the fission reaction of $^{235}$U is $200$ MeV per fission nucleus and $N_A=6.023\\times10^{23}$)",
+  "opts": [
+   "$7.62$",
+   "$25.6$",
+   "$15.04$",
+   "$9.13$"
+  ]
+ },
+ "questions/q_09aprs2_31.png": {
+  "format": "text",
+  "stem": "The candela is the luminous intensity, in a given direction, of a source that emits monochromatic radiation of frequency '$A$' $\\times10^{12}$ hertz and that has a radiant intensity in that direction of $\\dfrac{1}{'B'}$ watt per steradian. '$A$' and '$B$' are respectively:",
+  "opts": [
+   "$540$ and $683$",
+   "$450$ and $683$",
+   "$450$ and $\\dfrac{1}{683}$",
+   "$540$ and $\\dfrac{1}{683}$"
+  ]
+ },
+ "questions/q_09aprs2_32.png": {
+  "format": "text",
+  "stem": "The electronic configuration of Einsteinium is: (Given atomic number of Einsteinium $=99$)",
+  "opts": [
+   "$[\\text{Rn}]5f^{10}6d^0 7s^2$",
+   "$[\\text{Rn}]5f^{13}6d^0 7s^2$",
+   "$[\\text{Rn}]5f^{11}6d^0 7s^2$",
+   "$[\\text{Rn}]5f^{12}6d^0 7s^2$"
+  ]
+ },
+ "questions/q_09aprs2_33.png": {
+  "format": "text",
+  "stem": "Match List I with List II<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List-I (Element)</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List-II (Electronic configuration)</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. N</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">I. $[\\text{Ar}]3d^{10}4s^2 4p^5$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. S</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">II. $[\\text{Ne}]3s^2 3p^4$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. Br</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">III. $[\\text{He}]2s^2 2p^3$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. Kr</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">IV. $[\\text{Ar}]3d^{10}4s^2 4p^6$</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "A-III, B-II, C-I, D-IV",
+   "A-II, B-I, C-IV, D-III",
+   "A-I, B-IV, C-III, D-II",
+   "A-IV, B-III, C-II, D-I"
+  ]
+ },
+ "questions/q_09aprs2_34.png": {
+  "format": "text",
+  "stem": "Match List I with List II<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List-I</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List-II</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. Melting Point [K]</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">I. Tl > In > Ga > Al > B</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. Ionic Radius $[\\text{M}^{+3}/\\text{pm}]$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">II. B > Tl > Al $\\approx$ Ga > In</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. $\\Delta_i H_1$ [kJ mol$^{-1}$]</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">III. Tl > In > Al > Ga > B</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. Atomic Radius [pm]</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">IV. B > Al > Tl > In > Ga</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "A-II, B-III, C-IV, D-I",
+   "A-IV, B-I, C-II, D-III",
+   "A-I, B-II, C-III, D-IV",
+   "A-III, B-IV, C-I, D-II"
+  ]
+ },
+ "questions/q_09aprs2_35.png": {
+  "format": "text",
+  "stem": "The correct increasing order for bond angles among $\\text{BF}_3$, $\\text{PF}_3$ and $\\text{ClF}_3$ is:",
+  "opts": [
+   "$\\text{BF}_3<\\text{PF}_3<\\text{ClF}_3$",
+   "$\\text{ClF}_3<\\text{PF}_3<\\text{BF}_3$",
+   "$\\text{PF}_3<\\text{BF}_3<\\text{ClF}_3$",
+   "$\\text{BF}_3=\\text{PF}_3<\\text{ClF}_3$"
+  ]
+ },
+ "questions/q_09aprs2_36.png": {
+  "format": "text",
+  "stem": "The incorrect statement regarding ethyne is:",
+  "opts": [
+   "The C-C bonds in ethyne is shorter than that in ethene",
+   "Both carbons are sp hybridised",
+   "Ethyne is linear",
+   "The carbon-carbon bonds in ethyne is weaker than that in ethene"
+  ]
+ },
+ "questions/q_09aprs2_37.png": {
+  "format": "text",
+  "stem": "For a sparingly soluble salt $\\text{AB}_2$, the equilibrium concentrations of $\\text{A}^{2+}$ ions and $\\text{B}^-$ ions are $1.2\\times10^{-4}$ M and $0.24\\times10^{-3}$ M, respectively. The solubility product of $\\text{AB}_2$ is:",
+  "opts": [
+   "$6.91\\times10^{-12}$",
+   "$0.276\\times10^{-12}$",
+   "$27.65\\times10^{-12}$",
+   "$0.069\\times10^{-12}$"
+  ]
+ },
+ "questions/q_09aprs2_41.png": {
+  "format": "text",
+  "stem": "Match List I with List II<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List-I (Cell)</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List-II (Use/Property/Reaction)</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. Leclanche cell</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">I. Converts energy of combustion into electrical energy</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. Ni-Cd cell</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">II. Does not involve any ion in solution and is used in hearing aids</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. Fuel cell</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">III. Rechargeable</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. Mercury cell</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">IV. Reaction at anode $\\text{Zn}\\to\\text{Zn}^{2+}+2e^-$</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "A-II, B-III, C-IV, D-I",
+   "A-I, B-II, C-III, D-IV",
+   "A-III, B-I, C-IV, D-II",
+   "A-IV, B-III, C-I, D-II"
+  ]
+ },
+ "questions/q_09aprs2_42.png": {
+  "format": "text",
+  "stem": "Given below are two statements: <b>Statement I:</b> The higher oxidation states are more stable down the group among transition elements unlike p-block elements. <b>Statement II:</b> Copper can not liberate hydrogen from weak acids. In the light of the above statements, choose the correct answer from the options given below:",
+  "opts": [
+   "Both Statement I and Statement II are true",
+   "Statement I is false but Statement II is true",
+   "Both Statement I and Statement II are false",
+   "Statement I is true but Statement II is false"
+  ]
+ },
+ "questions/q_09aprs2_43.png": {
+  "format": "text",
+  "stem": "Match List I with List II<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List-I</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List-II</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. $\\text{K}_2[\\text{Ni(CN)}_4]$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">I. $sp^3$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. $[\\text{Ni(CO)}_4]$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">II. $sp^3 d^2$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. $[\\text{Co(NH}_3)_6]\\text{Cl}_3$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">III. $dsp^2$</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. $\\text{Na}_3[\\text{CoF}_6]$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">IV. $d^2 sp^3$</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "A-III, B-I, C-IV, D-II",
+   "A-III, B-I, C-II, D-IV",
+   "A-I, B-III, C-II, D-IV",
+   "A-III, B-II, C-IV, D-I"
+  ]
+ },
+ "questions/q_09aprs2_44.png": {
+  "format": "text",
+  "stem": "The coordination environment of $\\text{Ca}^{2+}$ ion in its complex with $\\text{EDTA}^{4-}$ is:",
+  "opts": [
+   "tetrahedral",
+   "trigonal prismatic",
+   "octahedral",
+   "square planar"
+  ]
+ },
+ "questions/q_09aprs2_46.png": {
+  "format": "text",
+  "stem": "Match List I with List II<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List-I (Test)</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">List-II (Observation)</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">A. $\\text{Br}_2$ water test</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">I. Yellow orange or orange red precipitate formed</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">B. Ceric ammonium nitrate test</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">II. Reddish orange colour disappears</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">C. Ferric chloride test</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">III. Red colour appears</td></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">D. 2,4-DNP test</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">IV. Blue, Green, Violet or Red colour appear</td></tr></table>Choose the correct answer from the options given below:",
+  "opts": [
+   "A-III, B-IV, C-I, D-II",
+   "A-I, B-II, C-III, D-IV",
+   "A-IV, B-I, C-II, D-III",
+   "A-II, B-III, C-IV, D-I"
+  ]
+ },
+ "questions/q_09aprs2_48.png": {
+  "format": "text",
+  "stem": "Which of the following compounds will give silver mirror with ammoniacal silver nitrate?  A. Formic acid  B. Formaldehyde  C. Benzaldehyde  D. Acetone. Choose the correct answer from the options given below:",
+  "opts": [
+   "A, B and C only",
+   "C and D only",
+   "B and C only",
+   "A only"
+  ]
+ },
+ "questions/q_09aprs2_50.png": {
+  "format": "text",
+  "stem": "The incorrect statement about Glucose is:",
+  "opts": [
+   "Glucose is soluble in water because of having aldehyde functional group",
+   "Glucose remains in multiple isomeric form in its aqueous solution",
+   "Glucose is one of the monomer unit in sucrose",
+   "Glucose is an aldohexose"
+  ]
+ },
+ "questions/q_09aprs2_61.png": {
+  "format": "text",
+  "stem": "Let $\\alpha,\\beta$; $\\alpha>\\beta$, be the roots of the equation $x^2-\\sqrt2 x-\\sqrt3=0$. Let $P_n=\\alpha^n-\\beta^n$, $n\\in\\mathbb{N}$. Then $(11\\sqrt3-10\\sqrt2)P_{10}+(11\\sqrt2+10)P_{11}-11P_{12}$ is equal to:",
+  "opts": [
+   "$10\\sqrt3\\,P_9$",
+   "$11\\sqrt3\\,P_9$",
+   "$10\\sqrt2\\,P_9$",
+   "$11\\sqrt2\\,P_9$"
+  ]
+ },
+ "questions/q_09aprs2_62.png": {
+  "format": "text",
+  "stem": "Let $z$ be a complex number such that the real part of $\\dfrac{z-2i}{z+2i}$ is zero. Then, the maximum value of $|z-(6+8i)|$ is equal to:",
+  "opts": [
+   "$12$",
+   "$10$",
+   "$8$",
+   "$\\infty$"
+  ]
+ },
+ "questions/q_09aprs2_63.png": {
+  "format": "text",
+  "stem": "Let $a,ar,ar^2,\\ldots$ be an infinite G.P. If $\\displaystyle\\sum_{n=0}^{\\infty}ar^n=57$ and $\\displaystyle\\sum_{n=0}^{\\infty}a^3 r^{3n}=9747$, then $a+18r$ is equal to:",
+  "opts": [
+   "$46$",
+   "$38$",
+   "$31$",
+   "$27$"
+  ]
+ },
+ "questions/q_09aprs2_64.png": {
+  "format": "text",
+  "stem": "The sum of the coefficient of $x^{2/3}$ and $x^{-2/5}$ in the binomial expansion of $\\left(x^{2/3}+\\dfrac{1}{2}x^{-2/5}\\right)^9$ is:",
+  "opts": [
+   "$\\dfrac{21}{4}$",
+   "$\\dfrac{63}{16}$",
+   "$\\dfrac{19}{4}$",
+   "$\\dfrac{69}{16}$"
+  ]
+ },
+ "questions/q_09aprs2_65.png": {
+  "format": "text",
+  "stem": "Two vertices of a triangle $ABC$ are $A(3,-1)$ and $B(-2,3)$, and its orthocentre is $P(1,1)$. If the coordinates of the point $C$ are $(\\alpha,\\beta)$ and the centre of the circle circumscribing the triangle $PAB$ is $(h,k)$, then the value of $(\\alpha+\\beta)+2(h+k)$ equals:",
+  "opts": [
+   "$5$",
+   "$81$",
+   "$15$",
+   "$51$"
+  ]
+ },
+ "questions/q_09aprs2_66.png": {
+  "format": "text",
+  "stem": "Let the foci of a hyperbola $H$ coincide with the foci of the ellipse $E:\\dfrac{(x-1)^2}{100}+\\dfrac{(y-1)^2}{75}=1$ and the eccentricity of the hyperbola $H$ be the reciprocal of the eccentricity of the ellipse $E$. If the length of the transverse axis of $H$ is $\\alpha$ and the length of its conjugate axis is $\\beta$, then $3\\alpha^2+2\\beta^2$ is equal to:",
+  "opts": [
+   "$237$",
+   "$242$",
+   "$205$",
+   "$225$"
+  ]
+ },
+ "questions/q_09aprs2_67.png": {
+  "format": "text",
+  "stem": "$\\displaystyle\\lim_{x\\to\\frac{\\pi}{2}}\\dfrac{\\int_{x^3}^{(\\pi/2)^3}\\left(\\sin\\left(2t^{1/3}\\right)+\\cos\\left(t^{1/3}\\right)\\right)dt}{\\left(x-\\frac{\\pi}{2}\\right)^2}$ is equal to:",
+  "opts": [
+   "$\\dfrac{5\\pi^2}{9}$",
+   "$\\dfrac{9\\pi^2}{8}$",
+   "$\\dfrac{11\\pi^2}{10}$",
+   "$\\dfrac{3\\pi^2}{2}$"
+  ]
+ },
+ "questions/q_09aprs2_68.png": {
+  "format": "text",
+  "stem": "$\\displaystyle\\lim_{x\\to0}\\dfrac{e-(1+2x)^{\\frac{1}{2x}}}{x}$ is equal to:",
+  "opts": [
+   "$0$",
+   "$\\dfrac{-2}{e}$",
+   "$e$",
+   "$e-e^2$"
+  ]
+ },
+ "questions/q_09aprs2_69.png": {
+  "format": "text",
+  "stem": "If the variance of the frequency distribution<table style=\"border-collapse:collapse;margin:8px 0;font-size:13px\"><tr><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">$x$</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">$c$</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">$2c$</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">$3c$</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">$4c$</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">$5c$</th><th style=\"border:1px solid #cbd5e1;padding:4px 8px\">$6c$</th></tr><tr><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">$f$</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">2</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">1</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">1</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">1</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">1</td><td style=\"border:1px solid #cbd5e1;padding:4px 8px\">1</td></tr></table>is $160$, then the value of $c\\in\\mathbb{N}$ is:",
+  "opts": [
+   "$7$",
+   "$8$",
+   "$5$",
+   "$6$"
+  ]
+ },
+ "questions/q_09aprs2_70.png": {
+  "format": "text",
+  "stem": "Let $B=\\begin{bmatrix}1&3\\\\1&5\\end{bmatrix}$ and $A$ be a $2\\times2$ matrix such that $AB^{-1}=A^{-1}$. If $BCB^{-1}=A$ and $C^4+\\alpha C^2+\\beta I=O$, then $2\\beta-\\alpha$ is equal to:",
+  "opts": [
+   "$16$",
+   "$2$",
+   "$8$",
+   "$10$"
+  ]
  }
 }
