@@ -1798,5 +1798,195 @@
    "$8$",
    "$10$"
   ]
+ },
+ "questions/q_09aprs2_71.png": {
+  "format": "text",
+  "stem": "The integral $\\displaystyle\\int_{1/4}^{3/4}\\cos\\left(2\\cot^{-1}\\sqrt{\\dfrac{1-x}{1+x}}\\right)dx$ is equal to:",
+  "opts": [
+   "$\\dfrac{1}{2}$",
+   "$-\\dfrac{1}{2}$",
+   "$-\\dfrac{1}{4}$",
+   "$\\dfrac{1}{4}$"
+  ]
+ },
+ "questions/q_09aprs2_72.png": {
+  "format": "text",
+  "stem": "Let the range of the function $f(x)=\\dfrac{1}{2+\\sin 3x+\\cos 3x}$, $x\\in\\mathbb{R}$ be $[a,b]$. If $\\alpha$ and $\\beta$ are respectively the A.M. and the G.M. of $a$ and $b$, then $\\dfrac{\\alpha}{\\beta}$ is equal to:",
+  "opts": [
+   "$\\pi$",
+   "$\\sqrt{\\pi}$",
+   "$2$",
+   "$\\sqrt{2}$"
+  ]
+ },
+ "questions/q_09aprs2_73.png": {
+  "format": "text",
+  "stem": "If $\\log_e y=3\\sin^{-1}x$, then $(1-x^2)y''-xy'$ at $x=\\dfrac{1}{2}$ is equal to:",
+  "opts": [
+   "$3e^{\\pi/6}$",
+   "$9e^{\\pi/2}$",
+   "$3e^{\\pi/2}$",
+   "$9e^{\\pi/6}$"
+  ]
+ },
+ "questions/q_09aprs2_74.png": {
+  "format": "text",
+  "stem": "Let $\\displaystyle\\int_0^x\\sqrt{1-(y'(t))^2}\\,dt=\\int_0^x y(t)\\,dt$, $0\\leq x\\leq3$, $y\\geq0$, $y(0)=0$. Then at $x=2$, $y''+y+1$ is equal to:",
+  "opts": [
+   "$1$",
+   "$2$",
+   "$\\sqrt{2}$",
+   "$\\dfrac{1}{2}$"
+  ]
+ },
+ "questions/q_09aprs2_75.png": {
+  "format": "text",
+  "stem": "The value of the integral $\\displaystyle\\int_{-1}^{2}\\log_e\\left(x+\\sqrt{x^2+1}\\right)dx$ is:",
+  "opts": [
+   "$\\sqrt5-\\sqrt2+\\log_e\\left(\\dfrac{7+4\\sqrt5}{1+\\sqrt2}\\right)$",
+   "$\\sqrt5-\\sqrt2+\\log_e\\left(\\dfrac{9+4\\sqrt5}{1+\\sqrt2}\\right)$",
+   "$\\sqrt2-\\sqrt5+\\log_e\\left(\\dfrac{7+4\\sqrt5}{1+\\sqrt2}\\right)$",
+   "$\\sqrt2-\\sqrt5+\\log_e\\left(\\dfrac{9+4\\sqrt5}{1+\\sqrt2}\\right)$"
+  ]
+ },
+ "questions/q_09aprs2_76.png": {
+  "format": "text",
+  "stem": "The area (in square units) of the region enclosed by the ellipse $x^2+3y^2=18$ in the first quadrant below the line $y=x$ is:",
+  "opts": [
+   "$\\sqrt3\\pi-\\dfrac{3}{4}$",
+   "$\\sqrt3\\pi+1$",
+   "$\\sqrt3\\pi$",
+   "$\\sqrt3\\pi+\\dfrac{3}{4}$"
+  ]
+ },
+ "questions/q_09aprs2_77.png": {
+  "format": "text",
+  "stem": "Between the following two statements: <b>Statement I:</b> Let $\\vec{a}=\\hat{i}+2\\hat{j}-3\\hat{k}$ and $\\vec{b}=2\\hat{i}+\\hat{j}-\\hat{k}$. Then the vector $\\vec{r}$ satisfying $\\vec{a}\\times\\vec{r}=\\vec{a}\\times\\vec{b}$ and $\\vec{a}\\cdot\\vec{r}=0$ is of magnitude $\\sqrt{10}$. <b>Statement II:</b> In a triangle $ABC$, $\\cos2A+\\cos2B+\\cos2C\\geq-\\dfrac{3}{2}$.",
+  "opts": [
+   "Statement I is incorrect but Statement II is correct.",
+   "Both Statement I and Statement II are correct.",
+   "Statement I is correct but Statement II is incorrect.",
+   "Both Statement I and Statement II are incorrect."
+  ]
+ },
+ "questions/q_09aprs2_78.png": {
+  "format": "text",
+  "stem": "Let $\\vec{a}=2\\hat{i}+\\alpha\\hat{j}+\\hat{k}$, $\\vec{b}=-\\hat{i}+\\hat{k}$, $\\vec{c}=\\beta\\hat{j}-\\hat{k}$, where $\\alpha$ and $\\beta$ are integers and $\\alpha\\beta=-6$. Let the values of the ordered pair $(\\alpha,\\beta)$, for which the area of the parallelogram of diagonals $\\vec{a}+\\vec{b}$ and $\\vec{b}+\\vec{c}$ is $\\dfrac{\\sqrt{21}}{2}$, be $(\\alpha_1,\\beta_1)$ and $(\\alpha_2,\\beta_2)$. Then $\\alpha_1^2+\\beta_1^2-\\alpha_2\\beta_2$ is equal to:",
+  "opts": [
+   "$19$",
+   "$17$",
+   "$24$",
+   "$21$"
+  ]
+ },
+ "questions/q_09aprs2_79.png": {
+  "format": "text",
+  "stem": "Consider the line $L$ passing through the points $(1,2,3)$ and $(2,3,5)$. The distance of the point $\\left(\\dfrac{11}{3},\\dfrac{11}{3},\\dfrac{19}{3}\\right)$ from the line $L$ along the line $\\dfrac{3x-11}{2}=\\dfrac{3y-11}{1}=\\dfrac{3z-19}{2}$ is equal to:",
+  "opts": [
+   "$6$",
+   "$5$",
+   "$4$",
+   "$3$"
+  ]
+ },
+ "questions/q_09aprs2_80.png": {
+  "format": "text",
+  "stem": "If an unbiased dice is rolled thrice, then the probability of getting a greater number in the $i^{\\text{th}}$ roll than the number obtained in the $(i-1)^{\\text{th}}$ roll, $i=2,3$, is equal to:",
+  "opts": [
+   "$\\dfrac{3}{54}$",
+   "$\\dfrac{2}{54}$",
+   "$\\dfrac{1}{54}$",
+   "$\\dfrac{5}{54}$"
+  ]
+ },
+ "questions/q_29jans2_1.png": {
+  "format": "text",
+  "stem": "A physical quantity $Q$ is found to depend on quantities $a$, $b$, $c$ by the relation $Q=\\dfrac{a^4 b^3}{c^2}$. The percentage error in $a$, $b$ and $c$ are $3\\%$, $4\\%$ and $5\\%$ respectively. Then, the percentage error in $Q$ is:",
+  "opts": [
+   "$66\\%$",
+   "$43\\%$",
+   "$34\\%$",
+   "$14\\%$"
+  ]
+ },
+ "questions/q_29jans2_2.png": {
+  "format": "text",
+  "stem": "A particle is moving in a straight line. The variation of position $x$ as a function of time $t$ is given as $x=(t^3-6t^2+20t+15)$ m. The velocity of the body when its acceleration becomes zero is:",
+  "opts": [
+   "$4$ m s$^{-1}$",
+   "$8$ m s$^{-1}$",
+   "$10$ m s$^{-1}$",
+   "$6$ m s$^{-1}$"
+  ]
+ },
+ "questions/q_29jans2_3.png": {
+  "format": "text",
+  "stem": "A stone of mass $900$ g is tied to a string and moved in a vertical circle of radius $1$ m making $10$ rpm. The tension in the string, when the stone is at the lowest point is (if $\\pi^2=9.8$ and $g=9.8$ m s$^{-2}$):",
+  "opts": [
+   "$97$ N",
+   "$9.8$ N",
+   "$8.82$ N",
+   "$17.8$ N"
+  ]
+ },
+ "questions/q_29jans2_4.png": {
+  "format": "text",
+  "stem": "The bob of a pendulum was released from a horizontal position. The length of the pendulum is $10$ m. If it dissipates $10\\%$ of its initial energy against air resistance, the speed with which the bob arrives at the lowest point is: [Use, $g=10$ m s$^{-2}$]",
+  "opts": [
+   "$6\\sqrt5$ m s$^{-1}$",
+   "$5\\sqrt6$ m s$^{-1}$",
+   "$5\\sqrt5$ m s$^{-1}$",
+   "$2\\sqrt5$ m s$^{-1}$"
+  ]
+ },
+ "questions/q_29jans2_6.png": {
+  "format": "text",
+  "stem": "A planet takes $200$ days to complete one revolution around the Sun. If the distance of the planet from Sun is reduced to one fourth of the original distance, how many days will it take to complete one revolution?",
+  "opts": [
+   "$25$",
+   "$50$",
+   "$100$",
+   "$20$"
+  ]
+ },
+ "questions/q_29jans2_7.png": {
+  "format": "text",
+  "stem": "A wire of length $L$ and radius $r$ is clamped at one end. If its other end is pulled by a force $F$, its length increases by $l$. If the radius of the wire and the applied force both are reduced to half of their original values keeping original length constant, the increase in length will become:",
+  "opts": [
+   "$3$ times",
+   "$\\dfrac{3}{2}$ times",
+   "$4$ times",
+   "$2$ times"
+  ]
+ },
+ "questions/q_29jans2_8.png": {
+  "format": "text",
+  "stem": "A small liquid drop of radius $R$ is divided into $27$ identical liquid drops. If the surface tension is $T$, then the work done in the process will be:",
+  "opts": [
+   "$8\\pi R^2 T$",
+   "$3\\pi R^2 T$",
+   "$\\dfrac{1}{8}\\pi R^2 T$",
+   "$4\\pi R^2 T$"
+  ]
+ },
+ "questions/q_29jans2_9.png": {
+  "format": "text",
+  "stem": "The temperature of a gas having $2.0\\times10^{25}$ molecules per cubic meter at $1.38$ atm (Given, $k=1.38\\times10^{-23}$ J K$^{-1}$) is:",
+  "opts": [
+   "$500$ K",
+   "$200$ K",
+   "$100$ K",
+   "$300$ K"
+  ]
+ },
+ "questions/q_29jans2_10.png": {
+  "format": "text",
+  "stem": "$N$ moles of a polyatomic gas ($f=6$) must be mixed with two moles of a monoatomic gas so that the mixture behaves as a diatomic gas. The value of $N$ is:",
+  "opts": [
+   "$6$",
+   "$3$",
+   "$4$",
+   "$2$"
+  ]
  }
 }
