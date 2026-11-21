@@ -8,8 +8,11 @@
 var PLANS = {
   grade11: { name: "11th Grade Prep",       amount: 149900 }, // Rs 1,499
   grade12: { name: "12th Grade Intensive",  amount: 179900 }, // Rs 1,799
-  dropper: { name: "Dropper Focused",       amount: 199900 }  // Rs 1,999
+  dropper: { name: "Dropper Focused",       amount: 199900 }, // Rs 1,999
+  crash27: { name: "JEE Main Jan 2027 Crash Course", amount: 99900 } // Rs 999, one-time, valid till 31 Jan 2027
 };
+// The crash course can no longer be bought after it ends (31 Jan 2027, 11:59 PM IST).
+var CRASH_VALID_UNTIL = Date.UTC(2027, 0, 31, 18, 29, 59);
 
 // Flat-discount coupons, in paise. A code is honoured server-side so it can't be
 // tampered with. The website only reveals FRIEND200 after a student's referral is
@@ -34,6 +37,7 @@ module.exports = async function (req, res) {
 
   var plan = PLANS[body.plan];
   if (!plan) { res.status(400).json({ error: "Invalid plan." }); return; }
+  if (body.plan === "crash27" && Date.now() > CRASH_VALID_UNTIL) { res.status(400).json({ error: "The JEE Main Jan 2027 Crash Course has ended." }); return; }
 
   // Apply a valid coupon (optional). Unknown/empty coupon = full price, unchanged.
   var amount = plan.amount, couponCode = "", discount = 0;

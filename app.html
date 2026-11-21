@@ -12,6 +12,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="crash.css">
+<script src="crash_data.js"></script>
+<script src="crash.js"></script>
 <style>
   *{ margin:0; padding:0; box-sizing:border-box; }
   :root{
@@ -510,6 +513,7 @@
     <div class="sb-brand"><img src="logo.png" alt=""> Dakhilaa</div>
     <nav class="sb-nav" id="sbnav">
       <div class="navi active" data-sec="overview" onclick="go('overview')"><span class="ic">📊</span> Overview</div>
+      <div class="navi" data-sec="crash" onclick="go('crash')"><span class="ic">🔥</span> Crash Course <span class="cr-nb">NEW</span></div>
       <div class="navi" data-sec="qbank" onclick="go('qbank')"><span class="ic">📝</span> Question Bank</div>
       <div class="navi" data-sec="tests" onclick="go('tests')"><span class="ic">✅</span> Mock / Chapter Tests</div>
       <div class="navi" data-sec="mytests" onclick="go('mytests')"><span class="ic">🗒️</span> My Tests</div>
@@ -1087,7 +1091,7 @@ function readCurrent(){ try{ return localStorage.getItem("dakhilaaCurrent"); }ca
 function clearCurrentStore(){ try{ localStorage.removeItem("dakhilaaCurrent"); }catch(e){} }
 
 /* ---------- top-level views ---------- */
-function view(id){ ["loadingScreen","authScreen","shell","testScreen","resultsScreen","advScreen","advResults","mainsScreen","mnResults","savedReviewScreen"].forEach(function(s){ var el=document.getElementById(s); if(el) el.classList.add("hidden"); }); document.getElementById(id).classList.remove("hidden"); window.scrollTo(0,0); }
+function view(id){ ["loadingScreen","authScreen","shell","testScreen","resultsScreen","advScreen","advResults","mainsScreen","mnResults","savedReviewScreen","crashIntro","crashScreen","crashResult"].forEach(function(s){ var el=document.getElementById(s); if(el) el.classList.add("hidden"); }); document.getElementById(id).classList.remove("hidden"); window.scrollTo(0,0); }
 function showAuthStep1(){ document.getElementById("authStep1").classList.remove("hidden"); document.getElementById("authStep2").classList.add("hidden"); var g=document.getElementById("google_btn"); if(g) g.disabled=false; }
 function showAuthStep2(){ document.getElementById("authStep2").classList.remove("hidden"); document.getElementById("authStep1").classList.add("hidden"); }
 function showSignup(){ showAuthStep1(); }
@@ -1494,7 +1498,7 @@ function writeReferralCommission(planKey){
   try{
     if(!USE_FIREBASE || !fbDB || !currentUser) return;
     var code=getRef(); if(!REF_RE.test(code)) return;
-    var plan=PLANS[planKey]; if(!plan) return;
+    var plan=PLANS[planKey]||(planKey==="crash27"?{amount:99900}:null); if(!plan) return;
     var amountRs=Math.round(plan.amount/100);
     var commission=Math.round(amountRs*0.20);
     fbDB.collection("refcodes").doc(code).get().then(function(doc){
@@ -1611,17 +1615,19 @@ function enterApp(){
   applyPlanUI();
   view("shell"); go("overview");
   if(pendingPlan){ var pk=pendingPlan; pendingPlan=null; setTimeout(function(){ beginPayment(pk); }, 500); }
+  if(window.crashAfterEnter) crashAfterEnter();
 }
 
 /* ---------- navigation ---------- */
 function go(sec){
   curSec=sec;
   var navs=document.querySelectorAll(".sb-nav .navi"); for(var i=0;i<navs.length;i++){ navs[i].classList.toggle("active", navs[i].getAttribute("data-sec")===sec); }
-  ["overview","qbank","tests","mytests","daily","weak","progress","ai","predictor","live","settings","insights","content"].forEach(function(s){
+  ["overview","crash","qbank","tests","mytests","daily","weak","progress","ai","predictor","live","settings","insights","content"].forEach(function(s){
     var el=document.getElementById("sec-"+s); if(el) el.classList.toggle("hidden", s!==sec);
   });
   closeSidebar();
-  if(sec==="overview") renderOverview();
+  if(sec==="overview"){ renderOverview(); if(window.crashOverviewCard) crashOverviewCard(); }
+  if(sec==="crash" && window.crashRender) crashRender();
   if(sec==="qbank") qbLoad();
   if(sec==="tests"){ renderAdvGrid(); mnRenderTests(); mn11RenderTests(); renderAdv11Grid(); layoutTests(); }
   if(sec==="mytests") renderMyTests();
@@ -3469,6 +3475,7 @@ function submitRate(){
 function initApp(){
   loadDB(); initPredictor(); captureRef(); captureInv(); applyAuthMode();
   try{ var up=new URLSearchParams(location.search).get("plan"); if(up && PLANS[up]) pendingPlan=up; }catch(e){}
+  try{ if(new URLSearchParams(location.search).get("course")==="crash27"){ window.pendingCourse=true; var _cn=document.getElementById("auth_note"); if(_cn){ _cn.textContent="Log in or create your account to join the JEE Main Jan 2027 Crash Course (₹999)."; _cn.classList.remove("hidden"); } } }catch(e){}
   fetch("questions.json").then(function(r){ if(!r.ok) throw new Error("load"); return r.json(); })
     .then(function(data){
       allQuestions=data;

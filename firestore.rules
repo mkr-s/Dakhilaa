@@ -23,13 +23,17 @@ service cloud.firestore {
           && request.resource.data.get('planSince', 0) == resource.data.get('planSince', 0)
           && request.resource.data.get('lastPaymentId', '') == resource.data.get('lastPaymentId', '')
           && request.resource.data.get('planSource', '') == resource.data.get('planSource', '')
-          && request.resource.data.get('lastCode', '') == resource.data.get('lastCode', '');
+          && request.resource.data.get('lastCode', '') == resource.data.get('lastCode', '')
+          && request.resource.data.get('crash27', false) == resource.data.get('crash27', false)
+          && request.resource.data.get('crash27Since', 0) == resource.data.get('crash27Since', 0)
+          && request.resource.data.get('crash27PaymentId', '') == resource.data.get('crash27PaymentId', '');
     }
     match /users/{uid} {
       allow read: if request.auth != null && request.auth.uid == uid;
       // A new doc may be created only without any plan field (no self-granting).
       allow create: if request.auth != null && request.auth.uid == uid
-                    && !('plan' in request.resource.data);
+                    && !('plan' in request.resource.data)
+                    && !('crash27' in request.resource.data);
       // An update must leave the plan fields untouched — unless it's the owner.
       allow update: if request.auth != null && request.auth.uid == uid
                     && (planFieldsUnchanged() || isOwner());
@@ -49,6 +53,17 @@ service cloud.firestore {
       allow read:   if isOwner() || (request.auth != null && resource.data.uid == request.auth.uid);
       allow delete: if false;
     }
+
+    // ---------- JEE Main Jan 2027 Crash Course ----------
+    // Papers, answer keys, attempts, timers and rank histograms are read and written
+    // ONLY by the server (/api/crash, Admin SDK). Browsers get nothing directly, so
+    // answers can't be read before submitting and scores/ranks can't be faked.
+    match /crash_papers/{id}   { allow read, write: if false; }
+    match /crash_keys/{id}     { allow read, write: if false; }
+    match /crash_meta/{id}     { allow read, write: if false; }
+    match /crash_progress/{id} { allow read, write: if false; }
+    match /crash_attempts/{id} { allow read, write: if false; }
+    match /crash_stats/{id}    { allow read, write: if false; }
 
     // ---------- Per-question aggregate stats (shared) ----------
     // Shared counters per question id: attempts, correct, wrong, per-option picks,
@@ -111,7 +126,7 @@ service cloud.firestore {
       // Update the amount list below if you change plan prices in /api/create-order.js.
       allow create: if request.auth != null
                     && request.resource.data.studentUid == request.auth.uid
-                    && request.resource.data.amount in [1499, 1799, 1999]
+                    && request.resource.data.amount in [999, 1499, 1799, 1999]
                     && request.resource.data.commission is number
                     && request.resource.data.commission >= request.resource.data.amount * 0.19
                     && request.resource.data.commission <= request.resource.data.amount * 0.21

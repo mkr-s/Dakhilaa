@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEE Main January 2027 Crash Course — 100 Full Mocks | Dakhilaa</title>
+<meta name="description" content="JEE Main January 2027 crash course: 100 full-length original mocks (7,500 questions), solutions that explain why each wrong option is wrong, a 60-day study plan, short notes, strategy lessons and PYQ chapter weightage.">
+<link rel="canonical" href="https://www.dakhilaa.com/course.html">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800;900&family=Anton&display=swap" rel="stylesheet">
+<style>
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --bg:#0a0e17; --bg-2:#0d1220; --card:#121826; --card-2:#151c2c;
+    --border:#1e2739; --border-2:#293349;
+    --text:#f8fafc; --muted:#94a3b8; --dim:#64748b;
+    --orange:#f97316; --orange-l:#fb923c; --orange-d:#ea580c;
+    --green:#22c55e; --blue:#38bdf8; --purple:#a78bfa; --yellow:#fbbf24;
+    --font-head:'Sora',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --font-body:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    --font-display:'Anton',Impact,sans-serif;
+  }
+  html{ scroll-behavior:smooth; }
+  body{ background:var(--bg); color:var(--text); font-family:var(--font-body); line-height:1.6; -webkit-font-smoothing:antialiased; }
+  a{ color:inherit; text-decoration:none; }
+  h1,h2,h3{ font-family:var(--font-head); }
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 20px; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; font-weight:700; font-size:15px; padding:14px 24px; border-radius:12px; border:0; cursor:pointer; transition:.15s; font-family:inherit; }
+  .btn-primary{ background:var(--orange); color:#fff; box-shadow:0 8px 26px rgba(249,115,22,.35); }
+  .btn-primary:hover{ background:var(--orange-d); transform:translateY(-1px); }
+  .btn-ghost{ background:#141b2b; color:var(--text); border:1px solid var(--border-2); }
+  .eyebrow{ color:var(--orange); font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; text-align:center; }
+  .section-title{ font-size:clamp(26px,4.6vw,40px); font-weight:800; text-align:center; line-height:1.15; margin:10px 0 8px; letter-spacing:-.4px; }
+  .section-sub{ color:var(--muted); text-align:center; max-width:640px; margin:0 auto 38px; font-size:16px; }
+  section{ padding:76px 0; }
+
+  /* header */
+  header{ position:sticky; top:0; z-index:20; background:rgba(10,14,23,.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); }
+  header .wrap{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand{ display:flex; align-items:center; gap:10px; font-family:var(--font-head); font-weight:800; font-size:20px; }
+  .brand img{ width:32px; height:32px; border-radius:8px; }
+  .hnav{ display:flex; gap:22px; align-items:center; font-size:14.5px; color:var(--muted); font-weight:600; }
+  .hnav a:hover{ color:#fff; }
+  .hnav .btn{ padding:10px 18px; font-size:14px; color:#fff; }
+  @media (max-width:720px){ .hnav a:not(.btn){ display:none; } }
+
+  /* hero */
+  .hero{ text-align:center; padding:70px 0 40px; position:relative; overflow:hidden; }
+  .hero::before{ content:""; position:absolute; top:-120px; left:50%; transform:translateX(-50%); width:900px; height:520px; border-radius:50%;
+    background:radial-gradient(closest-side,rgba(249,115,22,.28),transparent); filter:blur(10px); pointer-events:none; }
+  .tag{ position:relative; display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase;
+    color:#fde68a; background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.35); padding:7px 14px; border-radius:999px; }
+  .tag i{ width:8px; height:8px; border-radius:50%; background:var(--yellow); animation:dot 1.8s infinite; }
+  @keyframes dot{ 0%{ box-shadow:0 0 0 0 rgba(251,191,36,.7);} 70%{ box-shadow:0 0 0 9px rgba(251,191,36,0);} 100%{ box-shadow:0 0 0 0 rgba(251,191,36,0);} }
+  .hero h1{ position:relative; font-size:clamp(36px,7vw,66px); font-weight:800; line-height:1.04; letter-spacing:-1px; margin:22px auto 18px; max-width:900px; }
+  .hero h1 span{ background:linear-gradient(90deg,#fb923c,#fde68a); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .hero .lead{ position:relative; color:#cbd5e1; font-size:clamp(16px,2.3vw,19px); max-width:680px; margin:0 auto 30px; }
+  .hero-btns{ position:relative; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+
+  /* numbers */
+  .nums{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:46px; position:relative; }
+  .num{ background:linear-gradient(180deg,var(--card),#0f1522); border:1px solid var(--border); border-radius:20px; padding:24px 14px 20px; text-align:center; }
+  .num .n{ font-family:var(--font-display); font-size:clamp(40px,6vw,60px); line-height:1; letter-spacing:1px; }
+  .num .l{ color:var(--muted); font-size:13px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; margin-top:10px; }
+  .o{ color:var(--orange-l);} .g{ color:#4ade80;} .b{ color:#7dd3fc;} .p{ color:#c4b5fd;}
+  .ready{ margin:18px auto 0; display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; color:var(--muted); font-size:14px; }
+  .bar{ width:220px; height:8px; border-radius:99px; background:#1b2333; overflow:hidden; }
+  .bar i{ display:block; height:100%; width:60%; background:linear-gradient(90deg,#22c55e,#4ade80); border-radius:99px; }
+  .ready b{ color:#4ade80; }
+  @media (max-width:760px){ .nums{ grid-template-columns:repeat(2,1fr); } }
+
+  /* benefits */
+  .bens{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .ben{ position:relative; background:var(--card); border:1px solid var(--border); border-radius:20px; padding:26px 24px; transition:.2s; overflow:hidden; }
+  .ben:hover{ transform:translateY(-4px); border-color:var(--border-2); }
+  .ben::before{ content:""; position:absolute; inset:0 0 auto 0; height:3px; background:var(--c,var(--orange)); }
+  .ben .ic{ font-size:26px; }
+  .ben h3{ font-size:19px; margin:12px 0 8px; line-height:1.3; }
+  .ben p{ color:var(--muted); font-size:15px; }
+  @media (max-width:900px){ .bens{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:600px){ .bens{ grid-template-columns:1fr; } }
+
+  /* sample */
+  .sample{ display:grid; grid-template-columns:1fr 1fr; gap:26px; align-items:center; }
+  .qcard{ background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; }
+  .qhead{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--dim); font-weight:700; letter-spacing:.5px; text-transform:uppercase; margin-bottom:10px; }
+  .qtext{ font-size:15.5px; margin-bottom:14px; }
+  .opt{ display:flex; gap:10px; align-items:flex-start; padding:11px 12px; border-radius:12px; border:1px solid var(--border); margin-top:8px; font-size:14.5px; }
+  .opt .t{ font-weight:800; min-width:64px; }
+  .opt.ok{ border-color:rgba(34,197,94,.5); background:rgba(34,197,94,.08); }
+  .opt.ok .t{ color:#4ade80; }
+  .opt .why{ color:var(--muted); }
+  .opt .why b{ color:#fca5a5; font-weight:700; }
+  .sample h3{ font-size:clamp(22px,3.4vw,30px); line-height:1.2; margin-bottom:12px; }
+  .sample p{ color:var(--muted); margin-bottom:12px; }
+  .sample ul{ list-style:none; display:grid; gap:8px; }
+  .sample li{ color:#e2e8f0; } .sample li::before{ content:"→ "; color:var(--orange-l); font-weight:800; }
+  @media (max-width:860px){ .sample{ grid-template-columns:1fr; } }
+
+  /* inside */
+  .inside{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+  .item{ display:flex; gap:16px; background:var(--card); border:1px solid var(--border); border-radius:18px; padding:20px; }
+  .item .ic{ flex:none; width:48px; height:48px; border-radius:14px; display:grid; place-items:center; font-size:22px; background:rgba(249,115,22,.12); }
+  .item h3{ font-size:16.5px; margin-bottom:4px; }
+  .item p{ color:var(--muted); font-size:14.5px; }
+  .item .what{ display:inline-block; margin-top:8px; font-size:12px; font-weight:700; color:var(--dim); letter-spacing:.4px; text-transform:uppercase; }
+  @media (max-width:760px){ .inside{ grid-template-columns:1fr; } }
+
+  /* journey */
+  .journey{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; counter-reset:s; }
+  .stage{ background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; position:relative; }
+  .stage .lvl{ display:inline-block; font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 10px; border-radius:99px; }
+  .stage h3{ font-size:18px; margin:12px 0 6px; }
+  .stage p{ color:var(--muted); font-size:14.5px; }
+  .stage .rng{ font-family:var(--font-display); font-size:30px; letter-spacing:1px; color:#fff; margin-top:10px; }
+  @media (max-width:860px){ .journey{ grid-template-columns:1fr; } }
+
+  /* price */
+  .pricebox{ max-width:760px; margin:0 auto; border-radius:26px; padding:2px; background:linear-gradient(120deg,#f97316,#fbbf24,#22c55e,#38bdf8,#a78bfa,#f97316); background-size:300% 300%; animation:bd 8s linear infinite; box-shadow:0 30px 90px -25px rgba(249,115,22,.55); }
+  @keyframes bd{ to{ background-position:300% 0; } }
+  .pricein{ background:radial-gradient(120% 90% at 100% 0%,rgba(249,115,22,.18),transparent 55%),#0c1120; border-radius:24px; padding:34px 32px; display:grid; grid-template-columns:1fr 1fr; gap:26px; align-items:center; }
+  .pricein h3{ font-size:24px; line-height:1.2; }
+  .pricein .amt{ font-family:var(--font-display); font-size:64px; line-height:1; margin:12px 0 4px; }
+  .pricein .amt small{ font-family:var(--font-body); font-size:15px; color:var(--muted); font-weight:600; }
+  .pricein ul{ list-style:none; display:grid; gap:9px; font-size:15px; }
+  .pricein li::before{ content:"✓ "; color:#4ade80; font-weight:900; }
+  .pricein li.soon{ color:#fbbf24; } .pricein li.soon::before{ content:"⏳ "; }
+  .pricein .btn{ width:100%; margin-top:16px; font-size:16px; padding:16px; }
+  .pricein .fine{ color:var(--dim); font-size:12.5px; margin-top:10px; text-align:center; }
+  @media (max-width:720px){ .pricein{ grid-template-columns:1fr; padding:28px 22px; } }
+
+  /* faq */
+  .faq{ max-width:780px; margin:0 auto; display:grid; gap:10px; }
+  .qa{ background:var(--card); border:1px solid var(--border); border-radius:14px; }
+  .qa summary{ list-style:none; cursor:pointer; padding:16px 18px; font-weight:700; display:flex; justify-content:space-between; gap:12px; }
+  .qa summary::-webkit-details-marker{ display:none; }
+  .qa summary::after{ content:"+"; color:var(--orange); font-size:20px; line-height:1; }
+  .qa[open] summary::after{ content:"–"; }
+  .qa p{ padding:0 18px 16px; color:var(--muted); font-size:15px; }
+
+  footer{ border-top:1px solid var(--border); padding:34px 0; text-align:center; color:var(--dim); font-size:14px; }
+  footer .tl{ color:#e2e8f0; font-weight:700; margin-bottom:6px; }
+  @media (prefers-reduced-motion:reduce){ .pricebox,.tag i{ animation:none; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="logo.png" alt="">Dakhilaa</a>
+    <nav class="hnav">
+      <a href="#why">Why it works</a>
+      <a href="#inside">What you get</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn btn-primary" href="app.html?course=crash27">Join for ₹999</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="tag"><i></i>JEE Main · January 2027 · Crash Course</span>
+    <h1>Make exam day feel like your <span>101st attempt.</span></h1>
+    <p class="lead">The last 60 days decide your percentile. Practise the full paper again and again, see exactly why every mark slipped away, and follow a plan that already knows what you should study tomorrow.</p>
+    <div class="hero-btns">
+      <a class="btn btn-primary" href="app.html?course=crash27">Join for ₹999 →</a>
+      <a class="btn btn-ghost" href="#sample">See how the analysis works</a>
+    </div>
+
+    <div class="nums">
+      <div class="num"><div class="n o">100</div><div class="l">Full-length main mocks</div></div>
+      <div class="num"><div class="n g">7,500</div><div class="l">Original questions</div></div>
+      <div class="num"><div class="n b">60</div><div class="l">Day study plan</div></div>
+      <div class="num"><div class="n p">3</div><div class="l">Subjects · real pattern</div></div>
+    </div>
+    <div class="ready"><span class="bar"><i></i></span><span><b>60 of 100 mocks ready today</b> — the remaining 40 unlock in phases before the exam · online only, access till 31 Jan 2027</span></div>
+  </div>
+</section>
+
+<section id="why" style="background:var(--bg-2);">
+  <div class="wrap">
+    <div class="eyebrow">Why it works</div>
+    <h2 class="section-title">What changes for you in 60 days</h2>
+    <p class="section-sub">Not more content — fewer surprises, fewer repeated mistakes and a calmer head on exam day.</p>
+    <div class="bens">
+      <div class="ben" style="--c:#f97316"><div class="ic">🎯</div><h3>The real paper stops scaring you</h3><p>You sit 100 papers in the exact JEE Main pattern — 75 questions, 3 hours, +4/−1. By January the format, the clock and the pressure are routine.</p></div>
+      <div class="ben" style="--c:#22c55e"><div class="ic">🔍</div><h3>You stop repeating the same mistakes</h3><p>Every wrong option is labelled with the mistake behind it — a sign slip, a wrong formula, a misread question. You fix the habit, not just the answer.</p></div>
+      <div class="ben" style="--c:#38bdf8"><div class="ic">🗓️</div><h3>No more "what do I study today?"</h3><p>The 60-day plan tells you which mock to take, which chapters to revise and when to rest — so your energy goes into studying, not deciding.</p></div>
+      <div class="ben" style="--c:#a78bfa"><div class="ic">📈</div><h3>Your time goes where the marks are</h3><p>PYQ chapter weightage shows which chapters actually pay off, so the last weeks go to high-return topics instead of everything at once.</p></div>
+      <div class="ben" style="--c:#fbbf24"><div class="ic">⚡</div><h3>Revision that fits in a busy day <small style="font-size:11px;color:#fbbf24;font-family:var(--font-body)">· unlocking soon</small></h3><p>Short notes put each chapter's key formulas and traps on a page or two — revise one in minutes before a mock, not hours.</p></div>
+      <div class="ben" style="--c:#f472b6"><div class="ic">🧠</div><h3>A game plan for the 180 minutes</h3><p>A quick strategy guide is ready from day one; full strategy lessons (unlocking soon) cover attempt order, when to skip, how to handle the numerical section and how to recover after a bad start.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="sample">
+  <div class="wrap sample">
+    <div class="qcard">
+      <div class="qhead"><span>Physics · Mock 58 · Q7</span><span>Hard</span></div>
+      <div class="qtext">Water rises 6 cm in a capillary of radius r. In a capillary of radius r/2 inclined at 60° to the vertical, the length of the water column is</div>
+      <div class="opt ok"><span class="t">24 cm ✓</span><span class="why">Height doubles to 12 cm; length = h / cos 60°.</span></div>
+      <div class="opt"><span class="t">12 cm</span><span class="why"><b>Concept:</b> that is the vertical height, not the length.</span></div>
+      <div class="opt"><span class="t">13.9 cm</span><span class="why"><b>Formula:</b> used sin 60° instead of cos 60°.</span></div>
+      <div class="opt"><span class="t">6 cm</span><span class="why"><b>Concept:</b> the radius changed, so the rise changes too.</span></div>
+    </div>
+    <div>
+      <div class="eyebrow" style="text-align:left">How solutions work</div>
+      <h3>Every wrong option tells you which mistake you made.</h3>
+      <p>Most test series only show the right answer. Here, the option you picked tells you <i>why</i> you picked it — so after a mock you know whether you have a concept gap, a formula gap or just a careless habit.</p>
+      <ul>
+        <li>Concept, formula, sign, unit and reading mistakes are tagged separately</li>
+        <li>Your rank among course students, estimated JEE percentile &amp; AIR, and the marks gap to the next rank band</li>
+        <li>Chapters that cost you most, accuracy by difficulty, and the questions where you lost time</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="inside" style="background:var(--bg-2);">
+  <div class="wrap">
+    <div class="eyebrow">Everything in the crash course</div>
+    <h2 class="section-title">One course. Everything for the last 60 days.</h2>
+    <p class="section-sub">Each part has one job: get more marks out of the time you have left.</p>
+    <div class="inside">
+      <div class="item"><div class="ic">📝</div><div><h3>100 full-length JEE Main mocks</h3><p>Original questions in the exact pattern, with difficulty that climbs as you get stronger.</p><span class="what">7,500 questions · 75 per mock</span></div></div>
+      <div class="item"><div class="ic">🔍</div><div><h3>Solutions that explain every wrong option</h3><p>Full worked solution plus the reason behind each trap, for every question.</p><span class="what">All 100 mocks</span></div></div>
+      <div class="item"><div class="ic">🗓️</div><div><h3>60-day study plan</h3><p>Day-by-day: which mock, which chapters to revise, and when to take a lighter day.</p><span class="what">Ready now · inside the app, day by day</span></div></div>
+      <div class="item"><div class="ic">⚡</div><div><h3>Short notes &amp; formula sheets</h3><p>Chapter-wise formulas, key results and common traps for Physics, Chemistry and Maths.</p><span class="what" style="color:#fbbf24">Unlocking soon</span></div></div>
+      <div class="item"><div class="ic">🧠</div><div><h3>Exam strategy lessons</h3><p>Attempt order, time split, skipping rules, the numerical section and staying calm mid-paper.</p><span class="what" style="color:#fbbf24">Quick guide now · full lessons unlocking soon</span></div></div>
+      <div class="item"><div class="ic">📊</div><div><h3>PYQ chapter weightage</h3><p>How many questions each chapter got across all 19 shifts of JEE Main 2026, so you can prioritise revision.</p><span class="what">Ready now · 1,425 questions analysed</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow">How the mocks build you up</div>
+    <h2 class="section-title">Start steady. Finish sharper than the real paper.</h2>
+    <p class="section-sub">The difficulty rises with you, so early mocks build rhythm and later ones build confidence under pressure.</p>
+    <div class="journey">
+      <div class="stage"><span class="lvl" style="background:rgba(34,197,94,.14);color:#4ade80">Medium</span><div class="rng">Mocks 1–40</div><h3>Build rhythm</h3><p>Get used to 3 hours, 75 questions and the marking. Learn your own mistake pattern early.</p></div>
+      <div class="stage"><span class="lvl" style="background:rgba(249,115,22,.14);color:#fb923c">Medium–hard</span><div class="rng">Mocks 41–60</div><h3>Raise the bar</h3><p>More multi-concept questions and Statement I/II items — the kind that separate good scores from great ones.</p></div>
+      <div class="stage"><span class="lvl" style="background:rgba(167,139,250,.14);color:#c4b5fd">Exam-level+</span><div class="rng">Mocks 61–100</div><h3>Peak on time</h3><p>Released in phases before the exam, so your sharpest practice lands in the last weeks of the plan.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="join" style="background:var(--bg-2);">
+  <div class="wrap">
+    <div class="pricebox">
+      <div class="pricein">
+        <div>
+          <div class="eyebrow" style="text-align:left">JEE Main January 2027</div>
+          <h3>Crash Course — access till 31 January 2027</h3>
+          <div class="amt">₹999 <small>one-time</small></div>
+          <a class="btn btn-primary" href="app.html?course=crash27">Join the Crash Course</a>
+          <div class="fine">Secure payment via Razorpay (UPI, cards, net banking). Access ends automatically on 31 Jan 2027, 11:59 PM. Works alongside any coaching.</div>
+        </div>
+        <ul>
+          <li>100 full-length mocks (7,500 questions)</li>
+          <li>Solutions with the reason behind every wrong option</li>
+          <li>Rank, percentile, AIR estimate &amp; marks gap after every mock</li>
+          <li>60-day study plan</li>
+          <li>PYQ chapter weightage (JEE Main 2026)</li>
+          <li class="soon">Short notes &amp; strategy lessons — unlocking soon</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="eyebrow">Questions</div>
+    <h2 class="section-title">Before you join</h2>
+    <div class="faq" style="margin-top:28px">
+      <details class="qa"><summary>Are all 100 mocks available right away?</summary><p>60 mocks are ready today. The remaining 40 unlock in phases before the January exam, timed to match the 60-day plan — you will always have the next mock ready before you need it.</p></details>
+      <details class="qa"><summary>How long does my access last?</summary><p>Until 31 January 2027, 11:59 PM — after the last JEE Main January paper. The course then closes automatically. It is a one-time payment of ₹999, not a subscription.</p></details>
+      <details class="qa"><summary>Can I download the papers?</summary><p>No. Every mock is taken online in an exam-style interface, like the real CBT. Your full analysis and solutions stay available in your account till the course ends.</p></details>
+      <details class="qa"><summary>Are the questions copied from past papers?</summary><p>No. Every question is original and written in the current JEE Main pattern. Past papers are used only to decide chapter weightage.</p></details>
+      <details class="qa"><summary>Can I use this alongside my coaching?</summary><p>Yes. The mocks and plan are built to sit next to coaching — use them to practise the full paper and to find which chapters need your coaching time most.</p></details>
+      <details class="qa"><summary>Is this for JEE Main only?</summary><p>This crash course targets JEE Main January 2027. The concepts help for Advanced too, but the papers follow the Main pattern.</p></details>
+      <details class="qa"><summary>I haven't finished the syllabus. Should I still join?</summary><p>Yes — the plan pairs mocks with chapter revision, and the solutions show which gaps cost you the most, so you know what to finish first.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="tl">Score nahi, galti ka reason batata hai.</div>
+    <div>dakhilaa.com · © Dakhilaa Private Limited</div>
+  </div>
+</footer>
+</body>
+</html>

@@ -45,6 +45,19 @@ module.exports = async function (req, res) {
   var planKey = (body.plan || "").toString();
   var authH = req.headers.authorization || "";
   var token = authH.indexOf("Bearer ") === 0 ? authH.slice(7) : "";
+  // Crash course purchase: unlock the course only — never touches the yearly plan.
+  if (planKey === "crash27" && token) {
+    try {
+      var adminC = _fb.getAdmin();
+      var decC = await adminC.auth().verifyIdToken(token);
+      await adminC.firestore().collection("users").doc(decC.uid).set({
+        crash27: true,
+        crash27Since: Date.now(),
+        crash27PaymentId: pid
+      }, { merge: true });
+      planSet = true;
+    } catch (e) { planSet = false; }
+  }
   if (PLAN_NAME[planKey] && token) {
     try {
       var admin = _fb.getAdmin();
