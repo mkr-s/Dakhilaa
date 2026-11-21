@@ -128,7 +128,18 @@ module.exports = async function (req, res) {
       var prog = await db.collection("crash_progress").where("uid", "==", uid).get();
       var running = {};
       prog.forEach(function (d) { var p = d.data(); if (!mine[p.mock] && Date.now() < p.startedAt + DURATION_MS + GRACE_MS) running[p.mock] = p.startedAt + DURATION_MS; });
-      return send(res, 200, { enrolled: enrolled, bought: bought, expired: expired && !isOwner, validUntil: VALID_UNTIL, total: 100, ids: ids.sort(), attempts: mine, running: running, free: FREE_MOCKS, now: Date.now() });
+      var cmeta = await db.collection("crash_meta").doc("content").get();
+      var cids = cmeta.exists ? (cmeta.data().ids || []) : [];
+      return send(res, 200, { content: cids, enrolled: enrolled, bought: bought, expired: expired && !isOwner, validUntil: VALID_UNTIL, total: 100, ids: ids.sort(), attempts: mine, running: running, free: FREE_MOCKS, now: Date.now() });
+    }
+
+    if (body.action === "content") {
+      if (!enrolled) return send(res, 403, { error: (bought && expired) ? "The Crash Course ended on 31 January 2027." : "Join the Crash Course to read the notes and lessons.", needEnroll: !bought });
+      var cid = String(body.id || "");
+      if (!/^(lessons|notes_(physics|chemistry|mathematics))$/.test(cid)) return send(res, 400, { error: "Unknown content." });
+      var cd = await db.collection("crash_content").doc(cid).get();
+      if (!cd.exists) return send(res, 404, { error: "This part is not live yet." });
+      return send(res, 200, cd.data());
     }
 
     if (!mock) return send(res, 400, { error: "Missing mock." });

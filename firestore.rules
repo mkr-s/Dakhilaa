@@ -64,6 +64,7 @@ service cloud.firestore {
     match /crash_progress/{id} { allow read, write: if false; }
     match /crash_attempts/{id} { allow read, write: if false; }
     match /crash_stats/{id}    { allow read, write: if false; }
+    match /crash_content/{id}  { allow read, write: if false; }
 
     // ---------- Per-question aggregate stats (shared) ----------
     // Shared counters per question id: attempts, correct, wrong, per-option picks,

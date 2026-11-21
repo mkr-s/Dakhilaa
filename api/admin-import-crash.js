@@ -28,6 +28,15 @@ module.exports = async function (req, res) {
   if (typeof b === "string") { try { b = JSON.parse(b); } catch (e) { b = {}; } }
   b = b || {};
   var id = String(b.id || "");
+  // Notes & strategy lessons (crash_notes_*.json / crash_lessons.json): stored server-side,
+  // shown only to enrolled students inside the app. Re-uploading simply updates the text.
+  if (/^(lessons|notes_(physics|chemistry|mathematics))$/.test(id)) {
+    if (!Array.isArray(b.items) || !b.items.length) { res.status(400).json({ error: "Not a valid notes/lessons file." }); return; }
+    var dbc = admin.firestore();
+    await dbc.collection("crash_content").doc(id).set({ title: String(b.title || id), kind: String(b.kind || ""), subject: String(b.subject || ""), items: b.items, updated: Date.now() });
+    await dbc.collection("crash_meta").doc("content").set({ ids: admin.firestore.FieldValue.arrayUnion(id), updated: Date.now() }, { merge: true });
+    res.status(200).json({ ok: true, id: id, questions: b.items.length + " items" }); return;
+  }
   if (!/^m\d{2,3}$/.test(id) || !Array.isArray(b.paper) || !Array.isArray(b.key) || b.paper.length !== b.key.length || b.paper.length < 1) {
     res.status(400).json({ error: "Not a valid crash course mock file." }); return;
   }

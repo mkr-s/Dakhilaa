@@ -92,7 +92,8 @@ function rankFromHist(st,marks){ var idx=Math.max(0,Math.min(375,Math.round(mark
 function demoApi(action,d){
   var D=window.CRASH_DEMO_DATA||{mocks:{},ids:[]};
   return new Promise(function(ok,bad){ setTimeout(function(){
-    if(action==="list") return ok({enrolled:!!window.CRASH_DEMO_ENROLLED, bought:!!window.CRASH_DEMO_ENROLLED, expired:false, validUntil:CR.validUntil, total:100, ids:D.ids, attempts:DEMO.attempts, running:{}, free:[], now:Date.now()});
+    if(action==="content"){ var c=(D.content||{})[d.id]; return c?ok(c):bad(new Error("This part is not live yet.")); }
+    if(action==="list") return ok({content:Object.keys(D.content||{}),enrolled:!!window.CRASH_DEMO_ENROLLED, bought:!!window.CRASH_DEMO_ENROLLED, expired:false, validUntil:CR.validUntil, total:100, ids:D.ids, attempts:DEMO.attempts, running:{}, free:[], now:Date.now()});
     var m=D.mocks[d.mock];
     if(action==="start"){ if(!m) return bad(Object.assign(new Error("This preview contains only a few sample mocks."),{status:404})); if(DEMO.attempts[d.mock]) return bad(Object.assign(new Error("You have already submitted this mock."),{status:409})); var st=DEMO.progress[d.mock]||(DEMO.progress[d.mock]=Date.now()); return ok({mock:d.mock,title:m.title,qs:m.paper,startedAt:st,endAt:st+10800000,now:Date.now()}); }
     if(action==="submit"){ var r=scoreLocal(m.paper,m.key,d.picks,d.times); var st2=demoHist(d.mock); st2.hist[r.marks+75]++; st2.n++; st2.sum+=r.marks; r.rank=rankFromHist(st2,r.marks); r.mock=d.mock; r.at=Date.now(); DEMO.attempts[d.mock]={marks:r.marks,correct:r.correct,wrong:r.wrong,blank:r.blank,at:r.at,subjects:r.subjects,mistakes:r.mistakes,full:r}; return ok({attempt:r,key:m.key,qs:m.paper}); }
@@ -157,7 +158,7 @@ function renderDash(){
 function dayTitle(dd){ if(dd.type==="mock") return dd.final?'Final full mock (Mock '+dd.mock+')':'Mock '+dd.mock+' + revision'; if(dd.type==="review") return 'Review day — fix this week\'s mistakes'; if(dd.type==="light") return 'Light revision only'; return 'Rest & exam prep'; }
 function stat(k,v,s){ return '<div class="cr-stat"><div class="k">'+k+'</div><div class="v">'+v+'</div><div class="s">'+s+'</div></div>'; }
 function tabBtn(k,l){ return '<button class="cr-tab'+(CR.tab===k?' on':'')+'" onclick="crashTab(\''+k+'\')">'+l+'</button>'; }
-window.crashTab=function(k){ CR.tab=k; var b=document.querySelectorAll(".cr-tab"); for(var i=0;i<b.length;i++) b[i].classList.toggle("on", b[i].getAttribute("onclick").indexOf("'"+k+"'")>0); renderTab(); };
+window.crashTab=function(k){ disarm(); CR.tab=k; var b=document.querySelectorAll(".cr-tab"); for(var i=0;i<b.length;i++) b[i].classList.toggle("on", b[i].getAttribute("onclick").indexOf("'"+k+"'")>0); renderTab(); };
 function renderTab(){ var el=$("crTab"); if(!el) return; el.innerHTML = CR.tab==="plan"?planHTML():CR.tab==="weight"?weightHTML():CR.tab==="more"?moreHTML():mocksHTML(); typeset(el); }
 function spark(at){
   var W=520,H=120,p=14, xs=at.map(function(_,i){ return p+i*(W-2*p)/Math.max(1,at.length-1); }), mx=300, mn=Math.min(0,Math.min.apply(null,at.map(function(a){ return a.marks; })));
@@ -245,20 +246,66 @@ function weightHTML(){
 }
 
 /* ---------------- notes & strategy ---------------- */
+var NOTE_ID={Physics:"notes_physics",Chemistry:"notes_chemistry",Mathematics:"notes_mathematics"};
+CR.content={}; CR.nsub="Physics";
+function hasC(id){ return (CR.list && CR.list.content || []).indexOf(id)>=0; }
+function getC(id){ if(CR.content[id]) return Promise.resolve(CR.content[id]); return api("content",{id:id}).then(function(d){ CR.content[id]=d; return d; }); }
+function quickGuide(){
+  return '<div class="cr-box" style="margin-top:12px"><h4>Quick strategy guide <small>use it from your next mock</small></h4><ol style="padding-left:20px;display:grid;gap:8px;font-size:14px;color:#cbd5e1">'+
+    '<li><b>Three rounds, not one pass.</b> Round 1: everything you can solve in under 2 minutes. Round 2: the longer ones you know. Round 3: only if you can eliminate options.</li>'+
+    '<li><b>Time split.</b> Start with your strongest subject, but cap each subject near 60 minutes on the first pass.</li>'+
+    '<li><b>Negative marking.</b> Guess only after ruling out at least two options.</li>'+
+    '<li><b>Numericals also carry −1.</b> Don\'t type a number you haven\'t worked out.</li>'+
+    '<li><b>Last 10 minutes.</b> No new questions — recheck marked answers and numericals.</li></ol></div>';
+}
 function moreHTML(){
-  var h='<div class="cr-mat">'+
-    '<div class="cr-mi"><div class="ic">⚡</div><div><h5>Short notes &amp; formula sheets</h5><p>Chapter-wise formulas, key results and traps for all three subjects.</p><span class="st">UNLOCKING SOON</span></div></div>'+
-    '<div class="cr-mi"><div class="ic">🧠</div><div><h5>Exam strategy lessons</h5><p>Full lessons on attempt order, time split, numericals and recovering mid-paper.</p><span class="st">UNLOCKING SOON</span></div></div></div>';
-  h+='<div class="cr-box" style="margin-top:12px"><h4>Quick strategy guide <small>use it from your next mock</small></h4><ol style="padding-left:20px;display:grid;gap:8px;font-size:14px;color:#cbd5e1">'+
-    '<li><b>Three rounds, not one pass.</b> Round 1: everything you can solve in under 2 minutes. Round 2: the ones you know how to do but are longer. Round 3: whatever is left, only if you can eliminate options.</li>'+
-    '<li><b>Time split.</b> Start with your strongest subject, but cap each subject near 60 minutes on the first pass so no section gets starved.</li>'+
-    '<li><b>Negative marking.</b> A wrong answer costs 5 marks compared with a right one. Guess only after ruling out at least two options.</li>'+
-    '<li><b>Numericals also carry −1.</b> Don\'t type a number you haven\'t actually worked out.</li>'+
-    '<li><b>Mark for review, then move.</b> If you are stuck for 3 minutes, mark it and come back — the next question might be a free 4 marks.</li>'+
-    '<li><b>Last 10 minutes.</b> Stop new questions. Recheck the marked answers and every numerical you entered.</li>'+
-    '<li><b>After every mock</b> open “Why you lose marks”. Fix one mistake type at a time — that is where the next 20 marks come from.</li></ol></div>';
+  var h='', L=hasC("lessons");
+  h+='<div class="cr-box"><h4>🧠 Exam strategy lessons <small>'+(L?'8 short lessons · read in order':'unlocking soon')+'</small></h4>';
+  if(L){ h+='<div id="crLessons" class="cr-empty">Loading…</div>'; } else h+='<div class="cr-empty">Lessons on attempt order, time split, guessing, numericals and recovery are being added.</div>';
+  h+='</div>';
+  var subs=SUBS.filter(function(s){ return hasC(NOTE_ID[s]); });
+  h+='<div class="cr-box" style="margin-top:12px"><h4>⚡ Short notes &amp; formula sheets <small>ordered by PYQ weightage</small></h4>';
+  if(subs.length){
+    if(subs.indexOf(CR.nsub)<0) CR.nsub=subs[0];
+    h+='<div class="cr-filter">'+SUBS.map(function(s){ var on=hasC(NOTE_ID[s]); return '<button class="cr-chip'+(CR.nsub===s?' on':'')+'"'+(on?' onclick="CR.nsub=\''+s+'\';renderCrTab()"':' disabled style="opacity:.45"')+'>'+s+(on?'':' · soon')+'</button>'; }).join("")+'</div><div id="crNotes" class="cr-empty">Loading…</div>';
+  } else h+='<div class="cr-empty">Chapter-wise formulas, key results and traps for all three subjects are being added.</div>';
+  h+='</div>';
+  if(!L) h+=quickGuide();
+  setTimeout(fillMore,0);
   return h;
 }
+function fillMore(){
+  if(hasC("lessons") && $("crLessons")) getC("lessons").then(function(d){ var el=$("crLessons"); if(!el) return; el.className=""; el.innerHTML='<div class="cr-mat">'+d.items.map(function(l,i){ return '<div class="cr-mi" style="cursor:pointer" onclick="crashRead(\'lessons\','+i+')"><div class="ic">'+(i+1)+'</div><div><h5>'+esc(l.t)+'</h5><p>'+esc(l.why)+'</p><span class="st" style="color:var(--muted)">'+l.m+' min read →</span></div></div>'; }).join("")+'</div>'; }).catch(function(e){ var el=$("crLessons"); if(el) el.textContent=e.message; });
+  var id=NOTE_ID[CR.nsub];
+  if(hasC(id) && $("crNotes")) getC(id).then(function(d){ var el=$("crNotes"); if(!el) return;
+    var W=(window.CRASH_WEIGHT&&CRASH_WEIGHT.subjects[CR.nsub])||[], rank={}; W.forEach(function(r,i){ rank[r.ch]=i; });
+    var items=d.items.map(function(n,i){ return {n:n,i:i}; }).sort(function(a,b){ return (rank[a.n.ch]==null?99:rank[a.n.ch])-(rank[b.n.ch]==null?99:rank[b.n.ch]); });
+    el.className=""; el.innerHTML='<div class="cr-grid" style="grid-template-columns:repeat(auto-fill,minmax(210px,1fr))">'+items.map(function(x,k){ var w=W[rank[x.n.ch]]; return '<div class="cr-mk" style="min-height:0;cursor:pointer" onclick="crashRead(\''+id+'\','+x.i+')"><span class="lv" style="color:'+(k<6?'#fb923c':'var(--dim)')+'">'+(k<6?'High weightage':'Chapter')+(w?' · '+w.n+' Qs in 2026':'')+'</span><span class="no">'+esc(x.n.ch)+'</span><span class="sc">'+x.n.f.length+' formulas · '+x.n.t.length+' traps</span></div>'; }).join("")+'</div>'; typeset(el);
+  }).catch(function(e){ var el=$("crNotes"); if(el) el.textContent=e.message; });
+}
+window.crashRead=function(id,i){
+  var el=$("crTab"); if(!el) return; el.innerHTML='<div class="cr-empty">Loading…</div>';
+  getC(id).then(function(d){
+    var it=d.items[i], h='<div class="cr-box" style="position:relative;overflow:hidden">'+wmHTML()+'<div style="position:relative;z-index:4">';
+    var nav='<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn btn-outline" style="padding:7px 12px;font-size:13px" onclick="crashCloseRead()">← All notes &amp; lessons</button><span>'+
+      (i>0?'<button class="btn btn-outline" style="padding:7px 12px;font-size:13px" onclick="crashRead(\''+id+'\','+(i-1)+')">‹ Prev</button> ':'')+
+      (i<d.items.length-1?'<button class="btn" style="padding:7px 12px;font-size:13px" onclick="crashRead(\''+id+'\','+(i+1)+')">Next ›</button>':'')+'</span></div>';
+    h+=nav;
+    if(d.kind==="lessons"){
+      h+='<div style="font-size:12px;color:var(--dim);font-weight:800">LESSON '+(i+1)+' OF '+d.items.length+' · '+it.m+' MIN</div><h3 style="font-size:22px;margin:6px 0 10px">'+esc(it.t)+'</h3><div class="rr-tip" style="margin:0 0 14px">'+it.why+'</div>'+
+        it.secs.map(function(s){ return '<h4 style="font-size:15.5px;margin:14px 0 6px">'+esc(s.h)+'</h4><ul style="padding-left:20px;display:grid;gap:6px;color:#cbd5e1;font-size:14.5px">'+s.p.map(function(p){ return '<li>'+p+'</li>'; }).join("")+'</ul>'; }).join("")+
+        '<div class="rr-tip" style="margin-top:16px;border-color:rgba(34,197,94,.45);background:rgba(34,197,94,.08)">✍️ <b>Try this:</b> '+it.try+'</div>';
+    } else {
+      h+='<div style="font-size:12px;color:var(--dim);font-weight:800">'+esc(d.subject).toUpperCase()+' · SHORT NOTES</div><h3 style="font-size:22px;margin:6px 0 10px">'+esc(it.ch)+'</h3>'+
+        '<h4 style="font-size:15.5px;margin:12px 0 6px">📌 Key formulas &amp; results</h4><ul style="padding-left:20px;display:grid;gap:8px;font-size:14.5px;line-height:1.75">'+it.f.map(function(x){ return '<li>'+x+'</li>'; }).join("")+'</ul>'+
+        '<h4 style="font-size:15.5px;margin:16px 0 6px;color:#fca5a5">⚠️ Common traps</h4><ul style="padding-left:20px;display:grid;gap:6px;font-size:14.5px;color:#cbd5e1">'+it.t.map(function(x){ return '<li>'+x+'</li>'; }).join("")+'</ul>'+
+        '<h4 style="font-size:15.5px;margin:16px 0 6px;color:#4ade80">🎯 JEE tips</h4><ul style="padding-left:20px;display:grid;gap:6px;font-size:14.5px;color:#cbd5e1">'+it.j.map(function(x){ return '<li>'+x+'</li>'; }).join("")+'</ul>';
+    }
+    h+='<div style="margin-top:16px">'+nav+'</div></div></div>';
+    el.innerHTML=h; typeset(el); arm(false); el.scrollIntoView({behavior:"smooth",block:"start"});
+  }).catch(function(e){ el.innerHTML='<div class="cr-empty">'+esc(e.message)+'</div>'; });
+};
+window.crashCloseRead=function(){ disarm(); renderTab(); var el=$("crTab"); if(el) el.scrollIntoView({block:"start"}); };
 
 /* ---------------- sales (not enrolled) ---------------- */
 function salesHTML(L){
@@ -275,7 +322,7 @@ function salesHTML(L){
       '<div>✅ Score, course rank, estimated percentile &amp; AIR, marks gap to the next rank band</div>'+
       '<div>✅ Mistake-reason analysis, chapter-wise marks lost, time analysis and full solutions</div>'+
       '<div>✅ 60-day study plan · ✅ PYQ chapter weightage (JEE Main 2026, all 19 shifts)</div>'+
-      '<div>⏳ Short notes &amp; formula sheets · ⏳ Strategy lessons <span style="color:var(--dim)">(unlocking soon)</span></div></div></div>'+
+      '<div>✅ Short notes &amp; formula sheets for all 67 chapters · ✅ 8 exam strategy lessons</div></div></div>'+
     '<div class="cr-buy"><div><div class="amt">'+CR.price+' <small>one-time</small></div><div style="color:var(--muted);font-size:13px">Access till 31 January 2027, 11:59 PM — then the course closes automatically.</div></div>'+
       (closed?'<button class="btn" disabled>Enrolment closed</button>':'<button class="btn" style="padding:14px 26px" onclick="crashBuy()">Join the Crash Course →</button>')+'</div></div>';
 }
@@ -438,15 +485,18 @@ function shield(on,msg){
   s.innerHTML='<div><b>🔒 Screen hidden</b><p>'+msg+'</p><button class="btn" style="margin-top:14px" onclick="crashUnshield()">Continue</button></div>';
 }
 window.crashUnshield=function(){ shield(false); };
-function onVis(){ if(document.hidden || !document.hasFocus()){ if(armedExam && CR.x){ CR.x.flags.tabSwitch++; persist(); } shield(true, armedExam?("You left the test window. This is counted like a real CBT ("+(CR.x?CR.x.flags.tabSwitch:0)+" so far). The timer keeps running."):"Content is hidden while this window is not in focus."); } }
+function guarded(){ var s=$("crashScreen"), r=$("crashResult"), c=$("sec-crash");
+  return (s && !s.classList.contains("hidden")) || (r && !r.classList.contains("hidden")) || (c && !c.classList.contains("hidden") && !!document.querySelector("#crTab .cr-wm")); }
+function onVis(){ if(!guarded()) return; if(document.hidden || !document.hasFocus()){ if(armedExam && CR.x){ CR.x.flags.tabSwitch++; persist(); } shield(true, armedExam?("You left the test window. This is counted like a real CBT ("+(CR.x?CR.x.flags.tabSwitch:0)+" so far). The timer keeps running."):"Content is hidden while this window is not in focus."); } }
 function onKey(e){
+  if(!guarded()) return;
   var k=(e.key||"").toLowerCase();
   if(k==="printscreen"){ e.preventDefault(); try{ navigator.clipboard && navigator.clipboard.writeText("Screenshots of Dakhilaa tests are not allowed."); }catch(x){} if(CR.x){ CR.x.flags.blocked++; persist(); } shield(true,"Screenshots are not allowed during Dakhilaa tests."); return; }
   if((e.ctrlKey||e.metaKey) && ["c","x","s","p","u","a"].indexOf(k)>=0 && !(k==="a" && e.target && e.target.id==="cxNum")){ e.preventDefault(); if(CR.x){ CR.x.flags.blocked++; } }
   if(k==="f12" || ((e.ctrlKey||e.metaKey) && e.shiftKey && ["i","j","c","s"].indexOf(k)>=0)){ e.preventDefault(); }
 }
-function block(e){ if(e.target && e.target.id==="cxNum" && e.type!=="contextmenu") return; e.preventDefault(); }
-function unload(e){ if(armedExam){ e.preventDefault(); e.returnValue=""; return ""; } }
+function block(e){ if(!guarded()) return; if(e.target && e.target.id==="cxNum" && e.type!=="contextmenu") return; e.preventDefault(); }
+function unload(e){ if(armedExam && CR.x){ e.preventDefault(); e.returnValue=""; return ""; } }
 function arm(exam){
   armedExam=!!exam; if(armed) return; armed=true;
   document.addEventListener("visibilitychange",onVis); window.addEventListener("blur",onVis);
@@ -531,14 +581,14 @@ function renderReview(){
 }
 
 /* ---------------- owner: upload mocks ---------------- */
-function ownerHTML(){ return '<div class="cr-owner"><b>Owner · upload mocks</b><div>Select one or more <code>crash_mNN.json</code> files from your computer. They go straight to the server (never into the website files).</div><input type="file" id="crUp" accept=".json" multiple><button class="btn" style="padding:8px 14px" onclick="crashUpload()">Upload</button><div id="crUpLog" style="margin-top:8px;font-size:12.5px"></div></div>'; }
+function ownerHTML(){ return '<div class="cr-owner"><b>Owner · upload mocks</b><div>Select <code>crash_mNN.json</code> mock files and/or the notes &amp; lessons files (<code>crash_lessons.json</code>, <code>crash_notes_*.json</code>) from your computer. They go straight to the server (never into the website files).</div><input type="file" id="crUp" accept=".json" multiple><button class="btn" style="padding:8px 14px" onclick="crashUpload()">Upload</button><div id="crUpLog" style="margin-top:8px;font-size:12.5px"></div></div>'; }
 window.crashUpload=function(){
   var files=Array.prototype.slice.call(($("crUp")||{}).files||[]), log=$("crUpLog"); if(!files.length){ toast("Choose files first.",true); return; }
   var i=0; log.innerHTML="";
   (function next(){
     if(i>=files.length){ log.innerHTML+="<div>✅ Done.</div>"; CR.list=null; setTimeout(crashRender,800); return; }
     var f=files[i++]; f.text().then(function(txt){ return fbAuth.currentUser.getIdToken().then(function(tok){ return fetch("/api/admin-import-crash",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+tok},body:txt}); }); })
-     .then(function(r){ return r.json(); }).then(function(d){ log.innerHTML+='<div>'+(d.ok?'✅ '+d.id+' ('+d.questions+' Q)':'❌ '+esc(f.name)+': '+esc(d.error))+'</div>'; next(); })
+     .then(function(r){ return r.json(); }).then(function(d){ log.innerHTML+='<div>'+(d.ok?'✅ '+d.id+' ('+(typeof d.questions==="string"?d.questions:d.questions+' Q')+')':'❌ '+esc(f.name)+': '+esc(d.error))+'</div>'; next(); })
      .catch(function(e){ log.innerHTML+='<div>❌ '+esc(f.name)+': '+esc(e.message)+'</div>'; next(); });
   })();
 };
