@@ -376,7 +376,7 @@ window.crashOpen=function(id){
    '<div class="card"><table><tr><th>Subject</th><th>Section A (MCQ)</th><th>Section B (Numerical)</th><th>Marks</th></tr><tr><td>Physics</td><td>20</td><td>5</td><td>100</td></tr><tr><td>Chemistry</td><td>20</td><td>5</td><td>100</td></tr><tr><td>Mathematics</td><td>20</td><td>5</td><td>100</td></tr></table></div>'+
    '<div class="card"><b>Rules</b><ul style="margin-top:8px"><li>+4 for a correct answer, −1 for a wrong answer in <b>both</b> sections. Unanswered: 0.</li><li>The timer runs on our server. Closing the page does not stop it — you can resume within the 3 hours.</li><li>The paper is auto-submitted when time ends. Each mock can be submitted <b>once</b>; your first attempt sets your course rank.</li><li>Use “Mark for review” freely — answered questions that are marked are still evaluated.</li></ul></div>'+
    '<div class="card"><b>Question palette</b><div class="cr-legend" style="margin-top:10px"><span><i class="st-nv" style="width:18px;height:18px;border-radius:4px;display:inline-block"></i>Not visited</span><span><i class="st-na" style="width:18px;height:18px;border-radius:4px;display:inline-block"></i>Not answered</span><span><i class="st-a" style="width:18px;height:18px;border-radius:4px;display:inline-block"></i>Answered</span><span><i class="st-m" style="width:18px;height:18px;display:inline-block"></i>Marked for review</span><span style="grid-column:1/-1"><i class="st-am" style="width:18px;height:18px;display:inline-block;position:relative"></i>Answered &amp; marked (will be evaluated)</span></div></div>'+
-   '<div class="card" style="border-color:rgba(239,68,68,.4)"><b>🔒 Exam integrity</b><ul style="margin-top:8px"><li>Questions can\'t be downloaded, copied or printed. Each screen carries your name as a watermark.</li><li>Switching tabs or apps pauses the screen and is <b>counted</b>, like a real CBT.</li><li>Sharing the paper may lead to your access being removed without refund.</li></ul></div>'+
+   '<div class="card" style="border-color:rgba(239,68,68,.4)"><b>🔒 Exam integrity</b><ul style="margin-top:8px"><li>Questions can\'t be downloaded, copied or printed. Each screen carries a Dakhilaa watermark with your account ID.</li><li>Switching tabs or apps pauses the screen and is <b>counted</b>, like a real CBT.</li><li>Sharing the paper may lead to your access being removed without refund.</li></ul></div>'+
    '<label class="cr-agree"><input type="checkbox" id="crAgree"> I have read the instructions and will attempt this mock honestly in one sitting.</label>'+
    '<button class="btn btn-block" style="padding:14px" onclick="crashBegin(\''+id+'\')">'+(resume?'Resume Mock '+n+' →':'I am ready — begin Mock '+n+' →')+'</button></div>';
   show("crashIntro");
@@ -403,7 +403,9 @@ window.crashBegin=function(id){
   });
 };
 function wmHTML(){
-  var p=(typeof currentProfile!=="undefined" && currentProfile)||{}, who=[p.name||"Student", p.email||p.mobile||p.phone||"", uidKey().slice(-6)].filter(Boolean).join(" · ");
+  // Brand + anonymous ID only — no name, email or phone on screen. The ID is the last
+  // 6 characters of the student's account id, so a leaked screenshot can still be traced.
+  var who="Dakhilaa · dakhilaa.com · ID "+uidKey().slice(-6).toUpperCase();
   var s=""; for(var r=0;r<9;r++) for(var c=0;c<3;c++) s+='<div style="top:'+(r*130+20)+'px;left:'+(c*340-60+(r%2)*150)+'px">'+esc(who)+'</div>';
   return '<div class="cr-wm">'+s+'</div>';
 }
