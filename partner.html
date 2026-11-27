@@ -86,6 +86,9 @@
   .setrow .k{ color:var(--muted); }
   .kyc-note{ font-size:12px; color:var(--dim); background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin:10px 0 4px; }
   /* admin */
+  .cinp{ padding:8px 10px; background:var(--bg); border:1px solid var(--border-2); border-radius:8px; color:var(--text); font-size:14px; font-family:inherit; text-transform:uppercase; width:150px; }
+  .st-due{ color:#fbbf24; font-weight:700; } .st-paid{ color:var(--green); font-weight:700; } .st-cancelled{ color:#f87171; font-weight:700; }
+  .scroll-x{ overflow-x:auto; }
   .prow{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:10px; }
   .prow .pn{ font-weight:800; font-size:15px; }
   .prow .pm{ color:var(--muted); font-size:13px; }
@@ -175,30 +178,42 @@
 
   <!-- referral code -->
   <div class="card">
-    <div class="sec-title" style="margin-top:0">Your Referral Code</div>
+    <div class="sec-title" style="margin-top:0">Your Coupon Code</div>
     <div class="ref-box">
       <span class="code" id="d_code">—</span>
       <button class="btn sm" onclick="copyCode()" id="copyBtn">Copy code</button>
       <button class="btn sm gray" onclick="copyLink()">Copy link</button>
     </div>
-    <div class="ref-link">Share this link — the code is applied automatically at checkout: <span id="d_link">—</span></div>
-    <p class="hint" style="margin-top:10px">You earn <b>20%</b> of the plan price for every student who buys through your code.</p>
+    <div class="ref-link">Share this link — your code is filled in automatically at checkout: <span id="d_link">—</span></div>
+    <p class="hint" style="margin-top:10px">Students get <b>10% off</b> with your code (Crash Course and all yearly plans). You earn <b>20% of what the student pays</b> — e.g. ₹999 course → student pays ₹899 → you earn ₹180. Payouts are sent monthly to your UPI.</p>
+    <p class="hint" id="d_code_wait" style="display:none;color:#fbbf24">Your personal coupon code is being set up by Dakhilaa. It will appear here soon.</p>
   </div>
 
   <!-- stats -->
   <div class="sec-title">Referrals &amp; Earnings</div>
   <div class="grid4">
-    <div class="stat"><div class="lbl">Total Referrals</div><div class="val" id="d_totref">0</div></div>
-    <div class="stat"><div class="lbl">This Month Referrals</div><div class="val" id="d_moref">0</div></div>
+    <div class="stat"><div class="lbl">Total Sales</div><div class="val" id="d_totref">0</div></div>
+    <div class="stat"><div class="lbl">This Month Sales</div><div class="val" id="d_moref">0</div></div>
     <div class="stat"><div class="lbl">Total Earnings</div><div class="val money" id="d_totearn">₹0</div></div>
     <div class="stat"><div class="lbl">This Month Earnings</div><div class="val money" id="d_moearn">₹0</div></div>
+  </div>
+  <div class="grid4" style="margin-top:14px">
+    <div class="stat"><div class="lbl">Paid to you</div><div class="val money" id="d_paid">₹0</div></div>
+    <div class="stat"><div class="lbl">Pending payout</div><div class="val" style="color:#fbbf24" id="d_due">₹0</div></div>
+  </div>
+  <div class="sec-title">Your Sales</div>
+  <div class="card scroll-x" style="padding:8px 6px">
+    <table class="brk">
+      <thead><tr><th>Date</th><th>Student</th><th>Product</th><th style="text-align:right">Paid</th><th style="text-align:right">You earn</th><th>Status</th></tr></thead>
+      <tbody id="d_sales"><tr><td colspan="6" style="color:var(--muted)">No sales yet.</td></tr></tbody>
+    </table>
   </div>
 
   <!-- 12 month breakdown -->
   <div class="sec-title">Last 12 Months</div>
   <div class="card" style="padding:8px 6px">
     <table class="brk">
-      <thead><tr><th>Month</th><th style="text-align:right">Referrals</th><th style="text-align:right">Earnings</th></tr></thead>
+      <thead><tr><th>Month</th><th style="text-align:right">Sales</th><th style="text-align:right">Earnings</th></tr></thead>
       <tbody id="d_break"></tbody>
     </table>
   </div>
@@ -214,6 +229,7 @@
     <div class="field"><label>Facebook ID</label><input id="d_fb" type="text" placeholder="Profile name or link"></div>
     <div class="field"><label>YouTube ID</label><input id="d_yt" type="text" placeholder="Channel name or link"></div>
     <div class="kyc-note">🔒 Aadhaar &amp; PAN are used only to verify you for payouts. Keep them accurate.</div>
+    <div class="field"><label>UPI ID <span class="opt">(payouts are sent here)</span></label><input id="d_upi" type="text" placeholder="yourname@upi"></div>
     <div class="field"><label>Aadhaar Number <span class="opt">(for payouts)</span></label><input id="d_aadhaar" type="text" inputmode="numeric" maxlength="12" placeholder="12-digit Aadhaar"></div>
     <div class="field"><label>PAN Card Number <span class="opt">(for payouts)</span></label><input id="d_pan" type="text" maxlength="10" placeholder="ABCDE1234F" style="text-transform:uppercase"></div>
     <button class="btn sm" onclick="saveProfile()" id="saveBtn" style="margin-top:6px">Save details</button>
@@ -227,10 +243,12 @@
     <h2>Partner Admin</h2>
     <span class="pill" style="background:rgba(59,130,246,.14);color:#93c5fd;border-color:rgba(59,130,246,.35)">Owner</span>
   </div>
-  <div class="tabs" style="max-width:420px">
+  <div class="tabs" style="max-width:560px">
     <div class="tab active" id="atab_pending" onclick="adminTab('pending')">Pending</div>
     <div class="tab" id="atab_all" onclick="adminTab('all')">All Partners</div>
+    <div class="tab" id="atab_payouts" onclick="adminTab('payouts')">Sales &amp; Payouts</div>
   </div>
+  <p class="hint" style="margin:-8px 0 16px">Approve a partner, then give them a coupon code (e.g. RAHUL10) and click <b>Save code</b>. Students get 10% off with it; the partner's 20% commission is recorded automatically after each payment.</p>
   <div id="adminList"><div class="spin">Loading…</div></div>
 </div>
 
@@ -433,9 +451,10 @@ function last12(){ var arr=[], now=new Date(); for(var i=11;i>=0;i--){ var d=new
 function openDashboard(){
   var d=CUR.doc;
   document.getElementById("d_name").textContent=(d.fullName||"Partner").split(" ")[0];
-  document.getElementById("d_code").textContent=d.referralCode||"—";
-  var link=APP_ORIGIN+"/app.html?ref="+(d.referralCode||"");
-  document.getElementById("d_link").textContent=link;
+  var code=myCode();
+  document.getElementById("d_code").textContent=code||"—";
+  document.getElementById("d_link").textContent=code?(APP_ORIGIN+"/course.html?code="+code):"—";
+  document.getElementById("d_code_wait").style.display=d.couponCode?"none":"";
   document.getElementById("d_pf_name").textContent=d.fullName||"—";
   document.getElementById("d_pf_email").textContent=d.email||"—";
   document.getElementById("d_pf_mobile").textContent=d.mobile?("+91 "+d.mobile):"—";
@@ -444,20 +463,27 @@ function openDashboard(){
   document.getElementById("d_yt").value=d.youtube||"";
   document.getElementById("d_aadhaar").value=d.aadhaar||"";
   document.getElementById("d_pan").value=d.pan||"";
+  document.getElementById("d_upi").value=d.upi||"";
   show("dashView");
   loadEarnings();
 }
 
+function myCode(){ var d=CUR&&CUR.doc||{}; return d.couponCode||d.referralCode||""; }
+function cmStatus(r){ return r.status||"due"; }
+function fmtDate(ts){ try{ return new Date(ts).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}); }catch(e){ return ""; } }
 function loadEarnings(){
   fbDB.collection("commissions").where("partnerUid","==",CUR.uid).get().then(function(snap){
     var rows=[]; snap.forEach(function(doc){ rows.push(doc.data()); });
+    rows.sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
     var months=last12(), curKey=monthKey(Date.now());
     var byMonth={}; months.forEach(function(m){ byMonth[m.key]={ref:0,earn:0}; });
-    var totRef=0, totEarn=0, moRef=0, moEarn=0;
+    var totRef=0, totEarn=0, moRef=0, moEarn=0, paid=0, due=0;
     rows.forEach(function(r){
+      if(cmStatus(r)==="cancelled") return;           // refunded sales don't count
       var mk=r.month||monthKey(r.ts||Date.now());
       var earn=(typeof r.commission==="number")?r.commission:0;
       totRef++; totEarn+=earn;
+      if(cmStatus(r)==="paid") paid+=earn; else due+=earn;
       if(byMonth[mk]){ byMonth[mk].ref++; byMonth[mk].earn+=earn; }
       if(mk===curKey){ moRef++; moEarn+=earn; }
     });
@@ -465,11 +491,19 @@ function loadEarnings(){
     document.getElementById("d_moref").textContent=moRef;
     document.getElementById("d_totearn").textContent=money(totEarn);
     document.getElementById("d_moearn").textContent=money(moEarn);
+    document.getElementById("d_paid").textContent=money(paid);
+    document.getElementById("d_due").textContent=money(due);
     var tb=document.getElementById("d_break"); tb.innerHTML="";
     months.slice().reverse().forEach(function(m){
       var c=byMonth[m.key];
       tb.innerHTML+='<tr><td>'+m.label+'</td><td class="num">'+c.ref+'</td><td class="money">'+money(c.earn)+'</td></tr>';
     });
+    var sb=document.getElementById("d_sales");
+    if(!rows.length){ sb.innerHTML='<tr><td colspan="6" style="color:var(--muted)">No sales yet — share your link to get started.</td></tr>'; return; }
+    sb.innerHTML=rows.slice(0,100).map(function(r){
+      var st=cmStatus(r);
+      return '<tr><td>'+fmtDate(r.ts)+'</td><td>'+esc(r.studentName||"Student")+'</td><td>'+esc(r.planName||r.plan||"")+'</td><td class="num">'+money(r.amount||0)+'</td><td class="money">'+money(r.commission||0)+'</td><td class="st-'+st+'">'+(st==="paid"?"Paid":st==="cancelled"?"Refunded":"Pending")+'</td></tr>';
+    }).join("");
   }).catch(function(e){ console.error("earnings:",e); toast("Couldn't load earnings yet.", true); });
 }
 
@@ -480,17 +514,20 @@ function saveProfile(){
   var yt=document.getElementById("d_yt").value.trim();
   var aadhaar=document.getElementById("d_aadhaar").value.replace(/\D/g,"");
   var pan=document.getElementById("d_pan").value.trim().toUpperCase();
+  var upi=document.getElementById("d_upi").value.trim();
+  if(upi && !/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(upi)){ msg.textContent="UPI ID should look like yourname@bank."; return; }
   if(aadhaar && !validAadhaar(aadhaar)){ msg.textContent="Aadhaar must be 12 digits."; return; }
   if(pan && !validPAN(pan)){ msg.textContent="PAN must look like ABCDE1234F."; return; }
   busy("saveBtn",true,"Saving…");
-  fbDB.collection("partners").doc(CUR.uid).set({ instagram:insta, facebook:fb, youtube:yt, aadhaar:aadhaar, pan:pan },{merge:true}).then(function(){
+  fbDB.collection("partners").doc(CUR.uid).set({ instagram:insta, facebook:fb, youtube:yt, aadhaar:aadhaar, pan:pan, upi:upi },{merge:true}).then(function(){
+    CUR.doc.upi=upi;
     busy("saveBtn",false); CUR.doc.instagram=insta; CUR.doc.facebook=fb; CUR.doc.youtube=yt; CUR.doc.aadhaar=aadhaar; CUR.doc.pan=pan;
     msg.className="msg ok"; msg.textContent="Saved!";
   }).catch(function(e){ busy("saveBtn",false); console.error(e); msg.textContent="Couldn't save. Please try again."; });
 }
 
-function copyCode(){ var c=CUR&&CUR.doc?CUR.doc.referralCode:""; if(!c) return; copyText(c,"Referral code copied!"); }
-function copyLink(){ var c=CUR&&CUR.doc?CUR.doc.referralCode:""; if(!c) return; copyText(APP_ORIGIN+"/app.html?ref="+c,"Referral link copied!"); }
+function copyCode(){ var c=myCode(); if(!c) return; copyText(c,"Coupon code copied!"); }
+function copyLink(){ var c=myCode(); if(!c) return; copyText(APP_ORIGIN+"/course.html?code="+c,"Link copied!"); }
 function copyText(txt,ok){
   if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){ toast(ok); }).catch(function(){ legacyCopy(txt,ok); }); }
   else legacyCopy(txt,ok);
@@ -504,10 +541,12 @@ function adminTab(mode){
   adminMode=mode;
   document.getElementById("atab_pending").classList.toggle("active", mode==="pending");
   document.getElementById("atab_all").classList.toggle("active", mode==="all");
+  document.getElementById("atab_payouts").classList.toggle("active", mode==="payouts");
   document.getElementById("adminList").innerHTML='<div class="spin">Loading…</div>';
   fbDB.collection("partners").orderBy("created","desc").get().then(function(snap){
     var list=[]; snap.forEach(function(doc){ var d=doc.data(); if(d.role==="admin") return; list.push({ id:doc.id, d:d }); });
-    adminCache=list; renderAdmin();
+    adminCache=list;
+    if(mode==="payouts") loadPayouts(); else renderAdmin();
   }).catch(function(e){ console.error(e); document.getElementById("adminList").innerHTML='<div class="spin">Couldn\'t load partners. Check that you are logged in as the owner and rules are published.</div>'; });
 }
 function renderAdmin(){
@@ -522,9 +561,12 @@ function renderAdmin(){
     else if(d.status==="approved"){ acts='<button class="btn sm gray" onclick="setStatus(\''+x.id+'\',\'rejected\')">Revoke</button>'; }
     else { acts='<button class="btn sm green" onclick="setStatus(\''+x.id+'\',\'approved\')">Approve</button>'; }
     return '<div class="prow"><div class="pn">'+esc(d.fullName||"—")+' <span class="badge '+d.status+'">'+d.status+'</span></div>'+
-      '<div class="pm">'+esc(d.email||"")+' · +91 '+esc(d.mobile||"")+(d.referralCode?(" · code "+esc(d.referralCode)):"")+'</div>'+
+      '<div class="pm">'+esc(d.email||"")+' · +91 '+esc(d.mobile||"")+(d.upi?(" · UPI "+esc(d.upi)):"")+'</div>'+
       (social?'<div class="pm">'+esc(social)+'</div>':"")+
-      '<div class="pacts">'+acts+'</div></div>';
+      '<div class="pm" style="margin-top:6px">Coupon code: <b style="color:var(--orange-l)">'+esc(d.couponCode||"not set")+'</b>'+(d.referralCode?' <span style="color:var(--dim)">(old auto code '+esc(d.referralCode)+' also works)</span>':'')+'</div>'+
+      '<div class="pacts">'+acts+
+        (d.status!=="rejected"?'<input class="cinp" id="cc_'+x.id+'" maxlength="15" placeholder="e.g. RAHUL10" value="'+esc(d.couponCode||"")+'"><button class="btn sm" onclick="setCoupon(\''+x.id+'\')">Save code</button>':'')+
+      '</div></div>';
   }).join("");
 }
 function setStatus(uid,status){
@@ -532,6 +574,84 @@ function setStatus(uid,status){
     toast("Partner "+status+".");
     if(adminCache){ adminCache.forEach(function(x){ if(x.id===uid) x.d.status=status; }); renderAdmin(); }
   }).catch(function(e){ console.error(e); toast("Couldn't update. Are the security rules published?", true); });
+}
+/* ---- owner: give a partner a coupon code like RAHUL10 ---- */
+var CODE_RE=/^[A-Z0-9]{4,15}$/, RESERVED={ FRIEND200:1, TEST1:1 };
+function setCoupon(uid){
+  var inp=document.getElementById("cc_"+uid); if(!inp) return;
+  var code=(inp.value||"").trim().toUpperCase().replace(/\s+/g,""); inp.value=code;
+  if(!CODE_RE.test(code)){ toast("Code must be 4–15 letters/numbers, e.g. RAHUL10.", true); return; }
+  if(RESERVED[code]){ toast("That code is reserved — pick another.", true); return; }
+  var row=(adminCache||[]).filter(function(x){ return x.id===uid; })[0]; if(!row) return;
+  var oldCode=row.d.couponCode||"";
+  if(oldCode===code){ toast("Already set."); return; }
+  Promise.all([fbDB.collection("coupons").doc(code).get(), fbDB.collection("refcodes").doc(code).get()]).then(function(r){
+    if(r[0].exists && r[0].data().partnerUid!==uid){ toast("Code "+code+" is already used by another partner.", true); return; }
+    if(r[1].exists && r[1].data().uid!==uid){ toast("Code "+code+" clashes with an old partner code — pick another.", true); return; }
+    var b=fbDB.batch();
+    b.set(fbDB.collection("coupons").doc(code), { partnerUid:uid, partnerName:row.d.fullName||"", active:true, created:Date.now() });
+    if(oldCode) b.set(fbDB.collection("coupons").doc(oldCode), { active:false }, { merge:true });
+    b.set(fbDB.collection("partners").doc(uid), { couponCode:code }, { merge:true });
+    return b.commit().then(function(){
+      row.d.couponCode=code; toast("Code "+code+" saved"+(row.d.status==="approved"?" — it works at checkout now.":" — it will work once you approve this partner."));
+      renderAdmin();
+    });
+  }).catch(function(e){ console.error(e); toast("Couldn't save the code. Are the new security rules published?", true); });
+}
+
+/* ---- owner: sales & payouts ---- */
+var PAY_ROWS=null;
+function loadPayouts(){
+  var host=document.getElementById("adminList");
+  fbDB.collection("commissions").get().then(function(snap){
+    PAY_ROWS=[]; snap.forEach(function(doc){ PAY_ROWS.push({ id:doc.id, d:doc.data() }); });
+    var names={}; (adminCache||[]).forEach(function(x){ names[x.id]=x.d; });
+    var by={};
+    PAY_ROWS.forEach(function(x){
+      var d=x.d, k=d.partnerUid||"?"; if(!by[k]) by[k]={ sales:0, gross:0, earned:0, paid:0, due:0, refunded:0, last:0 };
+      var g=by[k], st=cmStatus(d), c=+d.commission||0;
+      if(st==="cancelled"){ g.refunded++; return; }
+      g.sales++; g.gross+=(+d.amount||0); g.earned+=c; g.last=Math.max(g.last, d.ts||0);
+      if(st==="paid") g.paid+=c; else g.due+=c;
+    });
+    var keys=Object.keys(by).sort(function(a,b){ return by[b].due-by[a].due || by[b].earned-by[a].earned; });
+    var tDue=0, tSales=0, tGross=0; keys.forEach(function(k){ tDue+=by[k].due; tSales+=by[k].sales; tGross+=by[k].gross; });
+    var h='<div class="grid4" style="margin-bottom:16px">'+
+      '<div class="stat"><div class="lbl">Partner sales</div><div class="val">'+tSales+'</div></div>'+
+      '<div class="stat"><div class="lbl">Revenue via partners</div><div class="val money">'+money(tGross)+'</div></div>'+
+      '<div class="stat"><div class="lbl">Payout pending</div><div class="val" style="color:#fbbf24">'+money(tDue)+'</div></div></div>';
+    if(!keys.length) h+='<div class="spin">No partner sales yet.</div>';
+    h+=keys.map(function(k){
+      var g=by[k], p=names[k]||{};
+      return '<div class="prow"><div class="pn">'+esc(p.fullName||"(partner "+k.slice(0,6)+")")+' <span style="color:var(--orange-l);font-weight:700">'+esc(p.couponCode||p.referralCode||"")+'</span></div>'+
+        '<div class="pm">'+g.sales+' sales · '+money(g.gross)+' collected · earned '+money(g.earned)+' · paid '+money(g.paid)+(g.refunded?(' · '+g.refunded+' refunded'):'')+(g.last?(' · last sale '+fmtDate(g.last)):'')+'</div>'+
+        '<div class="pm">Pay to: <b>'+esc(p.upi||"UPI not added yet")+'</b>'+(p.mobile?(' · +91 '+esc(p.mobile)):'')+'</div>'+
+        '<div class="pacts">'+(g.due>0?
+          '<span style="font-weight:800;color:#fbbf24;font-size:16px">Due '+money(g.due)+'</span><input class="cinp" style="width:190px;text-transform:none" id="utr_'+k+'" placeholder="UPI ref / UTR (optional)"><button class="btn sm green" onclick="markPaid(\''+k+'\')">Mark '+money(g.due)+' paid</button>'
+          :'<span class="st-paid">✓ Nothing due</span>')+
+        ' <button class="btn sm gray" onclick="showSales(\''+k+'\')">Sales</button></div>'+
+        '<div id="sales_'+k+'"></div></div>';
+    }).join("");
+    host.innerHTML=h;
+  }).catch(function(e){ console.error(e); host.innerHTML='<div class="spin">Couldn\'t load sales. Check that the new security rules are published.</div>'; });
+}
+function showSales(k){
+  var el=document.getElementById("sales_"+k); if(!el) return;
+  if(el.innerHTML){ el.innerHTML=""; return; }
+  var rows=(PAY_ROWS||[]).filter(function(x){ return x.d.partnerUid===k; }).sort(function(a,b){ return (b.d.ts||0)-(a.d.ts||0); });
+  el.innerHTML='<div class="scroll-x" style="margin-top:10px"><table class="brk"><thead><tr><th>Date</th><th>Student</th><th>Product</th><th style="text-align:right">Paid</th><th style="text-align:right">Commission</th><th>Status</th><th>Payment id</th></tr></thead><tbody>'+
+    rows.map(function(x){ var d=x.d, st=cmStatus(d);
+      return '<tr><td>'+fmtDate(d.ts)+'</td><td>'+esc(d.studentName||"")+'</td><td>'+esc(d.planName||d.plan||"")+'</td><td class="num">'+money(d.amount||0)+'</td><td class="money">'+money(d.commission||0)+'</td><td class="st-'+st+'">'+(st==="paid"?"Paid":st==="cancelled"?"Refunded":"Due")+(d.refundedAfterPayout?" ⚠ refunded after payout":"")+'</td><td style="font-size:12px;color:var(--dim)">'+esc(d.paymentId||x.id)+'</td></tr>'; }).join("")+
+    '</tbody></table></div>';
+}
+function markPaid(k){
+  var due=(PAY_ROWS||[]).filter(function(x){ return x.d.partnerUid===k && cmStatus(x.d)==="due"; });
+  if(!due.length) return;
+  var ref=((document.getElementById("utr_"+k)||{}).value||"").trim().slice(0,60);
+  var now=Date.now(), b=fbDB.batch();
+  due.forEach(function(x){ b.update(fbDB.collection("commissions").doc(x.id), { status:"paid", paidAt:now, payoutRef:ref }); });
+  b.commit().then(function(){ toast("Marked paid ✓"); loadPayouts(); })
+   .catch(function(e){ console.error(e); toast("Couldn't update. Are the new security rules published?", true); });
 }
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 

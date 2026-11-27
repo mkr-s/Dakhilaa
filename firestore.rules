@@ -99,6 +99,7 @@ service cloud.firestore {
                       && request.resource.data.status == resource.data.status
                       && request.resource.data.role == resource.data.role
                       && request.resource.data.referralCode == resource.data.referralCode
+                      && request.resource.data.get("couponCode", "") == resource.data.get("couponCode", "")
                     );
       allow delete: if isOwner();
     }
@@ -118,22 +119,26 @@ service cloud.firestore {
       allow update, delete: if false; // codes are permanent
     }
 
-    // ---------- Commissions (written when a student buys with a referral code) ----------
+    // ---------- Partner coupon codes (e.g. RAHUL10) ----------
+    // Set ONLY by the owner from partner.html → Admin. Checkout checks them on the
+    // server (/api/create-order), so students never need to read this collection.
+    match /coupons/{code} {
+      allow read: if isOwner() || (request.auth != null && resource.data.partnerUid == request.auth.uid);
+      allow write: if isOwner();
+    }
+
+    // ---------- Commissions ----------
+    // Written ONLY by the server (/api/verify-payment and /api/razorpay-webhook) after
+    // Razorpay confirms the payment. Nobody can create one from the browser.
     match /commissions/{id} {
       // A partner reads their own commissions; the owner reads all.
       allow read: if isOwner() || (request.auth != null && resource.data.partnerUid == request.auth.uid);
-      // Only a logged-in student can create, only for their own purchase, only at a real
-      // plan price, with commission fixed at ~20% (19-21% allows for rounding).
-      // Update the amount list below if you change plan prices in /api/create-order.js.
-      allow create: if request.auth != null
-                    && request.resource.data.studentUid == request.auth.uid
-                    && request.resource.data.amount in [999, 1499, 1799, 1999]
-                    && request.resource.data.commission is number
-                    && request.resource.data.commission >= request.resource.data.amount * 0.19
-                    && request.resource.data.commission <= request.resource.data.amount * 0.21
-                    && request.resource.data.partnerUid is string
-                    && request.resource.data.partnerUid != request.auth.uid;
-      allow update, delete: if false; // an audit trail — never edited from the app
+      allow create, delete: if false;
+      // The owner can only mark a commission paid / due (payout tracking).
+      allow update: if isOwner()
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(["status", "paidAt", "payoutRef"])
+                    && request.resource.data.status in ["due", "paid"];
     }
 
     // ---------- Feedback / ratings ----------

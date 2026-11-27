@@ -773,10 +773,10 @@
         <div id="planCard"></div>
 
         <div class="setcard" style="margin-top:16px">
-          <label style="display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:7px">Referral code <span style="color:var(--dim);font-weight:400;font-size:12px">(optional)</span></label>
-          <input id="ref_input" type="text" oninput="onRefInput()" placeholder="e.g. DAKXXXXXXX" style="width:100%;padding:12px 14px;background:var(--bg,#0a0e17);border:1px solid var(--border-2,#293349);border-radius:10px;color:inherit;font-size:15px;font-family:inherit;text-transform:uppercase">
+          <label style="display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:7px">Partner / coupon code <span style="color:var(--dim);font-weight:400;font-size:12px">(optional)</span></label>
+          <input id="ref_input" type="text" oninput="onRefInput()" placeholder="e.g. RAHUL10" style="width:100%;padding:12px 14px;background:var(--bg,#0a0e17);border:1px solid var(--border-2,#293349);border-radius:10px;color:inherit;font-size:15px;font-family:inherit;text-transform:uppercase">
           <div id="ref_note" class="ref-note"></div>
-          <p style="font-size:12px;color:var(--dim);margin-top:8px">Got a code from a Dakhilaa partner or teacher? Enter it here before you buy — it's applied automatically at checkout.</p>
+          <p style="font-size:12px;color:var(--dim);margin-top:8px">Got a code from a Dakhilaa partner? Save it here or enter it at checkout — it gives you 10% off.</p>
         </div>
       </section>
 
@@ -989,6 +989,29 @@
     <div class="sub" id="pm_sub">Choose a plan to unlock unlimited diagnostics and full access.</div>
     <div id="pm_opts" class="pm-opts"></div>
     <button class="btn btn-outline btn-block" style="margin-top:14px" onclick="closePricingModal()">Maybe later</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="ckModal">
+  <div class="modal" style="max-width:440px">
+    <button class="x" onclick="dkCloseCheckout()">×</button>
+    <h3 id="ck_title" style="margin-bottom:4px">Checkout</h3>
+    <div class="sub" id="ck_sub" style="color:var(--muted);font-size:13.5px">Review your order</div>
+    <div style="margin:16px 0 14px;padding:14px 16px;border:1px solid var(--border);border-radius:12px">
+      <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+        <span id="ck_list" style="color:var(--dim);text-decoration:line-through;font-size:15px;display:none"></span>
+        <span id="ck_amt" style="font-size:26px;font-weight:800"></span>
+        <span id="ck_save" style="color:#4ade80;font-size:13.5px;font-weight:700"></span>
+      </div>
+    </div>
+    <label style="display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:7px">Coupon / partner code <span style="color:var(--dim);font-weight:400">(optional)</span></label>
+    <div style="display:flex;gap:8px">
+      <input id="ck_code" type="text" maxlength="15" autocomplete="off" placeholder="e.g. RAHUL10" style="flex:1;min-width:0;padding:12px 14px;background:var(--bg,#0a0e17);border:1px solid var(--border-2,#293349);border-radius:10px;color:inherit;font-size:15px;font-family:inherit;text-transform:uppercase">
+      <button class="btn btn-outline" id="ck_apply" onclick="dkApplyCoupon()">Apply</button>
+    </div>
+    <div id="ck_note" style="font-size:13px;margin-top:8px;min-height:18px"></div>
+    <button class="btn btn-block" id="ck_pay" style="margin-top:12px;padding:14px" onclick="dkPay()">Pay securely →</button>
+    <p style="font-size:12px;color:var(--dim);margin-top:10px;text-align:center">Payment via Razorpay · UPI, cards, net banking</p>
   </div>
 </div>
 
@@ -1313,9 +1336,15 @@ function startCheckout(planKey){
 function beginPayment(planKey){
   var plan=PLANS[planKey]; if(!plan) return;
   if(typeof Razorpay==="undefined"){ payToast("Payment system is still loading — please try again in a moment.", true); return; }
+  dkCheckout(planKey, plan.name, plan.amount, function(cpn){ startRazorpay(planKey, cpn); });
+}
+function startRazorpay(planKey, _cpn){
+  var plan=PLANS[planKey]; if(!plan) return;
   payToast("Starting secure checkout…");
-  var _cpn=""; try{ _cpn=localStorage.getItem("dk_coupon")||""; }catch(e){}
-  fetch("/api/create-order",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ plan:planKey, email:currentProfile.email, name:currentProfile.name, coupon:_cpn }) })
+  dkToken().then(function(tok){
+    var h={"Content-Type":"application/json"}; if(tok) h["Authorization"]="Bearer "+tok;
+    return fetch("/api/create-order",{ method:"POST", headers:h, body:JSON.stringify({ plan:planKey, email:currentProfile.email, name:currentProfile.name, coupon:_cpn||"" }) });
+  })
     .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
     .then(function(res){
       if(!res.ok){ payToast((res.d&&res.d.error)||"Could not start payment. Please try again.", true); return; }
@@ -1357,7 +1386,6 @@ function activatePlan(planKey,paymentId){
   currentProfile.plan=planKey; currentProfile.planName=plan.name; currentProfile.planSince=Date.now(); currentProfile.lastPaymentId=paymentId||"";
   if(!(USE_FIREBASE && fbDB && currentUser)){ persistDB(); }
   applyPlanUI();
-  writeReferralCommission(planKey);
   payToast("🎉 "+plan.name+" activated! Full access unlocked.");
 }
 /* ---------- institute access code (B2B) + owner code import ---------- */
@@ -1469,54 +1497,96 @@ function addOwnerTestBtn(el){
   el.appendChild(b);
 }
 
-/* ---------- referral / partner commission ---------- */
-var REF_RE=/^DAK[A-Z0-9]{7}$/;
+/* ---------- partner (influencer) coupon codes ----------
+   A partner shares a link like dakhilaa.com/course.html?code=RAHUL10 (or app.html?ref=RAHUL10).
+   The code is remembered on this device and pre-filled at checkout. The 10% discount and the
+   partner's 20% commission are both decided and recorded on the SERVER (/api/create-order,
+   /api/verify-payment) — nothing here can create a commission. */
+var REF_RE=/^[A-Z0-9]{4,15}$/;
 function captureRef(){
   try{
-    var r=new URLSearchParams(location.search).get("ref");
+    var q=new URLSearchParams(location.search), r=q.get("code")||q.get("ref")||q.get("coupon");
     if(r){ r=r.trim().toUpperCase(); if(REF_RE.test(r)) localStorage.setItem("dakhilaaRef", r); }
   }catch(e){}
 }
 function getRef(){ try{ return (localStorage.getItem("dakhilaaRef")||"").trim().toUpperCase(); }catch(e){ return ""; } }
 function prefillRef(){
   var i=document.getElementById("ref_input"); if(!i) return;
-  var used=""; try{ used=localStorage.getItem("dakhilaaRefUsed")||""; }catch(e){}
-  var note=document.getElementById("ref_note");
-  if(used && hasPaid()){ i.value=used; i.disabled=true; if(note){ note.className="ref-note ok"; note.textContent="Referral "+used+" applied to your purchase. Thank you!"; } return; }
   i.value=getRef();
 }
 function onRefInput(){
   var i=document.getElementById("ref_input"); if(!i) return;
-  var v=(i.value||"").trim().toUpperCase(); i.value=v;
+  var v=(i.value||"").trim().toUpperCase().replace(/[^A-Z0-9]/g,""); i.value=v;
   try{ if(v) localStorage.setItem("dakhilaaRef", v); else localStorage.removeItem("dakhilaaRef"); }catch(e){}
   var note=document.getElementById("ref_note");
-  if(note){ if(!v){ note.textContent=""; note.className="ref-note"; } else if(REF_RE.test(v)){ note.className="ref-note ok"; note.textContent="Looks good — this code will be applied when you buy a plan."; } else { note.className="ref-note err"; note.textContent="Referral codes look like DAKXXXXXXX."; } }
+  if(note){ if(!v){ note.textContent=""; note.className="ref-note"; } else if(REF_RE.test(v)){ note.className="ref-note ok"; note.textContent="Saved — this code will be checked at checkout."; } else { note.className="ref-note err"; note.textContent="Codes are 4–15 letters/numbers, e.g. RAHUL10."; } }
 }
-// Writes a 20% commission for the referring partner. Only runs on a real, verified purchase
-// (called from activatePlan, which runs only after /api/verify-payment confirms the payment).
-function writeReferralCommission(planKey){
-  try{
-    if(!USE_FIREBASE || !fbDB || !currentUser) return;
-    var code=getRef(); if(!REF_RE.test(code)) return;
-    var plan=PLANS[planKey]||(planKey==="crash27"?{amount:99900}:null); if(!plan) return;
-    var amountRs=Math.round(plan.amount/100);
-    var commission=Math.round(amountRs*0.20);
-    fbDB.collection("refcodes").doc(code).get().then(function(doc){
-      if(!doc.exists) return;                       // unknown code — skip silently
-      var partnerUid=doc.data().uid;
-      if(!partnerUid || partnerUid===currentUser) return;  // no self-referral
-      var now=Date.now(); var dt=new Date(now);
-      var mk=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0");
-      fbDB.collection("commissions").add({
-        partnerUid:partnerUid, refCode:code,
-        studentUid:currentUser, studentName:(currentProfile&&currentProfile.name)||"", studentMobile:(currentProfile&&currentProfile.mobile)||"",
-        plan:planKey, planName:plan.name, amount:amountRs, commission:commission,
-        ts:now, month:mk
-      }).then(function(){
-        try{ localStorage.setItem("dakhilaaRefUsed", code); localStorage.removeItem("dakhilaaRef"); }catch(e){}
-      }).catch(function(e){ console.error("commission write failed:", e); });
-    }).catch(function(e){ console.error(e); });
-  }catch(e){}
+// Kept only so older cached pages that still call it do nothing. Commissions are server-side now.
+function writeReferralCommission(){}
+
+function dkToken(){
+  try{ if(USE_FIREBASE && fbAuth && fbAuth.currentUser) return fbAuth.currentUser.getIdToken().catch(function(){ return ""; }); }catch(e){}
+  return Promise.resolve("");
+}
+function dkRs(paise){ return "₹"+Math.round(paise/100).toLocaleString("en-IN"); }
+var CK=null;
+// Opens the checkout box. onPay(couponCode) is called when the student clicks Pay.
+function dkCheckout(planKey, title, listPaise, onPay){
+  var m=document.getElementById("ckModal");
+  if(!m){ onPay(""); return; }
+  CK={ plan:planKey, list:listPaise, applied:"", onPay:onPay, busy:false };
+  document.getElementById("ck_title").textContent=title;
+  document.getElementById("ck_sub").textContent=planKey==="crash27"?"One-time payment · access till 31 Jan 2027":"Yearly plan · full access";
+  var def=getRef(); if(!def){ try{ def=(localStorage.getItem("dk_coupon")||"").toUpperCase(); }catch(e){} }
+  document.getElementById("ck_code").value=def||"";
+  dkShowPrice(listPaise, 0); dkNote("", "");
+  m.classList.add("show");
+  if(def) dkApplyCoupon();
+}
+function dkCloseCheckout(){ var m=document.getElementById("ckModal"); if(m) m.classList.remove("show"); CK=null; }
+function dkNote(t, kind){ var n=document.getElementById("ck_note"); if(!n) return; n.textContent=t; n.style.color=kind==="ok"?"#4ade80":(kind==="err"?"#f87171":"var(--muted)"); }
+function dkShowPrice(amount, discount){
+  var l=document.getElementById("ck_list"), a=document.getElementById("ck_amt"), sv=document.getElementById("ck_save"), pay=document.getElementById("ck_pay");
+  a.textContent=dkRs(amount);
+  if(discount>0){ l.style.display=""; l.textContent=dkRs(amount+discount); sv.textContent="You save "+dkRs(discount); }
+  else { l.style.display="none"; sv.textContent=""; }
+  pay.textContent="Pay "+dkRs(amount)+" securely →";
+}
+// Asks the server what this code is worth (no order is created). Returns a promise of true/false.
+function dkApplyCoupon(){
+  if(!CK) return Promise.resolve(false);
+  var inp=document.getElementById("ck_code");
+  var code=(inp.value||"").trim().toUpperCase().replace(/[^A-Z0-9]/g,""); inp.value=code;
+  if(!code){ CK.applied=""; dkShowPrice(CK.list,0); dkNote("",""); return Promise.resolve(true); }
+  if(!REF_RE.test(code)){ CK.applied=""; dkShowPrice(CK.list,0); dkNote("Codes are 4–15 letters/numbers, e.g. RAHUL10.","err"); return Promise.resolve(false); }
+  dkNote("Checking code…","");
+  var plan=CK.plan;
+  return dkToken().then(function(tok){
+    var h={"Content-Type":"application/json"}; if(tok) h["Authorization"]="Bearer "+tok;
+    return fetch("/api/create-order",{ method:"POST", headers:h, body:JSON.stringify({ plan:plan, coupon:code, preview:true }) });
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if(!CK || CK.plan!==plan) return false;
+    if(d && d.valid){
+      CK.applied=d.coupon; dkShowPrice(d.amount, d.discount);
+      dkNote("✓ Code "+d.coupon+" applied","ok");
+      if(d.coupon!=="FRIEND200"){ try{ localStorage.setItem("dakhilaaRef", d.coupon); }catch(e){} }
+      return true;
+    }
+    CK.applied=""; dkShowPrice(CK.list,0); dkNote((d&&d.message)||"This code is not valid.","err");
+    if(getRef()===code){ try{ localStorage.removeItem("dakhilaaRef"); }catch(e){} }
+    return false;
+  }).catch(function(){ dkNote("Couldn't check the code — check your internet and try again.","err"); return false; });
+}
+function dkPay(){
+  if(!CK || CK.busy) return;
+  var typed=(document.getElementById("ck_code").value||"").trim().toUpperCase();
+  var go=function(){ var c=CK; if(!c) return; var code=c.applied; dkCloseCheckout(); c.onPay(code); };
+  if(typed && typed!==CK.applied){
+    CK.busy=true;
+    dkApplyCoupon().then(function(ok){ if(CK) CK.busy=false; if(ok) go(); });
+    return;
+  }
+  go();
 }
 function applyPlanUI(){
   var p=currentProfile;

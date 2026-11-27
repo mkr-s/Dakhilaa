@@ -6,6 +6,7 @@
 // Env required: RAZORPAY_KEY_SECRET, FIREBASE_SERVICE_ACCOUNT_B64
 var crypto = require("crypto");
 var _fb = require("./_firebase");
+var _cm = require("./_commission");
 
 var PLAN_NAME = {
   grade11: "11th Grade Prep",
@@ -43,6 +44,15 @@ module.exports = async function (req, res) {
   // activate the plan server-side. (The owner Rs 1 test sends no plan, so it is skipped.)
   var planSet = false;
   var planKey = (body.plan || "").toString();
+
+  // Read the order back from Razorpay (trusted). If the plan the browser claims does not
+  // match the plan this order was created (and priced) for, do not activate anything.
+  var order = null;
+  try { order = await _cm.fetchOrder(oid); } catch (e) { order = null; }
+  if (order && order.notes && order.notes.plan && order.notes.plan !== planKey) {
+    res.status(200).json({ valid: true, payment_id: pid, planSet: false, error: "Plan does not match this payment." });
+    return;
+  }
   var authH = req.headers.authorization || "";
   var token = authH.indexOf("Bearer ") === 0 ? authH.slice(7) : "";
   // Crash course purchase: unlock the course only — never touches the yearly plan.
@@ -72,6 +82,15 @@ module.exports = async function (req, res) {
       planSet = true;
     } catch (e) { planSet = false; }
   }
+
+  // Partner commission (20% of what the student paid). Written only here on the server,
+  // using the order details read back from Razorpay — never from the browser.
+  // A failure here never blocks the student's purchase; the webhook retries it.
+  try {
+    var uidForCm = "";
+    if (token) { try { uidForCm = (await _fb.getAdmin().auth().verifyIdToken(token)).uid; } catch (e) {} }
+    await _cm.recordCommission(_fb.getAdmin(), { order: order, orderId: oid, paymentId: pid, studentUid: uidForCm, source: "verify" });
+  } catch (e) { console.error("commission:", e && e.message); }
 
   res.status(200).json({ valid: true, payment_id: pid, planSet: planSet });
 };

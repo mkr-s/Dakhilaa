@@ -333,10 +333,19 @@ window.crashBuy=function(){
   if(Date.now()>CR.validUntil){ toast("The Crash Course has ended.", true); return; }
   if(typeof currentProfile==="undefined" || !currentProfile){ window.pendingCourse=true; if(typeof view==="function") view("authScreen"); var n=$("auth_note"); if(n){ n.textContent="Create your account (or log in) to join the "+CR.name+" ("+CR.price+")."; n.classList.remove("hidden"); } if(typeof showSignup==="function") showSignup(); return; }
   if(typeof Razorpay==="undefined"){ toast("Payment system is still loading — please try again in a moment.", true); return; }
+  if(CR.busy) return;
+  if(typeof dkCheckout==="function"){ dkCheckout(CR.key, CR.name, 99900, crashPay); return; }
+  var c0=""; try{ c0=localStorage.getItem("dk_coupon")||""; }catch(e){}
+  crashPay(c0);
+};
+function crashPay(cpn){
   if(CR.busy) return; CR.busy=true;
   toast("Starting secure checkout…");
-  var cpn=""; try{ cpn=localStorage.getItem("dk_coupon")||""; }catch(e){}
-  fetch("/api/create-order",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ plan:CR.key, email:currentProfile.email, name:currentProfile.name, coupon:cpn }) })
+  var tokP=(typeof dkToken==="function")?dkToken():Promise.resolve("");
+  tokP.then(function(tok){
+    var h={"Content-Type":"application/json"}; if(tok) h["Authorization"]="Bearer "+tok;
+    return fetch("/api/create-order",{ method:"POST", headers:h, body:JSON.stringify({ plan:CR.key, email:currentProfile.email, name:currentProfile.name, coupon:cpn||"" }) });
+  })
    .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
    .then(function(res){
      CR.busy=false;
@@ -348,14 +357,13 @@ window.crashBuy=function(){
      rz.on("payment.failed", function(e){ toast((e&&e.error&&e.error.description)||"Payment failed. No money was charged.", true); });
      rz.open();
    }).catch(function(){ CR.busy=false; toast("Network error starting payment. Please try again.", true); });
-};
+}
 function verifyBuy(resp){
   toast("Verifying payment…");
   fbAuth.currentUser.getIdToken().then(function(tok){
     return fetch("/api/verify-payment",{ method:"POST", headers:{"Content-Type":"application/json","Authorization":"Bearer "+tok}, body:JSON.stringify({ razorpay_order_id:resp.razorpay_order_id, razorpay_payment_id:resp.razorpay_payment_id, razorpay_signature:resp.razorpay_signature, plan:CR.key }) });
   }).then(function(r){ return r.json(); }).then(function(d){
     if(d && d.valid && d.planSet){
-      try{ if(typeof writeReferralCommission==="function") writeReferralCommission(CR.key); }catch(e){}
       CR.list=null; if(typeof go==="function") go("crash"); welcome();
     } else if(d && d.valid){ toast("Payment received ("+resp.razorpay_payment_id+") but activation is pending — please refresh in a minute or contact support@dakhilaa.com.", true); }
     else toast("Payment could not be verified. If money was deducted it will be auto-refunded — contact us with payment id "+resp.razorpay_payment_id, true);
